@@ -21,6 +21,7 @@ public class MainActivity extends ListActivity {
     /** Called when the activity is first created. */
     public void onCreate(Bundle savedInstanceState) {
 
+        // This is SPARTAAAA
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
