@@ -6,6 +6,7 @@ import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
 
+import com.example.lior.instakilo.model.Model;
 import com.example.lior.instakilo.model.Post;
 import com.example.lior.instakilo.model.PostAdapter;
 
@@ -49,7 +50,9 @@ public class MainActivity extends ListActivity {
             // here is where you could also request data from a server
             // and then create objects from that data.
             //(String id,String photoId,  String userId, String title, String content, int likeCounter,  boolean checked)
-            m_parts.add(new Post("id","photoid","userid","New POST","CONTENT xxxyyyy",5,true));
+            Model.getInstance().add(new Post("5","photoid","userid","New POST","CONTENT xxxyyyy",5,true));
+
+            m_parts.add(new Post("5","photoid","userid","New POST","CONTENT xxxyyyy",5,true));
             m_parts.add(new Post("id","photoid","user id","Much wow","very cool",15,true));
 
             m_adapter = new PostAdapter(MainActivity.this, R.layout.post_listview, m_parts);

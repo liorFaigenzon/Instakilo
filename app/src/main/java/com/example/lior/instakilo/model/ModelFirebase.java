@@ -71,21 +71,21 @@ public class ModelFirebase {
     }
 
 
-    public void getAllStudentsAsynch(final Model.GetStudentsListener listener, String lastUpdateDate) {
+    public void getAllPostsAsynch(final Model.GetPostsListener listener, String lastUpdateDate) {
         FirebaseDatabase database = FirebaseDatabase.getInstance();
-        DatabaseReference myRef = database.getReference("student");
+        DatabaseReference myRef = database.getReference("post");
 
         Query queryRef = myRef.orderByChild("lastUpdated").startAt(lastUpdateDate);
 
         queryRef.addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
             public void onDataChange(DataSnapshot snapshot) {
-                final List<Student> stList = new LinkedList<Student>();
-                Log.d("TAG", "read " + snapshot.getChildrenCount() + " new students");
+                final List<Post> stList = new LinkedList<Post>();
+                Log.d("TAG", "read " + snapshot.getChildrenCount() + " new posts");
                 for (DataSnapshot stSnapshot : snapshot.getChildren()) {
-                    Student st = stSnapshot.getValue(Student.class);
-                    Log.d("TAG", st.getFname() + " - " + st.getId());
-                    stList.add(st);
+                    Post pst = stSnapshot.getValue(Post.class);
+                    Log.d("TAG", pst.getTitle() + " - " + pst.getId());
+                    stList.add(pst);
                 }
                 listener.onResult(stList);
             }
@@ -98,15 +98,15 @@ public class ModelFirebase {
         });
     }
 
-    public void getStudentById(String id, final Model.GetStudent listener) {
+    public void getPostById(String id, final Model.GetPost listener) {
         FirebaseDatabase database = FirebaseDatabase.getInstance();
-        DatabaseReference myRef = database.getReference("student").child(id);
+        DatabaseReference myRef = database.getReference("post").child(id);
         myRef.addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
             public void onDataChange(DataSnapshot snapshot) {
-                Student st = snapshot.getValue(Student.class);
-                Log.d("TAG", st.getFname() + " - " + st.getId());
-                listener.onResult(st);
+                Post pst = snapshot.getValue(Post.class);
+                Log.d("TAG", pst.getTitle() + " - " + pst.getId());
+                listener.onResult(pst);
             }
 
             @Override
@@ -117,7 +117,7 @@ public class ModelFirebase {
         });
     }
 
-    public void add(Student st) {
+    public void add(Post pst) {
         SimpleDateFormat dateFormatGmt = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
         dateFormatGmt.setTimeZone(TimeZone.getTimeZone("GMT"));
         SimpleDateFormat dateFormatLocal = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
@@ -125,10 +125,10 @@ public class ModelFirebase {
         date =  dateFormatGmt.format(new Date()) .toString();
 
 
-        st.setLastUpdated(date);
+        pst.setLastUpdated(date);
         FirebaseDatabase database = FirebaseDatabase.getInstance();
-        DatabaseReference myRef = database.getReference("student").child(st.getId());
-        myRef.setValue(st);
+        DatabaseReference myRef = database.getReference("post").child(pst.getId());
+        myRef.setValue(pst);
     }
 
 

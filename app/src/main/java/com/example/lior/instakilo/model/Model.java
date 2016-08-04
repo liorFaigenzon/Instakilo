@@ -32,8 +32,8 @@ public class Model {
 
     private Model(){
         context = MyApplication.getAppContext();
-        modelFirebase = new ModelFirebase(MyApplication.getAppContext());
-        modelCloudinary = new ModelCoulinary();
+        //modelFirebase = new ModelFirebase(MyApplication.getAppContext());
+        //modelCloudinary = new ModelCoulinary();
         modelSql = new ModelSql(MyApplication.getAppContext());
     }
 
@@ -58,30 +58,30 @@ public class Model {
         modelFirebase.signout();
     }
 
-    public interface GetStudentsListener{
-        public void onResult(List<Student> students);
+    public interface GetPostsListener{
+        public void onResult(List<Post> students);
         public void onCancel();
     }
 
-    public void getAllStudentsAsynch(final GetStudentsListener listener){
-        final String lastUpdateDate = StudentSql.getLastUpdateDate(modelSql.getReadbleDB());
-        modelFirebase.getAllStudentsAsynch(new GetStudentsListener() {
+    public void getAllPostsAsynch(final GetPostsListener listener){
+        final String lastUpdateDate = PostSql.getLastUpdateDate(modelSql.getReadbleDB());
+        modelFirebase.getAllPostsAsynch(new GetPostsListener() {
             @Override
-            public void onResult(List<Student> students) {
+            public void onResult(List<Post> students) {
                 if(students != null && students.size() > 0) {
                     //update the local DB
                     String reacentUpdate = lastUpdateDate;
-                    for (Student s : students) {
-                        StudentSql.add(modelSql.getWritableDB(), s);
+                    for (Post s : students) {
+                        PostSql.add(modelSql.getWritableDB(), s);
                         if (reacentUpdate == null || s.getLastUpdated().compareTo(reacentUpdate) > 0) {
                             reacentUpdate = s.getLastUpdated();
                         }
                         Log.d("TAG","updating: " + s.toString());
                     }
-                    StudentSql.setLastUpdateDate(modelSql.getWritableDB(), reacentUpdate);
+                    PostSql.setLastUpdateDate(modelSql.getWritableDB(), reacentUpdate);
                 }
                 //return the complete student list to the caller
-                List<Student> res = StudentSql.getAllStudents(modelSql.getReadbleDB());
+                List<Post> res = PostSql.getAllPosts(modelSql.getReadbleDB());
                 listener.onResult(res);
             }
 
@@ -92,16 +92,17 @@ public class Model {
         },lastUpdateDate);
     }
 
-    public interface GetStudent{
-        public void onResult(Student student);
+    public interface GetPost{
+        public void onResult(Post student);
         public void onCancel();
     }
-    public void getStudentById(String id, GetStudent listener){
-        modelFirebase.getStudentById(id,listener);
+    public void getPostById(String id, GetPost listener){
+        modelFirebase.getPostById(id,listener);
     }
 
-    public void add(Student st){
-        modelFirebase.add(st);
+    public void add(Post pst){
+        //modelFirebase.add(pst);
+
     }
 
 

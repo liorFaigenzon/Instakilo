@@ -35,13 +35,13 @@ public class ModelSql {
 
         @Override
         public void onCreate(SQLiteDatabase db) {
-            StudentSql.create(db);
+            PostSql.create(db);
             LastUpdateSql.create(db);
         }
 
         @Override
         public void onUpgrade(SQLiteDatabase db, int oldVersion, int newVersion) {
-            StudentSql.drop(db);
+            PostSql.drop(db);
             LastUpdateSql.drop(db);
             onCreate(db);
         }
