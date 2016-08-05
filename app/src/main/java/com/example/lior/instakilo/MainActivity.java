@@ -9,6 +9,8 @@ import android.os.Message;
 import com.example.lior.instakilo.model.Model;
 import com.example.lior.instakilo.model.Post;
 import com.example.lior.instakilo.model.PostAdapter;
+import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.FirebaseDatabase;
 
 import java.util.ArrayList;
 
@@ -55,6 +57,11 @@ public class MainActivity extends ListActivity {
                     Model.getInstance().add(new Post("5","photoid","userid","New POST","CONTENT xxxyyyy",5,true));
                 }
             });
+
+            FirebaseDatabase database = FirebaseDatabase.getInstance();
+            DatabaseReference myRef = database.getReference("message");
+
+            myRef.setValue("Hello, World!!");
             Model.getInstance().add(new Post("5","photoid","userid","New POST","CONTENT xxxyyyy",5,true));
 
             m_parts.add(new Post("5","photoid","userid","New POST","CONTENT xxxyyyy",5,true));
