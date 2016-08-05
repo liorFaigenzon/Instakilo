@@ -4,6 +4,7 @@ import android.content.Context;
 import android.support.annotation.NonNull;
 import android.util.Log;
 
+import com.firebase.client.Firebase;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.AuthResult;
@@ -25,9 +26,10 @@ import java.util.TimeZone;
  * Created by eliav.menachi on 17/05/2016.
  */
 public class ModelFirebase {
-
+    //Firebase myFirebaseRef;
     ModelFirebase(Context context){
-
+        Firebase.setAndroidContext(context);
+        //myFirebaseRef = new Firebase("https://instakilo-60f25.firebaseio.com/");
     }
 
     public void signup(String email, String password, final Model.AuthListener listener){

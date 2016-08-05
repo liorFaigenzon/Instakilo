@@ -21,7 +21,6 @@ public class MainActivity extends ListActivity {
 
     /** Called when the activity is first created. */
     public void onCreate(Bundle savedInstanceState) {
-
         // This is SPARTAAAA
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
@@ -50,6 +49,12 @@ public class MainActivity extends ListActivity {
             // here is where you could also request data from a server
             // and then create objects from that data.
             //(String id,String photoId,  String userId, String title, String content, int likeCounter,  boolean checked)
+            Model.getInstance().signup("thboss49@gmail.com", "123456", new Model.AuthListener() {
+                @Override
+                public void onDone(String userId, Exception e) {
+                    Model.getInstance().add(new Post("5","photoid","userid","New POST","CONTENT xxxyyyy",5,true));
+                }
+            });
             Model.getInstance().add(new Post("5","photoid","userid","New POST","CONTENT xxxyyyy",5,true));
 
             m_parts.add(new Post("5","photoid","userid","New POST","CONTENT xxxyyyy",5,true));

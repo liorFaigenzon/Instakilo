@@ -32,7 +32,7 @@ public class Model {
 
     private Model(){
         context = MyApplication.getAppContext();
-        //modelFirebase = new ModelFirebase(MyApplication.getAppContext());
+        modelFirebase = new ModelFirebase(MyApplication.getAppContext());
         //modelCloudinary = new ModelCoulinary();
         modelSql = new ModelSql(MyApplication.getAppContext());
     }

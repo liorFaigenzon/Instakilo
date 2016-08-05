@@ -1,27 +1,27 @@
 {
   "project_info": {
-    "project_number": "644538149323",
-    "firebase_url": "https://insatkilo.firebaseio.com",
-    "project_id": "insatkilo",
-    "storage_bucket": "insatkilo.appspot.com"
+    "project_number": "755316057746",
+    "firebase_url": "https://instakilo-60f25.firebaseio.com",
+    "project_id": "instakilo-60f25",
+    "storage_bucket": "instakilo-60f25.appspot.com"
   },
   "client": [
     {
       "client_info": {
-        "mobilesdk_app_id": "1:644538149323:android:2a40632fc46d6499",
+        "mobilesdk_app_id": "1:755316057746:android:618acb0c4d9e11c3",
         "android_client_info": {
-          "package_name": "com.example.lior.instakilo.model"
+          "package_name": "com.example.lior.instakilo"
         }
       },
       "oauth_client": [
         {
-          "client_id": "644538149323-puhiakp05ug7i8bha0o3qnjm4fvuhr37.apps.googleusercontent.com",
+          "client_id": "755316057746-e8gtn507jur6ido9628pqdee1rb9mt0j.apps.googleusercontent.com",
           "client_type": 3
         }
       ],
       "api_key": [
         {
-          "current_key": "AIzaSyDpO7N-3wVIXo6PPopzKFSa9fZtbc9mCeA"
+          "current_key": "AIzaSyCxIxxndXPhySUUeuLYOfaDRm3F801ol3Q"
         }
       ],
       "services": {
