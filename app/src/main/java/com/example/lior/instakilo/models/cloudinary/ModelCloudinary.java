@@ -1,4 +1,4 @@
-package com.example.lior.instakilo.model;
+package com.example.lior.instakilo.models.cloudinary;
 
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
@@ -17,10 +17,10 @@ import java.util.Map;
 /**
  * Created by eliav.menachi on 17/05/2016.
  */
-public class ModelCoulinary {
+public class ModelCloudinary {
     Cloudinary cloudinary;
 
-    public ModelCoulinary(){
+    public ModelCloudinary(){
         cloudinary = new Cloudinary("cloudinary://395375899647957:m1hUMLJ9-80xXrQbhHxSGJX_DvU@menachi");
     }
 

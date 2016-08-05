@@ -1,4 +1,4 @@
-package com.example.lior.instakilo.model;
+package com.example.lior.instakilo.models.sqlite;
 
 /**
  * Created by eliav.menachi on 08/06/2016.

@@ -1,4 +1,4 @@
-package com.example.lior.instakilo.model;
+package com.example.lior.instakilo.models;
 
 import android.content.Context;
 import android.content.Intent;
@@ -10,6 +10,9 @@ import android.os.Environment;
 import android.util.Log;
 
 import com.example.lior.instakilo.MyApplication;
+import com.example.lior.instakilo.models.firebase.ModelFirebase;
+import com.example.lior.instakilo.models.sqlite.ModelSql;
+import com.example.lior.instakilo.models.sqlite.PostSql;
 
 import java.io.File;
 import java.io.FileInputStream;

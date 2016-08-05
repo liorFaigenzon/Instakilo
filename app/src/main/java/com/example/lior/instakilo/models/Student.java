@@ -1,4 +1,4 @@
-package com.example.lior.instakilo.model;
+package com.example.lior.instakilo.models;
 
 /**
  * Created by eliav.menachi on 25/03/2015.

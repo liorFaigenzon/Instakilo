@@ -1,8 +1,11 @@
-package com.example.lior.instakilo.model;
+package com.example.lior.instakilo.model.sqlite;
 
 import android.content.ContentValues;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
+
+import com.example.lior.instakilo.model.Post;
+import com.example.lior.instakilo.model.sqlite.LastUpdateSql;
 
 import java.util.LinkedList;
 import java.util.List;
@@ -14,7 +17,7 @@ public class PostSql {
     final static String POST_TABLE = "posts";
     final static String POST_TABLE_ID = "_id";
     final static String POST_TABLE_TITLE = "photoId";
-    final static String POST_TABLE_CONTENT = "userId";
+    final static String POST_TABLE_CONTENT = "authorId";
     final static String POST_TABLE_LIKE_COUNTER = "content";
     final static String POST_TABLE_USER_ID = "image_name";
     final static String POST_PHOTO_ID = "title";
@@ -94,7 +97,7 @@ public class PostSql {
         values.put(POST_TABLE_TITLE, pst.getTitle());
         values.put(POST_TABLE_CONTENT, pst.getContent());
         values.put(POST_TABLE_LIKE_COUNTER, pst.getLikeCounter());
-        values.put(POST_TABLE_USER_ID, pst.getUserId());
+        values.put(POST_TABLE_USER_ID, pst.getAuthorId());
         values.put(POST_PHOTO_ID, pst.getPhotoId());
         if (pst.isChecked()) {
             values.put(POST_TABLE_CHECKABLE, 1);

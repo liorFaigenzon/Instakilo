@@ -1,9 +1,11 @@
-package com.example.lior.instakilo.model;
+package com.example.lior.instakilo.model.Firebase;
 
 import android.content.Context;
 import android.support.annotation.NonNull;
 import android.util.Log;
 
+import com.example.lior.instakilo.model.Model;
+import com.example.lior.instakilo.model.Post;
 import com.firebase.client.Firebase;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
