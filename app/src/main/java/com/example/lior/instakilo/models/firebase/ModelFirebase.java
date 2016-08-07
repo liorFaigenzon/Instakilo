@@ -76,35 +76,18 @@ public class ModelFirebase {
         FirebaseAuth.getInstance().signOut();
     }
 
-    public void getAllPostsAsynch(final Model.GetPostsListener listener, String lastUpdateDate) {
-        FirebaseDatabase database = FirebaseDatabase.getInstance();
-        DatabaseReference myRef = database.getReference("post");
+    public void getAll(Model.ModelClass model, String lastUpdateDate, Model.GetAllListener listener) {
 
-        Query queryRef = myRef.orderByChild("lastUpdated").startAt(lastUpdateDate);
-
-        queryRef.addListenerForSingleValueEvent(new ValueEventListener() {
-            @Override
-            public void onDataChange(DataSnapshot snapshot) {
-                final List<Post> stList = new LinkedList<Post>();
-                Log.d("TAG", "read " + snapshot.getChildrenCount() + " new posts");
-                for (DataSnapshot stSnapshot : snapshot.getChildren()) {
-                    Post pst = stSnapshot.getValue(Post.class);
-                    //Log.d("TAG", pst.getTitle() + " - " + pst.getId());
-                    stList.add(pst);
-                }
-                listener.onResult(stList);
-            }
-
-            @Override
-            public void onCancelled(DatabaseError databaseError) {
-                System.out.println("The read failed: " + databaseError.getMessage());
-                listener.onCancel();
-            }
-        });
+        // Check the type of the model to get
+        switch (model){
+            case POST:
+                postFirebase.getAll(lastUpdateDate, listener);
+                break;
+        }
     }
 
-    public void getPostById(String id, final Model.GetPost listener) {
-        FirebaseDatabase database = FirebaseDatabase.getInstance();
+    public void getPostById(String id/*, final Model.GetPost listener*/) {
+        /*FirebaseDatabase database = FirebaseDatabase.getInstance();
         DatabaseReference myRef = database.getReference("post").child(id);
         myRef.addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
@@ -119,7 +102,7 @@ public class ModelFirebase {
                 System.out.println("The read failed: " + databaseError.getMessage());
                 listener.onCancel();
             }
-        });
+        });*/
     }
 
     public void add(Object model, Model.AddListener listener) {

@@ -8,19 +8,46 @@ import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.Query;
 import com.google.firebase.database.ValueEventListener;
 
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.HashMap;
+import java.util.LinkedList;
+import java.util.List;
 import java.util.Map;
 import java.util.TimeZone;
 
 public class PostFirebase implements IModelFirebase {
 
     @Override
-    public void getAll() {
+    public void getAll(String lastUpdateDate, final Model.GetAllListener listener) {
 
+        // Get all recent posts that are not cached already
+        Query queryPosts = ModelFirebase.getDatabase().child("posts").orderByChild("lastUpdated").startAt(lastUpdateDate);
+
+        queryPosts.addListenerForSingleValueEvent(new ValueEventListener() {
+            @Override
+            public void onDataChange(DataSnapshot snapshot) {
+                final List<Post> postList = new LinkedList<Post>();
+
+                // Gather all the posts to a list
+                for (DataSnapshot postSnapshot : snapshot.getChildren()) {
+                    Post post = postSnapshot.getValue(Post.class);
+                    postList.add(post);
+                }
+
+                // Return the list as a result
+                listener.onResult(postList);
+            }
+
+            @Override
+            public void onCancelled(DatabaseError databaseError) {
+                Log.w("Nir", "getAllPosts:onCancelled", databaseError.toException());
+                listener.onCancel();
+            }
+        });
     }
 
     @Override

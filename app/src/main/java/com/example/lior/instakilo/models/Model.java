@@ -28,6 +28,10 @@ import java.util.List;
 
 public class Model {
 
+    public enum ModelClass {
+        POST
+    }
+
     private final static Model instance = new Model();
     Context context;
     ModelFirebase modelFirebase;
@@ -62,20 +66,20 @@ public class Model {
         modelFirebase.signout();
     }
 
-    public interface GetPostsListener{
-        public void onResult(List<Post> students);
-        public void onCancel();
+    public interface GetAllListener{
+        void onResult(List<Post> posts);
+        void onCancel();
     }
 
-    public void getAllPostsAsynch(final GetPostsListener listener){
-        final String lastUpdateDate = PostSql.getLastUpdateDate(modelSql.getReadbleDB());
-        modelFirebase.getAllPostsAsynch(new GetPostsListener() {
+    public void getAll(ModelClass model, final GetAllListener listener){
+        final String lastUpdateDate = "";// PostSql.getLastUpdateDate(modelSql.getReadbleDB());
+        modelFirebase.getAll(model, lastUpdateDate, new GetAllListener() {
             @Override
-            public void onResult(List<Post> students) {
-                if(students != null && students.size() > 0) {
+            public void onResult(List<Post> posts) {
+                if(posts != null && posts.size() > 0) {
                     //update the local DB
                     String reacentUpdate = lastUpdateDate;
-                    for (Post s : students) {
+                    for (Post s : posts) {
                         PostSql.add(modelSql.getWritableDB(), s);
                         if (reacentUpdate == null || s.getLastUpdated().compareTo(reacentUpdate) > 0) {
                             reacentUpdate = s.getLastUpdated();
@@ -93,16 +97,16 @@ public class Model {
             public void onCancel() {
                 listener.onCancel();
             }
-        },lastUpdateDate);
+        });
     }
 
-    public interface GetPost{
-        public void onResult(Post student);
-        public void onCancel();
+    public interface GetOneListener{
+        void onResult(Post student);
+        void onCancel();
     }
 
-    public void getPostById(String id, GetPost listener){
-        modelFirebase.getPostById(id,listener);
+    public void getPostById(String id, GetOneListener listener){
+        //modelFirebase.getPostById(id,listener);
     }
 
     public void saveImage(final Bitmap imageBitmap, final String imageName) {
