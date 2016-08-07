@@ -1,18 +1,14 @@
-package com.example.lior.instakilo.model.sqlite;
+package com.example.lior.instakilo.models.sqlite;
 
 import android.content.ContentValues;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 
-import com.example.lior.instakilo.model.Post;
-import com.example.lior.instakilo.model.sqlite.LastUpdateSql;
+import com.example.lior.instakilo.models.Post;
 
 import java.util.LinkedList;
 import java.util.List;
 
-/**
- * Created by eliav.menachi on 08/06/2016.
- */
 public class PostSql {
     final static String POST_TABLE = "posts";
     final static String POST_TABLE_ID = "_id";
@@ -59,7 +55,7 @@ public class PostSql {
                 int likeCounter = cursor.getInt(likeCounterIndex);
                 String title = cursor.getString(titleIndex);
                 int checkable = cursor.getInt(checkableIndex); //0 false / 1 true
-                Post pst = new Post(id, photoId,userId, title , content, likeCounter, checkable == 1);
+                Post pst = new Post(id, photoId,userId, likeCounter, null);
                 posts.add(pst);
             } while (cursor.moveToNext());
         }
@@ -85,14 +81,14 @@ public class PostSql {
             int likeCounter = cursor.getInt(likeCounterIndex);
             String title = cursor.getString(titleIndex);
             int checkable = cursor.getInt(checkableIndex); //0 false / 1 true
-            Post pst = new Post(_id, photoId, userId,title, content, likeCounter, checkable == 1);
+            Post pst = new Post(_id, photoId, userId, likeCounter, null);
             return pst;
         }
         return null;
     }
 
     public static void add(SQLiteDatabase db, Post pst) {
-        ContentValues values = new ContentValues();
+        /*ContentValues values = new ContentValues();
         values.put(POST_TABLE_ID, pst.getId());
         values.put(POST_TABLE_TITLE, pst.getTitle());
         values.put(POST_TABLE_CONTENT, pst.getContent());
@@ -104,7 +100,7 @@ public class PostSql {
         } else {
             values.put(POST_TABLE_CHECKABLE, 0);
         }
-        db.insertWithOnConflict(POST_TABLE, POST_TABLE_ID, values, SQLiteDatabase.CONFLICT_REPLACE);
+        db.insertWithOnConflict(POST_TABLE, POST_TABLE_ID, values, SQLiteDatabase.CONFLICT_REPLACE);*/
     }
 
     public static String getLastUpdateDate(SQLiteDatabase db){

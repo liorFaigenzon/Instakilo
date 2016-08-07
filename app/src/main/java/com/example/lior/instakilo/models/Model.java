@@ -10,9 +10,12 @@ import android.os.Environment;
 import android.util.Log;
 
 import com.example.lior.instakilo.MyApplication;
+import com.example.lior.instakilo.models.cloudinary.ModelCloudinary;
 import com.example.lior.instakilo.models.firebase.ModelFirebase;
 import com.example.lior.instakilo.models.sqlite.ModelSql;
 import com.example.lior.instakilo.models.sqlite.PostSql;
+import com.google.firebase.database.DatabaseError;
+import com.google.firebase.database.DatabaseReference;
 
 import java.io.File;
 import java.io.FileInputStream;
@@ -23,20 +26,18 @@ import java.io.InputStream;
 import java.io.OutputStream;
 import java.util.List;
 
-/**
- * Created by eliav.menachi on 25/03/2015.
- */
 public class Model {
+
     private final static Model instance = new Model();
     Context context;
     ModelFirebase modelFirebase;
-    ModelCoulinary modelCloudinary;
+    ModelCloudinary modelCloudinary;
     ModelSql modelSql;
 
     private Model(){
         context = MyApplication.getAppContext();
         modelFirebase = new ModelFirebase(MyApplication.getAppContext());
-        //modelCloudinary = new ModelCoulinary();
+        //modelCloudinary = new ModelCloudinary();
         modelSql = new ModelSql(MyApplication.getAppContext());
     }
 
@@ -99,15 +100,10 @@ public class Model {
         public void onResult(Post student);
         public void onCancel();
     }
+
     public void getPostById(String id, GetPost listener){
         modelFirebase.getPostById(id,listener);
     }
-
-    public void add(Post pst){
-        //modelFirebase.add(pst);
-
-    }
-
 
     public void saveImage(final Bitmap imageBitmap, final String imageName) {
         saveImageToFile(imageBitmap,imageName); // synchronously save image locally
@@ -118,10 +114,6 @@ public class Model {
             }
         });
         d.start();
-    }
-
-    public interface LoadImageListener{
-        public void onResult(Bitmap imageBmp);
     }
 
     public void loadImage(final String imageName, final LoadImageListener listener) {
@@ -204,5 +196,33 @@ public class Model {
             e.printStackTrace();
         }
         return bitmap;
+    }
+
+    public interface LoadImageListener{
+        public void onResult(Bitmap imageBmp);
+    }
+
+    public interface AddListener {
+        void onComplete(DatabaseError databaseError, DatabaseReference databaseReference, String key);
+    }
+
+    public void add(Object model, AddListener listener){
+        modelFirebase.add(model, listener);
+    }
+
+    public interface UpdateListener {
+        void onComplete(DatabaseError databaseError, DatabaseReference databaseReference, String key);
+    }
+
+    public void update(Object model, UpdateListener listener){
+        modelFirebase.update(model, listener);
+    }
+
+    public interface DeleteListener {
+        void onComplete(DatabaseError databaseError, DatabaseReference databaseReference, String key);
+    }
+
+    public void delete(Object model, DeleteListener listener){
+        modelFirebase.delete(model, listener);
     }
 }

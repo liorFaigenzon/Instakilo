@@ -1,4 +1,4 @@
-package com.example.lior.instakilo.model.sqlite;
+package com.example.lior.instakilo.models.sqlite;
 
 import android.content.ContentValues;
 import android.database.Cursor;

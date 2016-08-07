@@ -18,20 +18,22 @@ import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.Query;
 import com.google.firebase.database.ValueEventListener;
 
-import java.text.SimpleDateFormat;
-import java.util.Date;
 import java.util.LinkedList;
 import java.util.List;
-import java.util.TimeZone;
 
-/**
- * Created by eliav.menachi on 17/05/2016.
- */
 public class ModelFirebase {
-    //Firebase myFirebaseRef;
-    ModelFirebase(Context context){
+
+    private final static DatabaseReference database = FirebaseDatabase.getInstance().getReference();
+
+    private PostFirebase postFirebase;
+
+    public ModelFirebase(Context context){
         Firebase.setAndroidContext(context);
-        //myFirebaseRef = new Firebase("https://instakilo-60f25.firebaseio.com/");
+        postFirebase = new PostFirebase();
+    }
+
+    public static DatabaseReference getDatabase() {
+        return database;
     }
 
     public void signup(String email, String password, final Model.AuthListener listener){
@@ -74,7 +76,6 @@ public class ModelFirebase {
         FirebaseAuth.getInstance().signOut();
     }
 
-
     public void getAllPostsAsynch(final Model.GetPostsListener listener, String lastUpdateDate) {
         FirebaseDatabase database = FirebaseDatabase.getInstance();
         DatabaseReference myRef = database.getReference("post");
@@ -88,7 +89,7 @@ public class ModelFirebase {
                 Log.d("TAG", "read " + snapshot.getChildrenCount() + " new posts");
                 for (DataSnapshot stSnapshot : snapshot.getChildren()) {
                     Post pst = stSnapshot.getValue(Post.class);
-                    Log.d("TAG", pst.getTitle() + " - " + pst.getId());
+                    //Log.d("TAG", pst.getTitle() + " - " + pst.getId());
                     stList.add(pst);
                 }
                 listener.onResult(stList);
@@ -109,7 +110,7 @@ public class ModelFirebase {
             @Override
             public void onDataChange(DataSnapshot snapshot) {
                 Post pst = snapshot.getValue(Post.class);
-                Log.d("TAG", pst.getTitle() + " - " + pst.getId());
+                //Log.d("TAG", pst.getTitle() + " - " + pst.getId());
                 listener.onResult(pst);
             }
 
@@ -121,22 +122,29 @@ public class ModelFirebase {
         });
     }
 
-    public void add(Post pst) {
-        SimpleDateFormat dateFormatGmt = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
-        dateFormatGmt.setTimeZone(TimeZone.getTimeZone("GMT"));
-        SimpleDateFormat dateFormatLocal = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
-        String date = null;
-        date =  dateFormatGmt.format(new Date()) .toString();
+    public void add(Object model, Model.AddListener listener) {
 
-
-        pst.setLastUpdated(date);
-        FirebaseDatabase database = FirebaseDatabase.getInstance();
-        DatabaseReference myRef = database.getReference("post").child(pst.getId());
-        myRef.setValue(pst);
+        // Check the type of the model to add
+        if (model instanceof Post) {
+            postFirebase.add(model, listener);
+        }
     }
 
+    public void update(Object model, Model.UpdateListener listener) {
 
+        // Check the type of the model to update
+        if (model instanceof Post) {
+            postFirebase.update(model, listener);
+        }
+    }
 
+    public void delete(Object model, Model.DeleteListener listener) {
+
+        // Check the type of the model to delete
+        if (model instanceof Post) {
+            postFirebase.delete(model, listener);
+        }
+    }
 }
 
 

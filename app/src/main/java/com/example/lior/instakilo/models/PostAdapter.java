@@ -68,17 +68,11 @@ public class PostAdapter extends ArrayAdapter<Post> {
 
             // check to see if each individual textview is null.
             // if not, assign some text!
-            if (tt != null){
-                tt.setText("Title: ");
-            }
-            if (ttd != null){
-                ttd.setText(i.getTitle());
-            }
             if (mt != null){
                 mt.setText("Content: ");
             }
             if (mtd != null){
-                mtd.setText(i.getContent());
+                mtd.setText(i.getPhotoId());
             }
             if (bt != null){
                 bt.setText("Likes: ");

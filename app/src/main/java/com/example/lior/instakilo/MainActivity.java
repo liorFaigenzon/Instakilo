@@ -1,16 +1,16 @@
 package com.example.lior.instakilo;
 
-
 import android.app.ListActivity;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
+import android.util.Log;
 
-import com.example.lior.instakilo.model.Model;
-import com.example.lior.instakilo.model.Post;
-import com.example.lior.instakilo.model.PostAdapter;
+import com.example.lior.instakilo.models.Model;
+import com.example.lior.instakilo.models.Post;
+import com.example.lior.instakilo.models.PostAdapter;
+import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
-import com.google.firebase.database.FirebaseDatabase;
 
 import java.util.ArrayList;
 
@@ -23,7 +23,7 @@ public class MainActivity extends ListActivity {
 
     /** Called when the activity is first created. */
     public void onCreate(Bundle savedInstanceState) {
-        // This is SPARTAAAA
+
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
@@ -45,27 +45,58 @@ public class MainActivity extends ListActivity {
 
     private Handler handler = new Handler()
     {
-        public void handleMessage(Message msg)
+        public void handleMessage(final Message msg)
         {
             // create some objects
             // here is where you could also request data from a server
             // and then create objects from that data.
             //(String id,String photoId,  String userId, String title, String content, int likeCounter,  boolean checked)
-            Model.getInstance().signup("thboss49@gmail.com", "123456", new Model.AuthListener() {
+            Model.getInstance().signup("kigelman.nir@gmail.com", "123456", new Model.AuthListener() {
                 @Override
                 public void onDone(String userId, Exception e) {
-                    Model.getInstance().add(new Post("5","photoid","userid","New POST","CONTENT xxxyyyy",5,true));
+                    //Model.getInstance().add(new Post("5","photoid","userid","New POST","CONTENT xxxyyyy",5,true));
                 }
             });
 
-            FirebaseDatabase database = FirebaseDatabase.getInstance();
-            DatabaseReference myRef = database.getReference("message");
+            Post firstPost = new Post("2", "Nir Kigelman", "photo2");
+            firstPost.incLikeCounter();
+            firstPost.getLikeUsers().put("3", true);
+            firstPost.incLikeCounter();
+            firstPost.getLikeUsers().put("4", true);
+            firstPost.incLikeCounter();
+            firstPost.getLikeUsers().put("2", true);
+            Model.getInstance().add(firstPost, new Model.AddListener() {
 
-            myRef.setValue("Hello, World!!");
-            Model.getInstance().add(new Post("5","photoid","userid","New POST","CONTENT xxxyyyy",5,true));
+                @Override
+                public void onComplete(DatabaseError databaseError, DatabaseReference databaseReference, String key) {
+                    if (databaseError == null) {
+                        Log.i("Nir", "Post has been added!");
+                        Log.i("Nir", "Post id: " + key);
 
-            m_parts.add(new Post("5","photoid","userid","New POST","CONTENT xxxyyyy",5,true));
-            m_parts.add(new Post("id","photoid","user id","Much wow","very cool",15,true));
+                        try {
+                            Thread.sleep(1000);
+                        } catch (InterruptedException e) {
+                            e.printStackTrace();
+                        }
+
+                        Model.getInstance().delete(new Post(key, "2", null, null, 1, null), new Model.DeleteListener() {
+                            @Override
+                            public void onComplete(DatabaseError databaseError, DatabaseReference databaseReference, String key) {
+                                if (databaseError == null) {
+                                    Log.i("Nir", "Post has been deleted!");
+                                    Log.i("Nir", "Post id: " + key);
+                                } else {
+                                    Log.w("Nir", "Delete post got error: ", databaseError.toException());
+                                }
+                            }
+                        });
+                    } else {
+                        Log.w("Nir", "Add post got error: ", databaseError.toException());
+                    }
+                }
+            });
+
+            m_parts.add(firstPost);
 
             m_adapter = new PostAdapter(MainActivity.this, R.layout.post_listview, m_parts);
 
