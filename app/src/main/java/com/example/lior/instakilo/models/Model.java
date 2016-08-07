@@ -72,6 +72,8 @@ public class Model {
     }
 
     public void getAll(ModelClass model, final GetAllListener listener){
+
+        // TODO: Change the hole method
         final String lastUpdateDate = "";// PostSql.getLastUpdateDate(modelSql.getReadbleDB());
         modelFirebase.getAll(model, lastUpdateDate, new GetAllListener() {
             @Override
@@ -101,12 +103,12 @@ public class Model {
     }
 
     public interface GetOneListener{
-        void onResult(Post student);
+        void onResult(Post post);
         void onCancel();
     }
 
-    public void getPostById(String id, GetOneListener listener){
-        //modelFirebase.getPostById(id,listener);
+    public void getById(ModelClass model, String id, GetOneListener listener){
+        modelFirebase.getById(model, id, listener);
     }
 
     public void saveImage(final Bitmap imageBitmap, final String imageName) {

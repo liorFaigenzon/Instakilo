@@ -51,8 +51,26 @@ public class PostFirebase implements IModelFirebase {
     }
 
     @Override
-    public void getById() {
+    public void getById(String id, final Model.GetOneListener listener) {
 
+        // Get a reference to the post specified
+        DatabaseReference postRef = ModelFirebase.getDatabase().child("posts").child(id);
+
+        postRef.addListenerForSingleValueEvent(new ValueEventListener() {
+            @Override
+            public void onDataChange(DataSnapshot snapshot) {
+
+                // Retrieve the post
+                Post post = snapshot.getValue(Post.class);
+                listener.onResult(post);
+            }
+
+            @Override
+            public void onCancelled(DatabaseError databaseError) {
+                Log.w("Nir", "getOnePost:onCancelled", databaseError.toException());
+                listener.onCancel();
+            }
+        });
     }
 
     @Override

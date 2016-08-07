@@ -86,23 +86,14 @@ public class ModelFirebase {
         }
     }
 
-    public void getPostById(String id/*, final Model.GetPost listener*/) {
-        /*FirebaseDatabase database = FirebaseDatabase.getInstance();
-        DatabaseReference myRef = database.getReference("post").child(id);
-        myRef.addListenerForSingleValueEvent(new ValueEventListener() {
-            @Override
-            public void onDataChange(DataSnapshot snapshot) {
-                Post pst = snapshot.getValue(Post.class);
-                //Log.d("TAG", pst.getTitle() + " - " + pst.getId());
-                listener.onResult(pst);
-            }
+    public void getById(Model.ModelClass model, String id, final Model.GetOneListener listener) {
 
-            @Override
-            public void onCancelled(DatabaseError databaseError) {
-                System.out.println("The read failed: " + databaseError.getMessage());
-                listener.onCancel();
-            }
-        });*/
+        // Check the type of the model to get
+        switch (model){
+            case POST:
+                postFirebase.getById(id, listener);
+                break;
+        }
     }
 
     public void add(Object model, Model.AddListener listener) {
