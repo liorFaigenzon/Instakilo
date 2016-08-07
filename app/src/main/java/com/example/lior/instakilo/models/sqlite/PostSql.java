@@ -55,7 +55,7 @@ public class PostSql {
                 int likeCounter = cursor.getInt(likeCounterIndex);
                 String title = cursor.getString(titleIndex);
                 int checkable = cursor.getInt(checkableIndex); //0 false / 1 true
-                Post pst = new Post(id, photoId,userId, likeCounter, null);
+                Post pst = new Post(id, photoId,userId, likeCounter);
                 posts.add(pst);
             } while (cursor.moveToNext());
         }
@@ -81,7 +81,7 @@ public class PostSql {
             int likeCounter = cursor.getInt(likeCounterIndex);
             String title = cursor.getString(titleIndex);
             int checkable = cursor.getInt(checkableIndex); //0 false / 1 true
-            Post pst = new Post(_id, photoId, userId, likeCounter, null);
+            Post pst = new Post(_id, photoId, userId, likeCounter);
             return pst;
         }
         return null;

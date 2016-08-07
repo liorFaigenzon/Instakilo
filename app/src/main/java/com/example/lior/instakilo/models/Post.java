@@ -26,6 +26,14 @@ public class Post {
         this.likeUsers = new HashMap<>();
     }
 
+    public Post(String authorId, String authorName, String photoId, int likeCounter) {
+        this.authorId = authorId;
+        this.authorName = authorName;
+        this.photoId = photoId;
+        this.likeCounter = likeCounter;
+        this.likeUsers = new HashMap<>();
+    }
+
     public Post(String authorId, String authorName, String photoId, int likeCounter, Map<String, Boolean> likeUsers) {
         this.authorId = authorId;
         this.authorName = authorName;
@@ -94,12 +102,28 @@ public class Post {
     @Exclude
     public Map<String, Object> toMap() {
         HashMap<String, Object> result = new HashMap<>();
-        result.put("authorId", authorId);
-        result.put("authorName", authorName);
-        result.put("photoId", photoId);
+
+        if (authorId != null) {
+            result.put("authorId", authorId);
+        }
+
+        if (authorName != null) {
+            result.put("authorName", authorName);
+        }
+
+        if (photoId != null) {
+            result.put("photoId", photoId);
+        }
+
         result.put("likeCounter", likeCounter);
-        result.put("lastUpdated", lastUpdated);
-        result.put("likeUsers", likeUsers);
+
+        if (lastUpdated != null) {
+            result.put("lastUpdated", lastUpdated);
+        }
+
+        if (likeUsers != null || likeUsers.size() != 0) {
+            result.put("likeUsers", likeUsers);
+        }
 
         return result;
     }
