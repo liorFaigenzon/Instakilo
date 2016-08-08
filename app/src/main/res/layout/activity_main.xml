@@ -4,14 +4,73 @@
     android:layout_width="fill_parent"
     android:layout_height="fill_parent"
     >
-    <ListView
-        android:id="@+id/android:list"
+
+    <ImageView
         android:layout_width="fill_parent"
-        android:layout_height="fill_parent"
-        />
+        android:layout_height="50dp"
+        android:background="@drawable/mr_white"/>
+
     <TextView
-        android:id="@+id/android:empty"
-        android:layout_width="fill_parent"
-        android:layout_height="fill_parent"
-        android:text="No items to display."/>
+    android:id="@+id/user"
+    android:layout_width="fill_parent"
+    android:layout_height="60dp"
+    android:text="user info."
+    android:gravity="top"/>
+
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content" >
+        <View
+            android:id="@+id/TopSep"
+            android:layout_width="wrap_content"
+            android:layout_height="2dp"
+            android:background="@android:color/darker_gray"
+            android:layout_gravity="top"/>
+        <LinearLayout
+            android:id="@+id/navigation_header_container"
+            android:layout_below="@+id/TopSep"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content" >
+            <ImageView
+                android:id="@+id/listPic"
+
+                android:layout_width="50dp"
+                android:layout_height="50dp"
+                android:background="@drawable/black_list"
+                android:layout_marginStart="35dp"
+                android:layout_marginLeft="35dp"
+                android:layout_marginRight="35dp"
+                android:layout_marginEnd="35dp"/>
+
+            <ImageView
+                android:id="@+id/matrixPic"
+                android:layout_width="50dp"
+                android:layout_height="50dp"
+                android:background="@drawable/black_matrix"
+                android:layout_marginRight="35dp"
+                android:layout_marginEnd="35dp"/>
+        </LinearLayout>
+        <View
+            android:id="@+id/BottomSep"
+            android:layout_below="@+id/navigation_header_container"
+            android:layout_width="wrap_content"
+            android:layout_height="2dp"
+            android:background="@android:color/darker_gray"
+            android:layout_gravity="bottom"/>
+
+
+    </RelativeLayout>
+
+    <ListView
+    android:id="@+id/android:list"
+    android:layout_below="@+id/user"
+    android:layout_width="fill_parent"
+    android:layout_height="fill_parent"/>
+
+    <TextView
+    android:id="@+id/android:empty"
+    android:layout_width="fill_parent"
+    android:layout_height="fill_parent"
+    android:text="No items to display."/>
+
 </LinearLayout>

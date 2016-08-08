@@ -1,33 +1,44 @@
 <?xml version="1.0" encoding="utf-8"?>
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="fill_parent"
-    android:layout_height="?android:attr/listPreferredItemHeight"
+    android:layout_height="400dp"
 
     android:padding="6dip">
+
+  
+    <!--Img-->
+    <ImageView
+        android:id="@+id/topImg"
+        android:layout_marginTop="2dp"
+        android:layout_width="fill_parent"
+        android:layout_height="300dp"
+        android:background="@drawable/login"/>
     <!-- Item Name -->
     <TextView
         android:id="@+id/toptext"
 
+        android:layout_below="@+id/topImg"
         android:layout_width="wrap_content"
         android:layout_height="26dip"
 
-        android:layout_alignParentTop="true"
+
         android:layout_alignParentLeft="true"
 
         android:textStyle="bold"
         android:singleLine="true"
         android:ellipsize="marquee"
+        android:text="@string/app_name"
         />
 
     <!-- Actual Item Name Data -->
     <TextView
         android:id="@+id/toptextdata"
+        android:layout_below="@+id/topImg"
 
         android:layout_width="fill_parent"
         android:layout_height="wrap_content"
 
         android:layout_alignParentRight="true"
-        android:layout_alignParentTop="true"
         android:layout_toRightOf="@id/toptext"
 
         android:singleLine="true"
@@ -64,6 +75,7 @@
 
     <!-- Description Tag -->
     <TextView
+
         android:layout_width="fill_parent"
         android:layout_height="wrap_content"
 

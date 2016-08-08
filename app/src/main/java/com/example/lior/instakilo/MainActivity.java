@@ -97,6 +97,8 @@ public class MainActivity extends ListActivity {
             });
 
             m_parts.add(firstPost);
+            m_parts.add(firstPost);
+            m_parts.add(firstPost);
 
             m_adapter = new PostAdapter(MainActivity.this, R.layout.post_listview, m_parts);
 
