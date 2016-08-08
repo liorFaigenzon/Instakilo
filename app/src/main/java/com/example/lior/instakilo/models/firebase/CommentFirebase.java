@@ -2,12 +2,12 @@ package com.example.lior.instakilo.models.firebase;
 
 import android.util.Log;
 
+import com.example.lior.instakilo.models.Comment;
 import com.example.lior.instakilo.models.Model;
 import com.example.lior.instakilo.models.Post;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
-import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.Query;
 import com.google.firebase.database.ValueEventListener;
 
@@ -19,32 +19,32 @@ import java.util.List;
 import java.util.Map;
 import java.util.TimeZone;
 
-public class PostFirebase implements IModelFirebase {
+public class CommentFirebase implements IModelFirebase {
 
     @Override
     public void getAll(String lastUpdateDate, final Model.GetAllListener listener) {
 
-        // Get all recent posts that are not cached already
-        Query queryPosts = ModelFirebase.getDatabase().child("posts").orderByChild("lastUpdated").startAt(lastUpdateDate);
+        // Get all recent comments that are not cached already
+        Query queryPosts = ModelFirebase.getDatabase().child("comments").orderByChild("lastUpdated").startAt(lastUpdateDate);
 
         queryPosts.addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
             public void onDataChange(DataSnapshot snapshot) {
-                final List<Object> postList = new LinkedList<>();
+                final List<Object> commentList = new LinkedList<>();
 
-                // Gather all the posts to a list
-                for (DataSnapshot postSnapshot : snapshot.getChildren()) {
-                    Post post = postSnapshot.getValue(Post.class);
-                    postList.add(post);
+                // Gather all the comments to a list
+                for (DataSnapshot commentSnapshot : snapshot.getChildren()) {
+                    Comment comment = commentSnapshot.getValue(Comment.class);
+                    commentList.add(comment);
                 }
 
                 // Return the list as a result
-                listener.onResult(postList);
+                listener.onResult(commentList);
             }
 
             @Override
             public void onCancelled(DatabaseError databaseError) {
-                Log.w("Nir", "getAllPosts:onCancelled", databaseError.toException());
+                Log.w("Nir", "getAllComments:onCancelled", databaseError.toException());
                 listener.onCancel();
             }
         });
@@ -53,21 +53,21 @@ public class PostFirebase implements IModelFirebase {
     @Override
     public void getById(String id, final Model.GetOneListener listener) {
 
-        // Get a reference to the post specified
-        DatabaseReference postRef = ModelFirebase.getDatabase().child("posts").child(id);
+        // Get a reference to the comment specified
+        DatabaseReference postRef = ModelFirebase.getDatabase().child("comments").child(id);
 
         postRef.addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
             public void onDataChange(DataSnapshot snapshot) {
 
-                // Retrieve the post
-                Post post = snapshot.getValue(Post.class);
-                listener.onResult(post);
+                // Retrieve the comment
+                Comment comment = snapshot.getValue(Comment.class);
+                listener.onResult(comment);
             }
 
             @Override
             public void onCancelled(DatabaseError databaseError) {
-                Log.w("Nir", "getOnePost:onCancelled", databaseError.toException());
+                Log.w("Nir", "getOneComment:onCancelled", databaseError.toException());
                 listener.onCancel();
             }
         });
@@ -76,29 +76,29 @@ public class PostFirebase implements IModelFirebase {
     @Override
     public void add(Object model, final Model.AddListener listener) {
 
-        // Cast the model to post
-        Post post = (Post)model;
+        // Cast the model to comment
+        Comment comment = (Comment)model;
 
-        // Create date object with now's date to save as the last update of the post
+        // Create date object with now's date to save as the last update of the comment
         SimpleDateFormat dateFormatGmt = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
         dateFormatGmt.setTimeZone(TimeZone.getTimeZone("GMT"));
         String date = dateFormatGmt.format(new Date()).toString();
 
-        // Set the last update of the post to now's date
-        post.setLastUpdated(date);
+        // Set the last update of the comment to now's date
+        comment.setLastUpdated(date);
 
-        // Create new post at /user-posts/$userid/$postid and at
-        // /posts/$postid simultaneously
-        final String postId = ModelFirebase.getDatabase().child("posts").push().getKey();
-        Map<String, Object> postValues = post.toMap();
+        // Create new comment at /post-comments/$postid/$commentid and at
+        // /comments/$commentid simultaneously
+        final String commentId = ModelFirebase.getDatabase().child("comments").push().getKey();
+        Map<String, Object> commentValues = comment.toMap();
         Map<String, Object> childUpdates = new HashMap<>();
-        childUpdates.put("/posts/" + postId, postValues);
-        childUpdates.put("/user-posts/" + post.getAuthorId() + "/" + postId, postValues);
+        childUpdates.put("/comments/" + commentId, commentValues);
+        childUpdates.put("/post-comments/" + comment.getPostId() + "/" + commentId, commentValues);
 
         ModelFirebase.getDatabase().updateChildren(childUpdates, new DatabaseReference.CompletionListener() {
             @Override
             public void onComplete(DatabaseError databaseError, DatabaseReference databaseReference) {
-                listener.onComplete(databaseError, databaseReference, postId);
+                listener.onComplete(databaseError, databaseReference, commentId);
             }
         });
     }
@@ -106,47 +106,47 @@ public class PostFirebase implements IModelFirebase {
     @Override
     public void update(Object model, final Model.UpdateListener listener) {
 
-        // Cast the model to post
-        final Post post = (Post)model;
+        // Cast the model to comment
+        final Comment comment = (Comment)model;
 
-        // Check if the post exists
-        ModelFirebase.getDatabase().child("posts").child(post.getId())
+        // Check if the comment exists
+        ModelFirebase.getDatabase().child("comments").child(comment.getId())
                 .addListenerForSingleValueEvent(new ValueEventListener() {
                     @Override
                     public void onDataChange(DataSnapshot dataSnapshot) {
 
-                        // Update the post if it exists
-                        if (dataSnapshot.getValue(Post.class) != null) {
+                        // Update the comment if it exists
+                        if (dataSnapshot.getValue(Comment.class) != null) {
 
-                            // Create date object with now's date to save as the last update of the post
+                            // Create date object with now's date to save as the last update of the comment
                             SimpleDateFormat dateFormatGmt = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
                             dateFormatGmt.setTimeZone(TimeZone.getTimeZone("GMT"));
                             String date = dateFormatGmt.format(new Date()).toString();
 
-                            // Set the last update of the post to now's date
-                            post.setLastUpdated(date);
+                            // Set the last update of the comment to now's date
+                            comment.setLastUpdated(date);
 
-                            // Update the post at /user-posts/$userid/$postid and at
-                            // /posts/$postid simultaneously
-                            Map<String, Object> postValues = post.toMap();
+                            // Update the comment at /post-comments/$postid/$commentid and at
+                            // /comments/$commentid simultaneously
+                            Map<String, Object> commentValues = comment.toMap();
                             Map<String, Object> childUpdates = new HashMap<>();
-                            childUpdates.put("/posts/" + post.getId(), postValues);
-                            childUpdates.put("/user-posts/" + post.getAuthorId() + "/" + post.getId(), postValues);
+                            childUpdates.put("/comments/" + comment.getId(), commentValues);
+                            childUpdates.put("/post-comments/" + comment.getPostId() + "/" + comment.getId(), commentValues);
 
                             ModelFirebase.getDatabase().updateChildren(childUpdates, new DatabaseReference.CompletionListener() {
                                 @Override
                                 public void onComplete(DatabaseError databaseError, DatabaseReference databaseReference) {
-                                    listener.onComplete(databaseError, databaseReference, post.getId());
+                                    listener.onComplete(databaseError, databaseReference, comment.getId());
                                 }
                             });
                         } else {
-                            listener.onComplete(null, null, post.getId());
+                            listener.onComplete(null, null, comment.getId());
                         }
                     }
 
                     @Override
                     public void onCancelled(DatabaseError databaseError) {
-                        Log.w("Nir", "updatePost:onCancelled", databaseError.toException());
+                        Log.w("Nir", "updateComment:onCancelled", databaseError.toException());
                     }
                 });
     }
@@ -154,19 +154,19 @@ public class PostFirebase implements IModelFirebase {
     @Override
     public void delete(Object model, final Model.DeleteListener listener) {
 
-        // Cast the model to post
-        final Post post = (Post)model;
+        // Cast the model to comment
+        final Comment comment = (Comment)model;
 
-        // Delete post at /user-posts/$userid/$postid and at
-        // /posts/$postid simultaneously
+        // Delete comment at /post-comments/$postid/$commentid and at
+        // /comments/$commentid simultaneously
         Map<String, Object> childUpdates = new HashMap<>();
-        childUpdates.put("/posts/" + post.getId(), null);
-        childUpdates.put("/user-posts/" + post.getAuthorId() + "/" + post.getId(), null);
+        childUpdates.put("/comments/" + comment.getId(), null);
+        childUpdates.put("/post-comments/" + comment.getPostId() + "/" + comment.getId(), null);
 
         ModelFirebase.getDatabase().updateChildren(childUpdates, new DatabaseReference.CompletionListener() {
             @Override
             public void onComplete(DatabaseError databaseError, DatabaseReference databaseReference) {
-                listener.onComplete(databaseError, databaseReference, post.getId());
+                listener.onComplete(databaseError, databaseReference, comment.getId());
             }
         });
     }

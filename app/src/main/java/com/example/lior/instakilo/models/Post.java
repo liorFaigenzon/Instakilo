@@ -23,32 +23,22 @@ public class Post {
         this.authorName = authorName;
         this.photoId = photoId;
         this.likeCounter = 0;
-        this.likeUsers = new HashMap<>();
     }
 
     public Post(String authorId, String authorName, String photoId, int likeCounter) {
-        this.authorId = authorId;
-        this.authorName = authorName;
-        this.photoId = photoId;
+        this(authorId, authorName, photoId);
         this.likeCounter = likeCounter;
         this.likeUsers = new HashMap<>();
     }
 
     public Post(String authorId, String authorName, String photoId, int likeCounter, Map<String, Boolean> likeUsers) {
-        this.authorId = authorId;
-        this.authorName = authorName;
-        this.photoId = photoId;
-        this.likeCounter = likeCounter;
+        this(authorId, authorName, photoId, likeCounter);
         this.likeUsers = likeUsers;
     }
 
     public Post(String id, String authorId, String authorName, String photoId, int likeCounter, Map<String, Boolean> likeUsers) {
+        this(authorId, authorName, photoId, likeCounter, likeUsers);
         this.id = id;
-        this.authorId = authorId;
-        this.authorName = authorName;
-        this.photoId = photoId;
-        this.likeCounter = likeCounter;
-        this.likeUsers = likeUsers;
     }
 
     public String getId() {
@@ -59,44 +49,48 @@ public class Post {
         return authorId;
     }
 
-    public String getAuthorName() {
-        return authorName;
-    }
-
-    public String getPhotoId() {
-        return photoId;
-    }
-
-    public int getLikeCounter() {
-        return likeCounter;
-    }
-
-    public String getLastUpdated() {
-        return lastUpdated;
-    }
-
-    public Map<String, Boolean> getLikeUsers() {
-        return likeUsers;
-    }
-
     public void setAuthorId(String authorId) {
         this.authorId = authorId;
+    }
+
+    public String getAuthorName() {
+        return authorName;
     }
 
     public void setAuthorName(String authorName) {
         this.authorName = authorName;
     }
 
+    public String getPhotoId() {
+        return photoId;
+    }
+
     public void setPhotoId(String photoId) {
         this.photoId = photoId;
+    }
+
+    public int getLikeCounter() {
+        return likeCounter;
     }
 
     public void incLikeCounter() {
         this.likeCounter++;
     }
 
+    public void decLikeCounter() {
+        this.likeCounter--;
+    }
+
+    public String getLastUpdated() {
+        return lastUpdated;
+    }
+
     public void setLastUpdated(String lastUpdated) {
         this.lastUpdated = lastUpdated;
+    }
+
+    public Map<String, Boolean> getLikeUsers() {
+        return likeUsers;
     }
 
     @Exclude

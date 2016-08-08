@@ -67,14 +67,14 @@ public class Model {
     }
 
     public interface GetAllListener{
-        void onResult(List<Post> posts);
+        void onResult(List<Object> objects);
         void onCancel();
     }
 
     public void getAll(ModelClass model, final GetAllListener listener){
 
-        // TODO: Change the hole method
-        final String lastUpdateDate = "";// PostSql.getLastUpdateDate(modelSql.getReadbleDB());
+        // TODO: Change the hole method to use cache
+        /*final String lastUpdateDate = "";// PostSql.getLastUpdateDate(modelSql.getReadbleDB());
         modelFirebase.getAll(model, lastUpdateDate, new GetAllListener() {
             @Override
             public void onResult(List<Post> posts) {
@@ -99,11 +99,11 @@ public class Model {
             public void onCancel() {
                 listener.onCancel();
             }
-        });
+        });*/
     }
 
     public interface GetOneListener{
-        void onResult(Post post);
+        void onResult(Object object);
         void onCancel();
     }
 
