@@ -23,6 +23,7 @@ public class Post {
         this.authorName = authorName;
         this.photoId = photoId;
         this.likeCounter = 0;
+        this.likeUsers = new HashMap<>();
     }
 
     public Post(String authorId, String authorName, String photoId, int likeCounter) {
