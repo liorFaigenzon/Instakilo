@@ -20,6 +20,14 @@ public class PostAdapter extends ArrayAdapter<Post> {
     // declaring our ArrayList of Posts
     private ArrayList<Post> objects;
 
+    public int getCount() {
+        return objects.size();
+    }
+
+    public long getItemId(int position) {
+        return 0;
+    }
+
     /* here we must override the constructor for ArrayAdapter
     * the only variable we care about now is ArrayList<Post> objects,
     * because it is the list of objects we want to display.
@@ -27,6 +35,7 @@ public class PostAdapter extends ArrayAdapter<Post> {
     public PostAdapter(Context context, int textViewResourceId, ArrayList<Post> objects) {
         super(context, textViewResourceId, objects);
         this.objects = objects;
+
     }
 
     /*
@@ -49,7 +58,7 @@ public class PostAdapter extends ArrayAdapter<Post> {
 		 * Recall that the variable position is sent in as an argument to this method.
 		 * The variable simply refers to the position of the current object in the list. (The ArrayAdapter
 		 * iterates through the list we sent it)
-		 * 
+		 *
 		 * Therefore, i refers to the current Post object.
 		 */
         Post i = objects.get(position);

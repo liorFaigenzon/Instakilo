@@ -5,10 +5,17 @@ import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
 import android.util.Log;
+import android.view.View;
+import android.widget.AdapterView;
+import android.widget.GridView;
+import android.widget.ImageView;
+import android.widget.ListView;
+import android.widget.Toast;
 
 import com.example.lior.instakilo.models.Model;
 import com.example.lior.instakilo.models.Post;
 import com.example.lior.instakilo.models.PostAdapter;
+import com.example.lior.instakilo.models.sqlite.ImageAdapter;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 
@@ -23,13 +30,73 @@ public class MainActivity extends ListActivity {
 
     /** Called when the activity is first created. */
     public void onCreate(Bundle savedInstanceState) {
-
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+
+        ListView list = getListView();
+        GridView gridview = (GridView) findViewById(R.id.gridview);
+        ImageView matrixPic = (ImageView) findViewById(R.id.matrixPic);
+        ImageView listPic = (ImageView) findViewById(R.id.listPic);
+
+        listPic.setOnClickListener(new View.OnClickListener() {
+
+            @Override
+            public void onClick(View v) {
+                ImageView matrixPic = (ImageView) findViewById(R.id.matrixPic);
+                ImageView listPic = (ImageView) findViewById(R.id.listPic);
+                ListView list = getListView();
+                GridView gridview = (GridView) findViewById(R.id.gridview);
+                // TODO Auto-generated method stub
+                matrixPic.setImageResource(R.drawable.black_matrix);
+                listPic.setImageResource(R.drawable.blue_list);
+
+                gridview.setVisibility(View.GONE);
+                list.setVisibility(View.VISIBLE);
+            }
+        });
+
+        matrixPic.setOnClickListener(new View.OnClickListener() {
+
+            @Override
+            public void onClick(View v) {
+                ImageView matrixPic = (ImageView) findViewById(R.id.matrixPic);
+                ImageView listPic = (ImageView) findViewById(R.id.listPic);
+                ListView list = getListView();
+                GridView gridview = (GridView) findViewById(R.id.gridview);
+
+                matrixPic.setImageResource(R.drawable.blue_matrix);
+                listPic.setImageResource(R.drawable.black_list);
+
+                // TODO Auto-generated method stub
+                list.setVisibility(View.GONE);
+                gridview.setVisibility(View.VISIBLE);
+            }
+        });
+
+        //GridView gridview = (GridView) findViewById(R.id.gridview);
+        gridview.setAdapter(new ImageAdapter(this));
+
+        gridview.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+            public void onItemClick(AdapterView<?> parent, View v,
+                                    int position, long id) {
+                Toast.makeText(MainActivity.this, "" + position,
+                        Toast.LENGTH_SHORT).show();
+           }
+        });
+        gridview.setVisibility(View.GONE);
 
         // instantiate our PostAdapter class
         m_adapter = new PostAdapter(this, R.layout.post_listview, m_parts);
         setListAdapter(m_adapter);
+
+
+        list.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+           public void onItemClick(AdapterView<?> parent, View v,
+                                  int position, long id) {
+              Toast.makeText(MainActivity.this, "" + position,
+                        Toast.LENGTH_SHORT).show();
+            }
+        });
 
         // here we are defining our runnable thread.
         viewParts = new Runnable(){
@@ -105,5 +172,7 @@ public class MainActivity extends ListActivity {
             // display the list.
             setListAdapter(m_adapter);
         }
+
+
     };
 }

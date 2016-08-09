@@ -30,25 +30,27 @@
             android:id="@+id/navigation_header_container"
             android:layout_below="@+id/TopSep"
             android:layout_width="wrap_content"
-            android:layout_height="wrap_content" >
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:layout_weight="1">
             <ImageView
                 android:id="@+id/listPic"
 
                 android:layout_width="50dp"
                 android:layout_height="50dp"
                 android:background="@drawable/black_list"
-                android:layout_marginStart="35dp"
+                android:layout_marginStart="60dp"
                 android:layout_marginLeft="35dp"
                 android:layout_marginRight="35dp"
-                android:layout_marginEnd="35dp"/>
+                android:layout_marginEnd="35dp" />
 
             <ImageView
                 android:id="@+id/matrixPic"
                 android:layout_width="50dp"
                 android:layout_height="50dp"
                 android:background="@drawable/black_matrix"
-                android:layout_marginRight="35dp"
-                android:layout_marginEnd="35dp"/>
+                android:layout_marginRight="30dp"
+                android:layout_marginEnd="30dp"/>
 
             <ImageView
                 android:id="@+id/gpsPic"
@@ -69,11 +71,26 @@
 
     </RelativeLayout>
 
+    <GridView
+        android:id="@+id/gridview"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:columnWidth="90dp"
+        android:numColumns="auto_fit"
+        android:verticalSpacing="10dp"
+        android:horizontalSpacing="10dp"
+        android:stretchMode="columnWidth"
+        android:gravity="center">
+
+
+    </GridView>
+
+
     <ListView
-    android:id="@+id/android:list"
-    android:layout_below="@+id/user"
-    android:layout_width="fill_parent"
-    android:layout_height="fill_parent"/>
+        android:id="@+id/android:list"
+        android:layout_below="@+id/user"
+        android:layout_width="fill_parent"
+        android:layout_height="fill_parent"/>
 
     <TextView
     android:id="@+id/android:empty"
