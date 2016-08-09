@@ -1,5 +1,8 @@
 package com.example.lior.instakilo.models;
 
+import android.os.Parcel;
+import android.os.Parcelable;
+
 import com.google.firebase.database.Exclude;
 import com.google.firebase.database.IgnoreExtraProperties;
 
@@ -7,7 +10,7 @@ import java.util.HashMap;
 import java.util.Map;
 
 @IgnoreExtraProperties
-public class Post {
+public class Post implements Parcelable {
     private String id;
     private String authorId;
     private String authorName;
@@ -121,5 +124,48 @@ public class Post {
         }
 
         return result;
+    }
+
+
+      /* everything below here is for implementing Parcelable */
+
+    // 99.9% of the time you can just ignore this
+    @Override
+    public int describeContents() {
+        return 0;
+    }
+
+    // write your object's data to the passed-in Parcel
+    @Override
+    public void writeToParcel(Parcel dest, int flags) {
+        dest.writeStringArray(new String[] {this.id,
+                this.authorId,
+                this.authorName,
+                this.photoId,
+                Integer.toString(this.likeCounter)});
+    }
+
+    // this is used to regenerate your object. All Parcelables must have a CREATOR that implements these two methods
+    public static final Parcelable.Creator<Post> CREATOR = new Parcelable.Creator<Post>() {
+        public Post createFromParcel(Parcel in) {
+            return new Post(in);
+        }
+
+        public Post[] newArray(int size) {
+            return new Post[size];
+        }
+    };
+
+    // example constructor that takes a Parcel and gives you an object populated with it's values
+    private Post(Parcel in) {
+        String[] data = new String[5];
+
+        in.readStringArray(data);
+        this.id = data[0];
+        this.authorId = data[1];
+        this.authorName = data[2];
+        this.photoId = data[3];
+        this.likeCounter = Integer.parseInt(data[4]);
+
     }
 }

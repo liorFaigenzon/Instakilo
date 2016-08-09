@@ -21,7 +21,7 @@
         android:orientation="horizontal">
 
         <ImageView
-            android:id="@+id/listPic1"
+            android:id="@+id/likePic"
             android:layout_width="40dp"
             android:layout_height="40dp"
             android:background="@drawable/heart_outline"
@@ -30,7 +30,7 @@
             android:layout_marginRight="10dp"
             android:layout_marginEnd="10dp" />
         <ImageView
-            android:id="@+id/listPic2"
+            android:id="@+id/commentPic"
             android:layout_width="40dp"
             android:layout_height="40dp"
             android:background="@drawable/comment_bubble"
