@@ -9,6 +9,8 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
+import android.widget.GridView;
+import android.widget.ListView;
 import android.widget.TextView;
 
 import com.example.lior.instakilo.R;
@@ -46,12 +48,13 @@ public class PostAdapter extends ArrayAdapter<Post> {
 
         // assign the view we are converting to a local variable
         View v = convertView;
-
+        LayoutInflater inflater = null;
         // first check to see if the view is null. if so, we have to inflate it.
         // to inflate it basically means to render, or show, the view.
-        if (v == null) {
-            LayoutInflater inflater = (LayoutInflater) getContext().getSystemService(Context.LAYOUT_INFLATER_SERVICE);
-            v = inflater.inflate(R.layout.post_listview, null);
+        //if (v == null)
+         {
+            inflater = (LayoutInflater) getContext().getSystemService(Context.LAYOUT_INFLATER_SERVICE);
+
         }
 
 		/*
@@ -65,29 +68,41 @@ public class PostAdapter extends ArrayAdapter<Post> {
 
         if (i != null) {
 
-            // This is how you obtain a reference to the TextViews.
-            // These TextViews are created in the XML files we defined.
+            if (parent instanceof GridView)
+            {
+                v = inflater.inflate(R.layout.post_matrixview,null);
+                //ImageView img = (ImageView) v.findViewById(R.id.topImg);
+                //img.getLayoutParams().height = 200;
+                //img.getLayoutParams().width = 300;
+                //img.requestLayout();
+            }
+            else if (parent instanceof ListView)
+            {
+                v = inflater.inflate(R.layout.post_listview, null);
+                // This is how you obtain a reference to the TextViews.
+                // These TextViews are created in the XML files we defined.
 
-            TextView tt = (TextView) v.findViewById(R.id.toptext);
-            TextView ttd = (TextView) v.findViewById(R.id.toptextdata);
-            TextView mt = (TextView) v.findViewById(R.id.middletext);
-            TextView mtd = (TextView) v.findViewById(R.id.middletextdata);
-            TextView bt = (TextView) v.findViewById(R.id.bottomtext);
-            TextView btd = (TextView) v.findViewById(R.id.desctext);
+                TextView tt = (TextView) v.findViewById(R.id.toptext);
+                TextView ttd = (TextView) v.findViewById(R.id.toptextdata);
+                TextView mt = (TextView) v.findViewById(R.id.middletext);
+                TextView mtd = (TextView) v.findViewById(R.id.middletextdata);
+                TextView bt = (TextView) v.findViewById(R.id.bottomtext);
+                TextView btd = (TextView) v.findViewById(R.id.desctext);
 
-            // check to see if each individual textview is null.
-            // if not, assign some text!
-            if (mt != null){
-                mt.setText("Content: ");
-            }
-            if (mtd != null){
-                mtd.setText(i.getPhotoId());
-            }
-            if (bt != null){
-                bt.setText("Likes: ");
-            }
-            if (btd != null){
-                btd.setText(Integer.toString(i.getLikeCounter()));
+                // check to see if each individual textview is null.
+                // if not, assign some text!
+                if (mt != null){
+                    mt.setText("Content: ");
+                }
+                if (mtd != null){
+                    mtd.setText(i.getPhotoId());
+                }
+                if (bt != null){
+                    bt.setText("Likes: ");
+                }
+                if (btd != null){
+                    btd.setText(Integer.toString(i.getLikeCounter()));
+                }
             }
         }
 
@@ -95,5 +110,7 @@ public class PostAdapter extends ArrayAdapter<Post> {
         return v;
 
     }
+
+
 
 }

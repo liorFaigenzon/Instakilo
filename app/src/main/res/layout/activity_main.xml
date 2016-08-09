@@ -35,11 +35,10 @@
             android:layout_weight="1">
             <ImageView
                 android:id="@+id/listPic"
-
                 android:layout_width="50dp"
                 android:layout_height="50dp"
                 android:background="@drawable/black_list"
-                android:layout_marginStart="60dp"
+                android:layout_marginStart="11dp"
                 android:layout_marginLeft="35dp"
                 android:layout_marginRight="35dp"
                 android:layout_marginEnd="35dp" />
@@ -59,6 +58,16 @@
                 android:background="@drawable/black_gps"
                 android:layout_marginRight="35dp"
                 android:layout_marginEnd="35dp"/>
+
+            <ImageView
+                android:id="@+id/takePic"
+                android:layout_width="50dp"
+                android:layout_height="50dp"
+                android:background="@drawable/camera_icon"
+                android:layout_marginRight="35dp"
+                android:layout_marginEnd="35dp"
+                android:layout_gravity="end"/>
+
         </LinearLayout>
         <View
             android:id="@+id/BottomSep"
@@ -75,10 +84,7 @@
         android:id="@+id/gridview"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:columnWidth="90dp"
-        android:numColumns="auto_fit"
-        android:verticalSpacing="10dp"
-        android:horizontalSpacing="10dp"
+        android:numColumns="3"
         android:stretchMode="columnWidth"
         android:gravity="center">
 
@@ -91,6 +97,8 @@
         android:layout_below="@+id/user"
         android:layout_width="fill_parent"
         android:layout_height="fill_parent"/>
+
+
 
     <TextView
     android:id="@+id/android:empty"

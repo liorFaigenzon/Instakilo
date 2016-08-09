@@ -13,20 +13,31 @@ import android.widget.ListView;
 import android.widget.Toast;
 
 import com.example.lior.instakilo.models.Model;
+import com.example.lior.instakilo.models.PicModeSelectDialogFragment;
 import com.example.lior.instakilo.models.Post;
 import com.example.lior.instakilo.models.PostAdapter;
-import com.example.lior.instakilo.models.sqlite.ImageAdapter;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 
 import java.util.ArrayList;
 
-public class MainActivity extends ListActivity {
+public class MainActivity extends ListActivity{
 
     // declare class variables
     private ArrayList<Post> m_parts = new ArrayList<Post>();
     private Runnable viewParts;
     private PostAdapter m_adapter;
+
+
+    public void doPositiveClick() {
+        // Do stuff here.
+        Log.i("FragmentAlertDialog", "Positive click!");
+    }
+
+    public void doNegativeClick() {
+        // Do stuff here.
+        Log.i("FragmentAlertDialog", "Negative click!");
+    }
 
     /** Called when the activity is first created. */
     public void onCreate(Bundle savedInstanceState) {
@@ -37,6 +48,9 @@ public class MainActivity extends ListActivity {
         GridView gridview = (GridView) findViewById(R.id.gridview);
         ImageView matrixPic = (ImageView) findViewById(R.id.matrixPic);
         ImageView listPic = (ImageView) findViewById(R.id.listPic);
+        ImageView takePic = (ImageView) findViewById(R.id.takePic);
+
+        takePic.setOnClickListener(new DialogPicActivity());
 
         listPic.setOnClickListener(new View.OnClickListener() {
 
@@ -73,23 +87,21 @@ public class MainActivity extends ListActivity {
             }
         });
 
-        //GridView gridview = (GridView) findViewById(R.id.gridview);
-        gridview.setAdapter(new ImageAdapter(this));
+        gridview.setVisibility(View.GONE);
+
+        // instantiate our PostAdapter class
+        m_adapter = new PostAdapter(this, R.layout.post_listview, m_parts);
+        setListAdapter(m_adapter);
+        gridview.setAdapter(m_adapter);
+
 
         gridview.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             public void onItemClick(AdapterView<?> parent, View v,
                                     int position, long id) {
                 Toast.makeText(MainActivity.this, "" + position,
                         Toast.LENGTH_SHORT).show();
-           }
+            }
         });
-        gridview.setVisibility(View.GONE);
-
-        // instantiate our PostAdapter class
-        m_adapter = new PostAdapter(this, R.layout.post_listview, m_parts);
-        setListAdapter(m_adapter);
-
-
         list.setOnItemClickListener(new AdapterView.OnItemClickListener() {
            public void onItemClick(AdapterView<?> parent, View v,
                                   int position, long id) {
@@ -166,6 +178,7 @@ public class MainActivity extends ListActivity {
             m_parts.add(firstPost);
             m_parts.add(firstPost);
             m_parts.add(firstPost);
+            m_parts.add(firstPost);
 
             m_adapter = new PostAdapter(MainActivity.this, R.layout.post_listview, m_parts);
 
@@ -175,4 +188,22 @@ public class MainActivity extends ListActivity {
 
 
     };
+
+    public class DialogPicActivity implements View.OnClickListener,PicModeSelectDialogFragment.IPicModeSelectListener
+    {
+        @Override
+        public void onPicModeSelected(String mode) {
+            if (mode.equalsIgnoreCase("camera"))
+                Log.i("FragmentAlertDialog", "camera click!");
+            else if (mode.equalsIgnoreCase("gallery")) Log.i("FragmentAlertDialog", "gallery click!");
+            else   Log.i("FragmentAlertDialog", "cancel click!");
+        }
+
+        @Override
+        public void onClick(View v) {
+            PicModeSelectDialogFragment frag = new PicModeSelectDialogFragment();
+            frag.setiPicModeSelectListener(this);
+            frag.show(getFragmentManager(), "Choose way");
+        }
+    }
 }
