@@ -82,7 +82,7 @@ public class PostAdapter extends ArrayAdapter<Post> {
                 // This is how you obtain a reference to the TextViews.
                 // These TextViews are created in the XML files we defined.
 
-                TextView tt = (TextView) v.findViewById(R.id.toptext);
+                //TextView tt = (TextView) v.findViewById(R.id.toptext);
                 TextView ttd = (TextView) v.findViewById(R.id.toptextdata);
                 TextView mt = (TextView) v.findViewById(R.id.middletext);
                 TextView mtd = (TextView) v.findViewById(R.id.middletextdata);
