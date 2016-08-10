@@ -11,7 +11,6 @@ import android.widget.AdapterView;
 import android.widget.GridView;
 import android.widget.ImageView;
 import android.widget.ListView;
-import android.widget.Toast;
 
 import com.example.lior.instakilo.models.Model;
 import com.example.lior.instakilo.models.PicModeSelectDialogFragment;
@@ -88,8 +87,10 @@ public class MainActivity extends ListActivity{
         gridview.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             public void onItemClick(AdapterView<?> parent, View v,
                                     int position, long id) {
-                Toast.makeText(MainActivity.this, "" + position,
-                        Toast.LENGTH_SHORT).show();
+                Post post = (Post)m_adapter.getItem(position);
+                Intent intent = new Intent(v.getContext(), PostDetailActivity.class);
+                intent.putExtra("com.example.instakilo.Post", post);
+                startActivity(intent);
             }
         });
         list.setOnItemClickListener(new AdapterView.OnItemClickListener() {
