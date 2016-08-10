@@ -13,7 +13,7 @@ import com.example.lior.instakilo.MyApplication;
 import com.example.lior.instakilo.models.cloudinary.ModelCloudinary;
 import com.example.lior.instakilo.models.firebase.ModelFirebase;
 import com.example.lior.instakilo.models.sqlite.ModelSql;
-import com.example.lior.instakilo.models.sqlite.PostSql;
+import com.facebook.AccessToken;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 
@@ -53,16 +53,12 @@ public class Model {
         void onDone(String userId, Exception e);
     }
 
-    public void login(String email, String pwd, AuthListener listener){
-        modelFirebase.login( email,  pwd,  listener);
+    public void signIn(AccessToken token, AuthListener listener){
+        modelFirebase.signIn(token,  listener);
     }
 
-    public void signout(){
-        modelFirebase.signout();
-    }
-
-    public void signup(String email, String pwd, AuthListener listener){
-        modelFirebase.signup( email,  pwd,  listener);
+    public void signOut(){
+        modelFirebase.signOut();
     }
 
     public String getUserId(){
@@ -112,6 +108,30 @@ public class Model {
 
     public void getById(ModelClass model, String id, GetOneListener listener){
         modelFirebase.getById(model, id, listener);
+    }
+
+    public interface AddListener {
+        void onComplete(DatabaseError databaseError, DatabaseReference databaseReference, String key);
+    }
+
+    public void add(Object model, AddListener listener){
+        modelFirebase.add(model, listener);
+    }
+
+    public interface UpdateListener {
+        void onComplete(DatabaseError databaseError, DatabaseReference databaseReference, String key);
+    }
+
+    public void update(Object model, UpdateListener listener){
+        modelFirebase.update(model, listener);
+    }
+
+    public interface DeleteListener {
+        void onComplete(DatabaseError databaseError, DatabaseReference databaseReference, String key);
+    }
+
+    public void delete(Object model, DeleteListener listener){
+        modelFirebase.delete(model, listener);
     }
 
     public void saveImage(final Bitmap imageBitmap, final String imageName) {
@@ -209,29 +229,5 @@ public class Model {
 
     public interface LoadImageListener{
         public void onResult(Bitmap imageBmp);
-    }
-
-    public interface AddListener {
-        void onComplete(DatabaseError databaseError, DatabaseReference databaseReference, String key);
-    }
-
-    public void add(Object model, AddListener listener){
-        modelFirebase.add(model, listener);
-    }
-
-    public interface UpdateListener {
-        void onComplete(DatabaseError databaseError, DatabaseReference databaseReference, String key);
-    }
-
-    public void update(Object model, UpdateListener listener){
-        modelFirebase.update(model, listener);
-    }
-
-    public interface DeleteListener {
-        void onComplete(DatabaseError databaseError, DatabaseReference databaseReference, String key);
-    }
-
-    public void delete(Object model, DeleteListener listener){
-        modelFirebase.delete(model, listener);
     }
 }

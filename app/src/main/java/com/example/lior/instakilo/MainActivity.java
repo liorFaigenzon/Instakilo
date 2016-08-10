@@ -122,13 +122,6 @@ public class MainActivity extends ListActivity{
             // create some objects
             // here is where you could also request data from a server
             // and then create objects from that data.
-            //(String id,String photoId,  String userId, String title, String content, int likeCounter,  boolean checked)
-            Model.getInstance().signup("kigelman.nir@gmail.com", "123456", new Model.AuthListener() {
-                @Override
-                public void onDone(String userId, Exception e) {
-                    //Model.getInstance().add(new Post("5","photoid","userid","New POST","CONTENT xxxyyyy",5,true));
-                }
-            });
 
             Post firstPost = new Post("2", "Nir Kigelman", "photo2");
             firstPost.incLikeCounter();
@@ -137,36 +130,6 @@ public class MainActivity extends ListActivity{
             firstPost.getLikeUsers().put("4", true);
             firstPost.incLikeCounter();
             firstPost.getLikeUsers().put("2", true);
-            Model.getInstance().add(firstPost, new Model.AddListener() {
-
-                @Override
-                public void onComplete(DatabaseError databaseError, DatabaseReference databaseReference, String key) {
-                    if (databaseError == null) {
-                        Log.i("Nir", "Post has been added!");
-                        Log.i("Nir", "Post id: " + key);
-
-                        try {
-                            Thread.sleep(1000);
-                        } catch (InterruptedException e) {
-                            e.printStackTrace();
-                        }
-
-                        Model.getInstance().delete(new Post(key, "2", null, null, 1, null), new Model.DeleteListener() {
-                            @Override
-                            public void onComplete(DatabaseError databaseError, DatabaseReference databaseReference, String key) {
-                                if (databaseError == null) {
-                                    Log.i("Nir", "Post has been deleted!");
-                                    Log.i("Nir", "Post id: " + key);
-                                } else {
-                                    Log.w("Nir", "Delete post got error: ", databaseError.toException());
-                                }
-                            }
-                        });
-                    } else {
-                        Log.w("Nir", "Add post got error: ", databaseError.toException());
-                    }
-                }
-            });
 
             m_parts.add(firstPost);
             m_parts.add(firstPost);
