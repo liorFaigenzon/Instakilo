@@ -52,18 +52,21 @@ public class Model {
     public interface AuthListener{
         void onDone(String userId, Exception e);
     }
+
     public void login(String email, String pwd, AuthListener listener){
         modelFirebase.login( email,  pwd,  listener);
-    }
-    public void signup(String email, String pwd, AuthListener listener){
-        modelFirebase.signup( email,  pwd,  listener);
-    }
-    public String getUserId(){
-        return modelFirebase.getUserId();
     }
 
     public void signout(){
         modelFirebase.signout();
+    }
+
+    public void signup(String email, String pwd, AuthListener listener){
+        modelFirebase.signup( email,  pwd,  listener);
+    }
+
+    public String getUserId(){
+        return modelFirebase.getUserId();
     }
 
     public interface GetAllListener{
