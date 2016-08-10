@@ -10,6 +10,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
 import android.widget.GridView;
+import android.widget.ImageView;
 import android.widget.ListView;
 import android.widget.TextView;
 
@@ -28,6 +29,10 @@ public class PostAdapter extends ArrayAdapter<Post> {
 
     public long getItemId(int position) {
         return 0;
+    }
+
+    public Post getItem(int position) {
+        return objects.get(position);
     }
 
     /* here we must override the constructor for ArrayAdapter
@@ -82,12 +87,20 @@ public class PostAdapter extends ArrayAdapter<Post> {
                 // This is how you obtain a reference to the TextViews.
                 // These TextViews are created in the XML files we defined.
 
-                TextView tt = (TextView) v.findViewById(R.id.toptext);
+                //TextView tt = (TextView) v.findViewById(R.id.toptext);
                 TextView ttd = (TextView) v.findViewById(R.id.toptextdata);
                 TextView mt = (TextView) v.findViewById(R.id.middletext);
                 TextView mtd = (TextView) v.findViewById(R.id.middletextdata);
                 TextView bt = (TextView) v.findViewById(R.id.bottomtext);
                 TextView btd = (TextView) v.findViewById(R.id.desctext);
+                ImageView likePic = (ImageView) v.findViewById(R.id.likePic);
+                ImageView commentPic = (ImageView) v.findViewById(R.id.commentPic);
+
+                likePic.setTag(position);
+                likePic.setOnClickListener(mOnLikeClickListener);
+                commentPic.setTag(position);
+                commentPic.setOnClickListener(mOnCommentClickListener);
+
 
                 // check to see if each individual textview is null.
                 // if not, assign some text!
@@ -112,5 +125,44 @@ public class PostAdapter extends ArrayAdapter<Post> {
     }
 
 
+
+    @Override
+    public void notifyDataSetChanged() {
+        super.notifyDataSetChanged();
+    }
+
+    private View.OnClickListener mOnLikeClickListener = new View.OnClickListener() {
+        @Override
+        public void onClick(View v) {
+            int position = (Integer) v.getTag();
+
+            //if(((ImageView)v).getDrawable().equals(R.drawable.heart_outline))
+            {
+                // Access the row position here to get the correct data item
+                objects.get(position).incLikeCounter();
+                ((ImageView) v).setImageResource(R.drawable.heart_full);
+            }
+            //else
+            {
+                // Access the row position here to get the correct data item
+                objects.get(position).decLikeCounter();
+                ((ImageView) v).setImageResource(R.drawable.heart_outline);
+            }
+
+            notifyDataSetChanged();
+        }
+
+
+    };
+
+    private View.OnClickListener mOnCommentClickListener = new View.OnClickListener() {
+        @Override
+        public void onClick(View v) {
+            int position = (Integer) v.getTag();
+            // Access the row position here to get the correct data item
+            Post pst = objects.get(position);
+
+        }
+    };
 
 }

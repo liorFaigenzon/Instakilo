@@ -20,6 +20,7 @@
             android:name=".LoginActivity"
             android:label="@string/app_name">
         </activity>
+<<<<<<< HEAD
         <activity android:name=".MainActivity" />
         <!--
  ATTENTION: This was auto-generated to add Google Play services to your project for
@@ -32,6 +33,12 @@
             android:theme="@android:style/Theme.Translucent.NoTitleBar"
             tools:replace="android:theme" />
 
+=======
+        <activity android:name=".MainActivity"></activity>
+        <activity android:name=".PostDetailActivity"></activity><!-- ATTENTION: This was auto-generated to add Google Play services to your project for
+
+     App Indexing.  See https://g.co/AppIndexing/AndroidStudio for more information. -->
+>>>>>>> 5bf3b204c20d1e536f52536d5da4da31b8a3c0ba
         <meta-data
             android:name="com.google.android.gms.version"
             android:value="@integer/google_play_services_version" />

@@ -1,6 +1,7 @@
 package com.example.lior.instakilo;
 
 import android.app.ListActivity;
+import android.content.Intent;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
@@ -27,17 +28,6 @@ public class MainActivity extends ListActivity{
     private ArrayList<Post> m_parts = new ArrayList<Post>();
     private Runnable viewParts;
     private PostAdapter m_adapter;
-
-
-    public void doPositiveClick() {
-        // Do stuff here.
-        Log.i("FragmentAlertDialog", "Positive click!");
-    }
-
-    public void doNegativeClick() {
-        // Do stuff here.
-        Log.i("FragmentAlertDialog", "Negative click!");
-    }
 
     /** Called when the activity is first created. */
     public void onCreate(Bundle savedInstanceState) {
@@ -105,8 +95,10 @@ public class MainActivity extends ListActivity{
         list.setOnItemClickListener(new AdapterView.OnItemClickListener() {
            public void onItemClick(AdapterView<?> parent, View v,
                                   int position, long id) {
-              Toast.makeText(MainActivity.this, "" + position,
-                        Toast.LENGTH_SHORT).show();
+               Post post = (Post)m_adapter.getItem(position);
+               Intent intent = new Intent(v.getContext(), PostDetailActivity.class);
+               intent.putExtra("com.example.instakilo.Post", post);
+               startActivity(intent);
             }
         });
 
