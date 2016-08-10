@@ -3,10 +3,11 @@ package com.example.lior.instakilo;
 import android.app.Application;
 import android.content.Context;
 import android.content.res.Configuration;
+import android.util.Log;
 
-/**
- * Created by eliav.menachi on 04/04/2016.
- */
+import com.facebook.FacebookSdk;
+import com.facebook.appevents.AppEventsLogger;
+
 public class MyApplication extends Application {
     private static Context context;
 
@@ -14,6 +15,11 @@ public class MyApplication extends Application {
     public void onCreate() {
         super.onCreate();
         MyApplication.context = getApplicationContext();
+
+
+        // Initialize the SDK before executing any other operations,
+        FacebookSdk.sdkInitialize(getApplicationContext());
+        AppEventsLogger.activateApp(this);
     }
 
     public static Context getAppContext() {

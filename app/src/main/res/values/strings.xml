@@ -16,4 +16,8 @@
 
     <!-- TODO: Remove or change this placeholder text -->
     <string name="hello_blank_fragment">Hello blank fragment</string>
+
+    <!-- Facebook -->
+    <string name="facebook_app_id">1291911370822068</string>
+    <string name="facebook_application_id">1291911370822068</string>
 </resources>
