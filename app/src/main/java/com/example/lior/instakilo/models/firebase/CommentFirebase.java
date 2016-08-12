@@ -4,7 +4,6 @@ import android.util.Log;
 
 import com.example.lior.instakilo.models.Comment;
 import com.example.lior.instakilo.models.Model;
-import com.example.lior.instakilo.models.Post;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
@@ -22,12 +21,12 @@ import java.util.TimeZone;
 public class CommentFirebase implements IModelFirebase {
 
     @Override
-    public void getAll(String lastUpdateDate, final Model.GetAllListener listener) {
+    public void getAll(String lastUpdateDate, final Model.GetManyListener listener) {
 
         // Get all recent comments that are not cached already
-        Query queryPosts = ModelFirebase.getDatabase().child("comments").orderByChild("lastUpdated").startAt(lastUpdateDate);
+        Query queryComments = ModelFirebase.getDatabase().child("comments").orderByChild("lastUpdated").startAt(lastUpdateDate);
 
-        queryPosts.addListenerForSingleValueEvent(new ValueEventListener() {
+        queryComments.addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
             public void onDataChange(DataSnapshot snapshot) {
                 final List<Object> commentList = new LinkedList<>();
@@ -68,6 +67,42 @@ public class CommentFirebase implements IModelFirebase {
             @Override
             public void onCancelled(DatabaseError databaseError) {
                 Log.w("Nir", "getOneComment:onCancelled", databaseError.toException());
+                listener.onCancel();
+            }
+        });
+    }
+
+    public void getByPostId(String id, String lastUpdateDate, final Model.GetManyListener listener) {
+        Query queryPostComments;
+
+        if (lastUpdateDate != null) {
+
+            // Get all recent comments of specific post that are not cached already
+            queryPostComments = ModelFirebase.getDatabase().child("post-comments").child(id).orderByChild("lastUpdated").startAt(lastUpdateDate);
+        } else {
+
+            // Get all comments of specific post
+            queryPostComments = ModelFirebase.getDatabase().child("post-comments").child(id).orderByChild("lastUpdated");
+        }
+
+        queryPostComments.addListenerForSingleValueEvent(new ValueEventListener() {
+            @Override
+            public void onDataChange(DataSnapshot snapshot) {
+                final List<Object> commentList = new LinkedList<>();
+
+                // Gather all the comments to a list
+                for (DataSnapshot commentSnapshot : snapshot.getChildren()) {
+                    Comment comment = commentSnapshot.getValue(Comment.class);
+                    commentList.add(comment);
+                }
+
+                // Return the list as a result
+                listener.onResult(commentList);
+            }
+
+            @Override
+            public void onCancelled(DatabaseError databaseError) {
+                Log.w("Nir", "getAllComments:onCancelled", databaseError.toException());
                 listener.onCancel();
             }
         });

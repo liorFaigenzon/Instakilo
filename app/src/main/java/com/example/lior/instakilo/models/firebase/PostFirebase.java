@@ -7,7 +7,6 @@ import com.example.lior.instakilo.models.Post;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
-import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.Query;
 import com.google.firebase.database.ValueEventListener;
 
@@ -22,7 +21,7 @@ import java.util.TimeZone;
 public class PostFirebase implements IModelFirebase {
 
     @Override
-    public void getAll(String lastUpdateDate, final Model.GetAllListener listener) {
+    public void getAll(String lastUpdateDate, final Model.GetManyListener listener) {
 
         // Get all recent posts that are not cached already
         Query queryPosts = ModelFirebase.getDatabase().child("posts").orderByChild("lastUpdated").startAt(lastUpdateDate);

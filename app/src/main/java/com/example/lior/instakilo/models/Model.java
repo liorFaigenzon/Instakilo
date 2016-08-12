@@ -13,7 +13,6 @@ import com.example.lior.instakilo.MyApplication;
 import com.example.lior.instakilo.models.cloudinary.ModelCloudinary;
 import com.example.lior.instakilo.models.firebase.ModelFirebase;
 import com.example.lior.instakilo.models.sqlite.ModelSql;
-import com.example.lior.instakilo.models.sqlite.PostSql;
 import com.facebook.AccessToken;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
@@ -26,7 +25,6 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
 import java.util.List;
-import java.util.Objects;
 
 public class Model {
 
@@ -43,7 +41,7 @@ public class Model {
     private Model(){
         context = MyApplication.getAppContext();
         modelFirebase = new ModelFirebase(MyApplication.getAppContext());
-        //modelCloudinary = new ModelCloudinary();
+        modelCloudinary = new ModelCloudinary();
         modelSql = new ModelSql(MyApplication.getAppContext());
     }
 
@@ -67,40 +65,32 @@ public class Model {
         return modelFirebase.getUserId();
     }
 
-    public interface GetAllListener{
+    public interface GetManyListener {
         void onResult(List<Object> objects);
         void onCancel();
     }
 
-    public void getAll(final ModelClass model, final GetAllListener listener){
+    public void getAll(ModelClass model, final GetManyListener listener){
 
-        final String lastUpdateDate = modelSql.getLastUpdateData(model);
-
-        modelFirebase.getAll(model, lastUpdateDate, new GetAllListener() {
+        // TODO: Change the hole method to use cache
+        /*final String lastUpdateDate = "";// PostSql.getLastUpdateDate(modelSql.getReadbleDB());
+        modelFirebase.getAll(model, lastUpdateDate, new GetManyListener() {
             @Override
-            public void onResult(List<Object> objects) {
-                if(objects != null && objects.size() > 0) {
+            public void onResult(List<Post> posts) {
+                if(posts != null && posts.size() > 0) {
                     //update the local DB
                     String reacentUpdate = lastUpdateDate;
-
-                    for (Object m : objects) {
-                        modelSql.add(m);
-
-                        switch (model) {
-                            case POST:
-                                if (reacentUpdate == null || ((Post)m).getLastUpdated().compareTo(reacentUpdate) > 0) {
-                                    reacentUpdate = ((Post)m).getLastUpdated();
-                                }
-                                Log.d("TAG", "updating: " + ((Post)m).toString());
-                                break;
+                    for (Post s : posts) {
+                        PostSql.add(modelSql.getWritableDB(), s);
+                        if (reacentUpdate == null || s.getLastUpdated().compareTo(reacentUpdate) > 0) {
+                            reacentUpdate = s.getLastUpdated();
                         }
+                        Log.d("TAG","updating: " + s.toString());
                     }
-
-                    modelSql.setLastUpdateData(model, reacentUpdate);
+                    PostSql.setLastUpdateDate(modelSql.getWritableDB(), reacentUpdate);
                 }
-
-                //return the complete objects list to the caller
-                List<Object> res = modelSql.getAll(model);
+                //return the complete student list to the caller
+                List<Post> res = PostSql.getAllPosts(modelSql.getReadbleDB());
                 listener.onResult(res);
             }
 
@@ -108,7 +98,7 @@ public class Model {
             public void onCancel() {
                 listener.onCancel();
             }
-        });
+        });*/
     }
 
     public interface GetOneListener{
@@ -144,27 +134,37 @@ public class Model {
         modelFirebase.delete(model, listener);
     }
 
-    public void saveImage(final Bitmap imageBitmap, final String imageName) {
-        saveImageToFile(imageBitmap,imageName); // synchronously save image locally
-        Thread d = new Thread(new Runnable() {  // asynchronously save image to parse
+    public void savePhoto(final Bitmap photoBitmap, final String photoName) {
+        //saveImageToFile(imageBitmap, imageName); // synchronously save image locally
+        Thread savePhoto = new Thread(new Runnable() {  // asynchronously save image to parse
             @Override
             public void run() {
-                modelCloudinary.saveImage(imageBitmap,imageName);
+                modelCloudinary.savePhoto(photoBitmap, photoName);
             }
         });
-        d.start();
+        savePhoto.start();
     }
 
-    public void loadImage(final String imageName, final LoadImageListener listener) {
+    public interface LoadPhotoListener {
+        void onResult(Bitmap photo);
+    }
+
+    public void loadPhoto(final String photoId, final LoadPhotoListener listener) {
         AsyncTask<String,String,Bitmap> task = new AsyncTask<String, String, Bitmap >() {
             @Override
             protected Bitmap doInBackground(String... params) {
-                Bitmap bmp = loadImageFromFile(imageName);              //first try to fin the image on the device
-                if (bmp == null) {                                      //if image not found - try downloading it from parse
-                    bmp = modelCloudinary.loadImage(imageName);
-                    if (bmp != null) saveImageToFile(bmp,imageName);    //save the image locally for next time
-                }
-                return bmp;
+                //Bitmap photo = loadImageFromFile(photoId);              //first try to fin the image on the device
+                //if (photo == null) {
+
+                    // Download photo from cloudinary
+                    Bitmap photo = modelCloudinary.loadPhoto(photoId);
+
+                    // Save to cache
+                    //if (photo != null) {
+                    //    saveImageToFile(bmp,photoId);    //save the image locally for next time
+                    //}
+                //}
+                return photo;
             }
 
             @Override
@@ -235,9 +235,5 @@ public class Model {
             e.printStackTrace();
         }
         return bitmap;
-    }
-
-    public interface LoadImageListener{
-        public void onResult(Bitmap imageBmp);
     }
 }
