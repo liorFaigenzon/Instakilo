@@ -2,9 +2,11 @@ package com.example.lior.instakilo;
 
 import android.app.ListActivity;
 import android.content.Intent;
+import android.graphics.Bitmap;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
+import android.provider.MediaStore;
 import android.util.Log;
 import android.view.View;
 import android.widget.AdapterView;
@@ -16,12 +18,16 @@ import com.example.lior.instakilo.models.Model;
 import com.example.lior.instakilo.models.PicModeSelectDialogFragment;
 import com.example.lior.instakilo.models.Post;
 import com.example.lior.instakilo.models.PostAdapter;
-import com.google.firebase.database.DatabaseError;
-import com.google.firebase.database.DatabaseReference;
 
+import java.io.IOException;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Date;
 
 public class MainActivity extends ListActivity{
+
+    static final int REQUEST_IMAGE_CAPTURE = 100;
+    static final int REQUEST_IMAGE_SELECT = 200;
 
     // declare class variables
     private ArrayList<Post> m_parts = new ArrayList<Post>();
@@ -115,6 +121,75 @@ public class MainActivity extends ListActivity{
         thread.start();
     }
 
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+
+        if (resultCode == RESULT_OK) {
+            if (requestCode == REQUEST_IMAGE_SELECT)
+                onSelectFromGalleryResult(data);
+            else if (requestCode == REQUEST_IMAGE_CAPTURE)
+                onCapturePhotoResult(data);
+        }
+    }
+
+    private void onCapturePhotoResult(Intent data) {
+
+        // Get thumbnail photo
+        Bitmap thumbnail = (Bitmap) data.getExtras().get("data");
+
+        // Save the thumbnail to cloudinary
+        String timeStamp = new SimpleDateFormat("yyyyMMdd_HHmmss").format(new Date());
+        Model.getInstance().savePhoto(thumbnail, "test1" + timeStamp + ".jpg");
+    }
+
+    private void onSelectFromGalleryResult(Intent data) {
+        Bitmap thumbnail = null;
+
+        // Check if selected photo
+        if (data != null) {
+            try {
+
+                // Get a bitmap object from the selected photo
+                thumbnail = MediaStore.Images.Media.getBitmap(getApplicationContext().getContentResolver(), data.getData());
+
+                // Save the thumbnail to cloudinary
+                String timeStamp = new SimpleDateFormat("yyyyMMdd_HHmmss").format(new Date());
+                Model.getInstance().savePhoto(thumbnail, "test1" + timeStamp + ".jpg");
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+        } else {
+            Log.d("Nir", "onSelectFromGalleryResult:noPhotoSelected");
+        }
+    }
+
+    private void dispatchCameraIntent() {
+
+        // Create camera intent
+        Intent cameraIntent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
+
+        // Check that there is an activity that can handle such request
+        if (cameraIntent.resolveActivity(getPackageManager()) != null) {
+
+            // Start camera intent
+            startActivityForResult(cameraIntent, REQUEST_IMAGE_CAPTURE);
+        }
+    }
+
+    private void dispatchGalleryIntent() {
+
+        // Create camera intent
+        Intent galleryIntent = new Intent(Intent.ACTION_GET_CONTENT);
+        galleryIntent.setType("image/*");
+
+        // Check that there is an activity that can handle such request
+        if (galleryIntent.resolveActivity(getPackageManager()) != null) {
+
+            // Start gallery intent to select single image
+            startActivityForResult(Intent.createChooser(galleryIntent, "Select File"), REQUEST_IMAGE_SELECT);
+        }
+    }
+
     private Handler handler = new Handler()
     {
         public void handleMessage(final Message msg)
@@ -135,6 +210,17 @@ public class MainActivity extends ListActivity{
             m_parts.add(firstPost);
             m_parts.add(firstPost);
             m_parts.add(firstPost);
+
+            //dispatchCameraIntent();
+            //dispatchGalleryIntent();
+            Model.getInstance().loadPhoto("test120160812_141416", new Model.LoadPhotoListener() {
+                @Override
+                public void onResult(Bitmap photo) {
+                    if (photo != null) {
+                        Log.d("Nir", "Download photo from cloudinary succeeded");
+                    }
+                }
+            });
 
             m_adapter = new PostAdapter(MainActivity.this, R.layout.post_listview, m_parts);
 

@@ -3,7 +3,6 @@ package com.example.lior.instakilo.models.firebase;
 import android.content.Context;
 import android.support.annotation.NonNull;
 import android.util.Log;
-import android.widget.Toast;
 
 import com.example.lior.instakilo.models.Model;
 import com.example.lior.instakilo.models.Post;
@@ -15,15 +14,8 @@ import com.google.firebase.auth.AuthCredential;
 import com.google.firebase.auth.AuthResult;
 import com.google.firebase.auth.FacebookAuthProvider;
 import com.google.firebase.auth.FirebaseAuth;
-import com.google.firebase.database.DataSnapshot;
-import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
-import com.google.firebase.database.Query;
-import com.google.firebase.database.ValueEventListener;
-
-import java.util.LinkedList;
-import java.util.List;
 
 public class ModelFirebase {
 
@@ -77,7 +69,7 @@ public class ModelFirebase {
         }
     }
 
-    public void getAll(Model.ModelClass model, String lastUpdateDate, Model.GetAllListener listener) {
+    public void getAll(Model.ModelClass model, String lastUpdateDate, Model.GetManyListener listener) {
 
         // Check the type of the model to get
         switch (model){
