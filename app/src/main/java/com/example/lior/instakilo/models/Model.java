@@ -73,13 +73,13 @@ public class Model {
     public void getAll(ModelClass model, final GetManyListener listener){
 
         // TODO: Change the hole method to use cache
-        /*final String lastUpdateDate = "";// PostSql.getLastUpdateDate(modelSql.getReadbleDB());
+        final String lastUpdateDate = "2016-08-07 08:00:00";// PostSql.getLastUpdateDate(modelSql.getReadbleDB());
         modelFirebase.getAll(model, lastUpdateDate, new GetManyListener() {
             @Override
-            public void onResult(List<Post> posts) {
-                if(posts != null && posts.size() > 0) {
+            public void onResult(List<Object> objects) {
+                //if(objects != null && objects.size() > 0) {
                     //update the local DB
-                    String reacentUpdate = lastUpdateDate;
+                    /*String reacentUpdate = lastUpdateDate;
                     for (Post s : posts) {
                         PostSql.add(modelSql.getWritableDB(), s);
                         if (reacentUpdate == null || s.getLastUpdated().compareTo(reacentUpdate) > 0) {
@@ -87,18 +87,18 @@ public class Model {
                         }
                         Log.d("TAG","updating: " + s.toString());
                     }
-                    PostSql.setLastUpdateDate(modelSql.getWritableDB(), reacentUpdate);
-                }
+                    PostSql.setLastUpdateDate(modelSql.getWritableDB(), reacentUpdate);*/
+                //}
                 //return the complete student list to the caller
-                List<Post> res = PostSql.getAllPosts(modelSql.getReadbleDB());
-                listener.onResult(res);
+                //List<Post> res = PostSql.getAllPosts(modelSql.getReadbleDB());
+                listener.onResult(objects);
             }
 
             @Override
             public void onCancel() {
                 listener.onCancel();
             }
-        });*/
+        });
     }
 
     public interface GetOneListener{

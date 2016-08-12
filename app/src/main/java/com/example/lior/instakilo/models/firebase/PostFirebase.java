@@ -1,9 +1,12 @@
 package com.example.lior.instakilo.models.firebase;
 
 import android.util.Log;
+import android.widget.Toast;
 
+import com.example.lior.instakilo.MyApplication;
 import com.example.lior.instakilo.models.Model;
 import com.example.lior.instakilo.models.Post;
+import com.google.firebase.database.ChildEventListener;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
@@ -34,6 +37,7 @@ public class PostFirebase implements IModelFirebase {
                 // Gather all the posts to a list
                 for (DataSnapshot postSnapshot : snapshot.getChildren()) {
                     Post post = postSnapshot.getValue(Post.class);
+                    post.setId(postSnapshot.getKey());
                     postList.add(post);
                 }
 
