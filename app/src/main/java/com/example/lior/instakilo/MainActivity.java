@@ -98,7 +98,7 @@ public class MainActivity extends ListActivity{
                                     int position, long id) {
                 Post post = (Post)m_adapter.getItem(position);
                 Intent intent = new Intent(v.getContext(), PostDetailActivity.class);
-                //intent.putExtra("com.example.instakilo.Post", post);
+                intent.putExtra("com.example.instakilo.Post", post);
                 startActivity(intent);
             }
         });
@@ -107,7 +107,7 @@ public class MainActivity extends ListActivity{
                                   int position, long id) {
                Post post = (Post)m_adapter.getItem(position);
                Intent intent = new Intent(v.getContext(), PostDetailActivity.class);
-               //intent.putExtra("com.example.instakilo.Post", post);
+               intent.putExtra("com.example.instakilo.Post", post);
                startActivity(intent);
             }
         });
@@ -209,31 +209,24 @@ public class MainActivity extends ListActivity{
             firstPost.incLikeCounter();
             firstPost.getLikeUsers().put("b", true);
 
-            Model.getInstance().add(firstPost, new Model.AddListener() {
-                @Override
-                public void onComplete(DatabaseError databaseError, DatabaseReference databaseReference, String key) {
-                    Log.d("Nir", key);
-                }
-            });
+            m_parts.add(firstPost);
+            m_parts.add(firstPost);
+            m_parts.add(firstPost);
+            m_parts.add(firstPost);
 
-            m_parts.add(firstPost);
-            m_parts.add(firstPost);
-            m_parts.add(firstPost);
-            m_parts.add(firstPost);
+            Model.getInstance().attachCacheListener(Model.ModelClass.POST);
 
             Model.getInstance().getAll(Model.ModelClass.POST, new Model.GetManyListener() {
                 @Override
                 public void onResult(List<Object> objects) {
                     Log.d("Nir", "Objects returned: " + objects.size());
 
-                    if (objects.size() == 9) {
-                        Model.getInstance().add(firstPost, new Model.AddListener() {
-                            @Override
-                            public void onComplete(DatabaseError databaseError, DatabaseReference databaseReference, String key) {
-                                Log.d("Nir", key);
-                            }
-                        });
-                    }
+                    Model.getInstance().add(firstPost, new Model.AddListener() {
+                        @Override
+                        public void onComplete(DatabaseError databaseError, DatabaseReference databaseReference, String key) {
+                            Log.d("Nir", key);
+                        }
+                    });
                 }
 
                 @Override

@@ -29,7 +29,8 @@ import java.util.List;
 public class Model {
 
     public enum ModelClass {
-        POST
+        POST,
+        COMMENT
     }
 
     private final static Model instance = new Model();
@@ -132,6 +133,10 @@ public class Model {
 
     public void delete(Object model, DeleteListener listener){
         modelFirebase.delete(model, listener);
+    }
+
+    public void attachCacheListener(ModelClass model) {
+        modelFirebase.attachCacheListener(model);
     }
 
     public void savePhoto(final Bitmap photoBitmap, final String photoName) {

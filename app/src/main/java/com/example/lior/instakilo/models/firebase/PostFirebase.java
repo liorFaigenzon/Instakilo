@@ -173,4 +173,37 @@ public class PostFirebase implements IModelFirebase {
             }
         });
     }
+
+    @Override
+    public void attachCacheListener() {
+        ModelFirebase.getDatabase().child("posts").addChildEventListener(new ChildEventListener() {
+
+            @Override
+            public void onChildAdded(DataSnapshot dataSnapshot, String previousChildName) {
+                Log.d("Nir", "Post:onChildAdded:" + dataSnapshot.getKey());
+            }
+
+            @Override
+            public void onChildChanged(DataSnapshot dataSnapshot, String previousChildName) {
+                Log.d("Nir", "Post:onChildChanged:" + dataSnapshot.getKey());
+            }
+
+            @Override
+            public void onChildRemoved(DataSnapshot dataSnapshot) {
+                Log.d("Nir", "Post:onChildRemoved:" + dataSnapshot.getKey());
+            }
+
+            @Override
+            public void onChildMoved(DataSnapshot dataSnapshot, String previousChildName) {
+                Log.d("Nir", "Post:onChildMoved:" + dataSnapshot.getKey());
+            }
+
+            @Override
+            public void onCancelled(DatabaseError databaseError) {
+                Log.w("Nir", "Post:onCancelled", databaseError.toException());
+                Toast.makeText(MyApplication.getAppContext(), "Failed to load posts.",
+                        Toast.LENGTH_SHORT).show();
+            }
+        });
+    }
 }

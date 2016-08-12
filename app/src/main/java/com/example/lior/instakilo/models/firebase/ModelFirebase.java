@@ -4,6 +4,7 @@ import android.content.Context;
 import android.support.annotation.NonNull;
 import android.util.Log;
 
+import com.example.lior.instakilo.models.Comment;
 import com.example.lior.instakilo.models.Model;
 import com.example.lior.instakilo.models.Post;
 import com.facebook.AccessToken;
@@ -22,10 +23,12 @@ public class ModelFirebase {
     private final static DatabaseReference database = FirebaseDatabase.getInstance().getReference();
 
     private PostFirebase postFirebase;
+    private CommentFirebase commentFirebase;
 
     public ModelFirebase(Context context){
         Firebase.setAndroidContext(context);
         postFirebase = new PostFirebase();
+        commentFirebase = new CommentFirebase();
     }
 
     public static DatabaseReference getDatabase() {
@@ -76,6 +79,9 @@ public class ModelFirebase {
             case POST:
                 postFirebase.getAll(lastUpdateDate, listener);
                 break;
+            case COMMENT:
+                commentFirebase.getAll(lastUpdateDate, listener);
+                break;
         }
     }
 
@@ -86,6 +92,9 @@ public class ModelFirebase {
             case POST:
                 postFirebase.getById(id, listener);
                 break;
+            case COMMENT:
+                commentFirebase.getById(id, listener);
+                break;
         }
     }
 
@@ -94,6 +103,8 @@ public class ModelFirebase {
         // Check the type of the model to add
         if (model instanceof Post) {
             postFirebase.add(model, listener);
+        } else if (model instanceof Comment) {
+            commentFirebase.add(model, listener);
         }
     }
 
@@ -102,6 +113,8 @@ public class ModelFirebase {
         // Check the type of the model to update
         if (model instanceof Post) {
             postFirebase.update(model, listener);
+        } else if (model instanceof Comment) {
+            commentFirebase.update(model, listener);
         }
     }
 
@@ -110,6 +123,21 @@ public class ModelFirebase {
         // Check the type of the model to delete
         if (model instanceof Post) {
             postFirebase.delete(model, listener);
+        } else if (model instanceof Comment) {
+            commentFirebase.delete(model, listener);
+        }
+    }
+
+    public void attachCacheListener(Model.ModelClass model) {
+
+        // Check the type of the model to attache to it the listener
+        switch (model){
+            case POST:
+                postFirebase.attachCacheListener();
+                break;
+            case COMMENT:
+                commentFirebase.attachCacheListener();
+                break;
         }
     }
 }
