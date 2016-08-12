@@ -4,14 +4,20 @@ package com.example.lior.instakilo.models.sqlite;
  * Created by eliav.menachi on 08/06/2016.
  */
 import android.content.Context;
+import java.util.LinkedList;
+import java.util.List;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
+
+import com.example.lior.instakilo.models.Comment;
+import com.example.lior.instakilo.models.Model;
+import com.example.lior.instakilo.models.Post;
 
 /**
  * Created by eliav.menachi on 13/05/2015.
  */
 public class ModelSql {
-    final static int VERSION = 6;
+    final static int VERSION = 7;
 
     Helper sqlDb;
 
@@ -27,6 +33,65 @@ public class ModelSql {
     public SQLiteDatabase getReadbleDB(){
         return sqlDb.getReadableDatabase();
     }
+
+    public List<Object> getAll(Model.ModelClass model) {
+        SQLiteDatabase db = getReadbleDB();
+
+        switch (model)
+        {
+            case POST:
+                return PostSql.getAllPosts(db);
+        }
+        return null;
+    }
+
+    public void add(Object model) {
+        SQLiteDatabase db = getWritableDB();
+
+        if (model instanceof  Post)
+            PostSql.add(db, model);
+    }
+
+    public String getLastUpdateData(Model.ModelClass model)
+    {
+        SQLiteDatabase db = getReadbleDB();
+
+        switch (model)
+        {
+            case POST:
+                return PostSql.getLastUpdateDate(db);
+        }
+        return null;
+    }
+
+    public void setLastUpdateData(Model.ModelClass model, String date)
+    {
+        SQLiteDatabase db = getWritableDB();
+
+        switch (model)
+        {
+            case POST:
+                PostSql.setLastUpdateDate(db, date);
+        }
+    }
+
+    public List<Comment> getAllComments() {
+        SQLiteDatabase db = getReadbleDB();
+        return CommentSql.getAllComments(db);
+    }
+
+    public String getCommentsLastUpdateData()
+    {
+        SQLiteDatabase db = getReadbleDB();
+        return CommentSql.getLastUpdateDate(db);
+    }
+
+    public void setCommentsLastUpdateData(String date)
+    {
+        SQLiteDatabase db = getWritableDB();
+        CommentSql.setLastUpdateDate(db, date);
+    }
+
 
     class Helper extends SQLiteOpenHelper {
         public Helper(Context context) {

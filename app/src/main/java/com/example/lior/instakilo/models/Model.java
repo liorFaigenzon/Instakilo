@@ -13,6 +13,7 @@ import com.example.lior.instakilo.MyApplication;
 import com.example.lior.instakilo.models.cloudinary.ModelCloudinary;
 import com.example.lior.instakilo.models.firebase.ModelFirebase;
 import com.example.lior.instakilo.models.sqlite.ModelSql;
+import com.example.lior.instakilo.models.sqlite.PostSql;
 import com.facebook.AccessToken;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
@@ -25,6 +26,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
 import java.util.List;
+import java.util.Objects;
 
 public class Model {
 
@@ -70,27 +72,35 @@ public class Model {
         void onCancel();
     }
 
-    public void getAll(ModelClass model, final GetAllListener listener){
+    public void getAll(final ModelClass model, final GetAllListener listener){
 
-        // TODO: Change the hole method to use cache
-        /*final String lastUpdateDate = "";// PostSql.getLastUpdateDate(modelSql.getReadbleDB());
+        final String lastUpdateDate = modelSql.getLastUpdateData(model);
+
         modelFirebase.getAll(model, lastUpdateDate, new GetAllListener() {
             @Override
-            public void onResult(List<Post> posts) {
-                if(posts != null && posts.size() > 0) {
+            public void onResult(List<Object> objects) {
+                if(objects != null && objects.size() > 0) {
                     //update the local DB
                     String reacentUpdate = lastUpdateDate;
-                    for (Post s : posts) {
-                        PostSql.add(modelSql.getWritableDB(), s);
-                        if (reacentUpdate == null || s.getLastUpdated().compareTo(reacentUpdate) > 0) {
-                            reacentUpdate = s.getLastUpdated();
+
+                    for (Object m : objects) {
+                        modelSql.add(m);
+
+                        switch (model) {
+                            case POST:
+                                if (reacentUpdate == null || ((Post)m).getLastUpdated().compareTo(reacentUpdate) > 0) {
+                                    reacentUpdate = ((Post)m).getLastUpdated();
+                                }
+                                Log.d("TAG", "updating: " + ((Post)m).toString());
+                                break;
                         }
-                        Log.d("TAG","updating: " + s.toString());
                     }
-                    PostSql.setLastUpdateDate(modelSql.getWritableDB(), reacentUpdate);
+
+                    modelSql.setLastUpdateData(model, reacentUpdate);
                 }
-                //return the complete student list to the caller
-                List<Post> res = PostSql.getAllPosts(modelSql.getReadbleDB());
+
+                //return the complete objects list to the caller
+                List<Object> res = modelSql.getAll(model);
                 listener.onResult(res);
             }
 
@@ -98,7 +108,7 @@ public class Model {
             public void onCancel() {
                 listener.onCancel();
             }
-        });*/
+        });
     }
 
     public interface GetOneListener{
