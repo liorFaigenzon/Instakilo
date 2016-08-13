@@ -1,0 +1,41 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="45dp">
+
+    <TextView
+        android:id="@+id/name"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:textAppearance="?attr/textAppearanceListItem"
+
+        android:textStyle="bold"
+        android:text="Name"/>
+
+    <TextView
+        android:id="@+id/content"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:textAppearance="?attr/textAppearanceListItem"
+        android:layout_toRightOf="@id/name"
+        android:text="Content"
+        android:layout_marginLeft="5dp"/>
+
+    <TextView
+        android:id="@+id/date"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/content"
+
+        android:textAppearance="?attr/textAppearanceListItem"
+        android:text="Date7777"/>
+
+    <View
+        android:layout_below="@id/date"
+        android:gravity="bottom"
+        android:id="@+id/TopSep"
+        android:layout_width="wrap_content"
+        android:layout_height="1dp"
+        android:background="@android:color/darker_gray"
+        android:layout_gravity="top"/>
+</RelativeLayout>

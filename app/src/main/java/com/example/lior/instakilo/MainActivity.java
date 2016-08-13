@@ -1,7 +1,6 @@
 package com.example.lior.instakilo;
 
 import android.app.ListActivity;
-import android.content.Intent;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
@@ -12,16 +11,13 @@ import android.widget.GridView;
 import android.widget.ImageView;
 import android.widget.ListView;
 
-import com.example.lior.instakilo.models.Model;
 import com.example.lior.instakilo.models.PicModeSelectDialogFragment;
 import com.example.lior.instakilo.models.Post;
 import com.example.lior.instakilo.models.PostAdapter;
-import com.google.firebase.database.DatabaseError;
-import com.google.firebase.database.DatabaseReference;
 
 import java.util.ArrayList;
 
-public class MainActivity extends ListActivity{
+public class MainActivity extends ListActivity {
 
     // declare class variables
     private ArrayList<Post> m_parts = new ArrayList<Post>();
@@ -38,6 +34,7 @@ public class MainActivity extends ListActivity{
         ImageView matrixPic = (ImageView) findViewById(R.id.matrixPic);
         ImageView listPic = (ImageView) findViewById(R.id.listPic);
         ImageView takePic = (ImageView) findViewById(R.id.takePic);
+        //FrameLayout fragment_container = (FrameLayout) findViewById(R.id.fragment_container);
 
         takePic.setOnClickListener(new DialogPicActivity());
 
@@ -62,6 +59,7 @@ public class MainActivity extends ListActivity{
 
             @Override
             public void onClick(View v) {
+
                 ImageView matrixPic = (ImageView) findViewById(R.id.matrixPic);
                 ImageView listPic = (ImageView) findViewById(R.id.listPic);
                 ListView list = getListView();
@@ -76,30 +74,41 @@ public class MainActivity extends ListActivity{
             }
         });
 
+        //fragment_container.setVisibility(View.GONE);
         gridview.setVisibility(View.GONE);
 
         // instantiate our PostAdapter class
-        m_adapter = new PostAdapter(this, R.layout.post_listview, m_parts);
-        setListAdapter(m_adapter);
-        gridview.setAdapter(m_adapter);
+       // m_adapter = new PostAdapter(this, R.layout.activity_login, m_parts);
+       // setListAdapter(m_adapter);
+        //gridview.setAdapter(m_adapter);
 
 
         gridview.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             public void onItemClick(AdapterView<?> parent, View v,
                                     int position, long id) {
+                //FrameLayout fragment_container = (FrameLayout) findViewById(R.id.fragment_container);
+                //PostDetailFragment fragmentInstance = new PostDetailFragment();
                 Post post = (Post)m_adapter.getItem(position);
-                Intent intent = new Intent(v.getContext(), PostDetailActivity.class);
-                intent.putExtra("com.example.instakilo.Post", post);
-                startActivity(intent);
+                Bundle bundle = new Bundle();
+                bundle.putParcelable("com.example.instakilo.Post", post);
+                //fragmentInstance.setArguments(bundle);
+                //FragmentManager fragmentManager = getFragmentManager();
+                //FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
+                // add fragment to the fragment container layout
+                //fragment_container.addView(R.id.fragment_container, fragmentInstance).commit();;
+
+                //Intent intent = new Intent(v.getContext(), PostDetailActivity.class);
+                //intent.putExtra("com.example.instakilo.Post", post);
+                //startActivity(intent);
             }
         });
         list.setOnItemClickListener(new AdapterView.OnItemClickListener() {
            public void onItemClick(AdapterView<?> parent, View v,
                                   int position, long id) {
                Post post = (Post)m_adapter.getItem(position);
-               Intent intent = new Intent(v.getContext(), PostDetailActivity.class);
-               intent.putExtra("com.example.instakilo.Post", post);
-               startActivity(intent);
+              // Intent intent = new Intent(v.getContext(), PostDetailActivity.class);
+              // intent.putExtra("com.example.instakilo.Post", post);
+              // startActivity(intent);
             }
         });
 
@@ -136,10 +145,10 @@ public class MainActivity extends ListActivity{
             m_parts.add(firstPost);
             m_parts.add(firstPost);
 
-            m_adapter = new PostAdapter(MainActivity.this, R.layout.post_listview, m_parts);
+            //m_adapter = new PostAdapter(MainActivity.this, R.layout.post_listview, m_parts);
 
             // display the list.
-            setListAdapter(m_adapter);
+            //setListAdapter(m_adapter);
         }
 
 
