@@ -12,95 +12,100 @@ import java.util.List;
 public class PostSql {
     final static String POST_TABLE = "posts";
     final static String POST_TABLE_ID = "_id";
-    final static String POST_TABLE_TITLE = "photoId";
-    final static String POST_TABLE_CONTENT = "authorId";
-    final static String POST_TABLE_LIKE_COUNTER = "content";
-    final static String POST_TABLE_USER_ID = "image_name";
-    final static String POST_PHOTO_ID = "title";
-    final static String POST_TABLE_CHECKABLE = "checkable";
-    //final static String POST_TABLE_DELETED = "deleted";
+    final static String POST_TABLE_AUTHOR_ID = "authorId";
+    final static String POST_TABLE_AUTHOR_NAME = "authorName";
+    final static String POST_TABLE_LIKE_COUNTER = "likeCounter";
+    final static String POST_TABLE_PHOTO_ID = "photo_id";
 
-    static public void create(SQLiteDatabase db) {
-        db.execSQL("create table " + POST_TABLE + " (" +
+    public static void create(SQLiteDatabase db) {
+        db.execSQL("create table " +
+                POST_TABLE + " (" +
                 POST_TABLE_ID + " TEXT PRIMARY KEY," +
-                POST_TABLE_TITLE + " TEXT," +
-                POST_TABLE_CONTENT + " TEXT," +
+                POST_TABLE_AUTHOR_ID + " TEXT," +
+                POST_TABLE_AUTHOR_NAME + " TEXT," +
                 POST_TABLE_LIKE_COUNTER + " TEXT," +
-                POST_TABLE_USER_ID + " TEXT," +
-                POST_PHOTO_ID + " TEXT," +
-                POST_TABLE_CHECKABLE + " BOOLEAN);");
+                POST_TABLE_PHOTO_ID + " TEXT);");
     }
 
     public static void drop(SQLiteDatabase db) {
-        db.execSQL("drop table " + POST_TABLE + ";");
+        db.execSQL("drop table " + POST_TABLE);
     }
 
-    public static List<Post> getAllPosts(SQLiteDatabase db) {
+    public static List<Object> getAllPosts(SQLiteDatabase db) {
         Cursor cursor = db.query(POST_TABLE, null, null , null, null, null, null);
-        List<Post> posts = new LinkedList<Post>();
+        List<Object> posts = new LinkedList<Object>();
 
         if (cursor.moveToFirst()) {
             int idIndex = cursor.getColumnIndex(POST_TABLE_ID);
-            int titleIndex = cursor.getColumnIndex(POST_TABLE_TITLE);
-            int contentIndex = cursor.getColumnIndex(POST_TABLE_CONTENT);
+            int authorIdIndex = cursor.getColumnIndex(POST_TABLE_AUTHOR_ID);
+            int authorNameIndex = cursor.getColumnIndex(POST_TABLE_AUTHOR_NAME);
             int likeCounterIndex = cursor.getColumnIndex(POST_TABLE_LIKE_COUNTER);
-            int userIdIndex = cursor.getColumnIndex(POST_TABLE_USER_ID);
-            int phoneIdIndex = cursor.getColumnIndex(POST_PHOTO_ID);
-            int checkableIndex = cursor.getColumnIndex(POST_TABLE_CHECKABLE);
+            int photoIdIndex = cursor.getColumnIndex(POST_TABLE_PHOTO_ID);
             do {
                 String id = cursor.getString(idIndex);
-                String photoId = cursor.getString(phoneIdIndex);
-                String userId = cursor.getString(userIdIndex);
-                String content = cursor.getString(contentIndex);
+                String authorId = cursor.getString(authorIdIndex);
+                String authorName = cursor.getString(authorNameIndex);
                 int likeCounter = cursor.getInt(likeCounterIndex);
-                String title = cursor.getString(titleIndex);
-                int checkable = cursor.getInt(checkableIndex); //0 false / 1 true
-                Post pst = new Post(id, photoId,userId, likeCounter);
+                String photoId = cursor.getString(photoIdIndex);
+                Post pst = new Post(id, authorId, authorName, photoId, likeCounter, null);
                 posts.add(pst);
             } while (cursor.moveToNext());
         }
+
         return posts;
     }
 
-    public static Post getPostById(SQLiteDatabase db, String id) {
+    public static Object getPostById(SQLiteDatabase db, String id) {
         String where = POST_TABLE_ID + " = ?";
         String[] args = {id};
         Cursor cursor = db.query(POST_TABLE, null, where, args, null, null, null);
         if (cursor.moveToFirst()) {
-            int idIndex = cursor.getColumnIndex(POST_TABLE_ID);
-            int titleIndex = cursor.getColumnIndex(POST_TABLE_TITLE);
-            int contentIndex = cursor.getColumnIndex(POST_TABLE_CONTENT);
+            //int idIndex = cursor.getColumnIndex(POST_TABLE_ID);
+            int authorIdIndex = cursor.getColumnIndex(POST_TABLE_AUTHOR_ID);
+            int authorNameIndex = cursor.getColumnIndex(POST_TABLE_AUTHOR_NAME);
             int likeCounterIndex = cursor.getColumnIndex(POST_TABLE_LIKE_COUNTER);
-            int userIdIndex = cursor.getColumnIndex(POST_TABLE_USER_ID);
-            int phoneIdIndex = cursor.getColumnIndex(POST_PHOTO_ID);
-            int checkableIndex = cursor.getColumnIndex(POST_TABLE_CHECKABLE);
-            String _id = cursor.getString(idIndex);
-            String photoId = cursor.getString(phoneIdIndex);
-            String userId = cursor.getString(userIdIndex);
-            String content = cursor.getString(contentIndex);
+            int photoIdIndex = cursor.getColumnIndex(POST_TABLE_PHOTO_ID);
+            String authorId = cursor.getString(authorIdIndex);
+            String authorName = cursor.getString(authorNameIndex);
             int likeCounter = cursor.getInt(likeCounterIndex);
-            String title = cursor.getString(titleIndex);
-            int checkable = cursor.getInt(checkableIndex); //0 false / 1 true
-            Post pst = new Post(_id, photoId, userId, likeCounter);
+            String photoId = cursor.getString(photoIdIndex);
+            Post pst = new Post(id, authorId, authorName, photoId, likeCounter, null);
             return pst;
         }
         return null;
     }
 
-    public static void add(SQLiteDatabase db, Post pst) {
-        /*ContentValues values = new ContentValues();
+    public static void add(SQLiteDatabase db, Object model) {
+        // Cast the model to post
+        Post pst = (Post)model;
+
+        ContentValues values = new ContentValues();
         values.put(POST_TABLE_ID, pst.getId());
-        values.put(POST_TABLE_TITLE, pst.getTitle());
-        values.put(POST_TABLE_CONTENT, pst.getContent());
+        values.put(POST_TABLE_AUTHOR_ID, pst.getAuthorId());
+        values.put(POST_TABLE_AUTHOR_NAME, pst.getAuthorName());
         values.put(POST_TABLE_LIKE_COUNTER, pst.getLikeCounter());
-        values.put(POST_TABLE_USER_ID, pst.getAuthorId());
-        values.put(POST_PHOTO_ID, pst.getPhotoId());
-        if (pst.isChecked()) {
-            values.put(POST_TABLE_CHECKABLE, 1);
-        } else {
-            values.put(POST_TABLE_CHECKABLE, 0);
-        }
-        db.insertWithOnConflict(POST_TABLE, POST_TABLE_ID, values, SQLiteDatabase.CONFLICT_REPLACE);*/
+        values.put(POST_TABLE_PHOTO_ID, pst.getPhotoId());
+        db.insertWithOnConflict(POST_TABLE, POST_TABLE_ID, values, SQLiteDatabase.CONFLICT_REPLACE);
+    }
+
+    public static void update(SQLiteDatabase db, Object model) {
+        // Cast the model to post
+        Post pst = (Post)model;
+
+        ContentValues values = new ContentValues();
+        //values.put(COMMENT_TABLE_ID, pst.getId());
+        values.put(POST_TABLE_AUTHOR_ID, pst.getAuthorId());
+        values.put(POST_TABLE_AUTHOR_NAME, pst.getAuthorName());
+        values.put(POST_TABLE_LIKE_COUNTER, pst.getLikeCounter());
+        values.put(POST_TABLE_PHOTO_ID, pst.getPhotoId());
+        db.update(POST_TABLE, values, POST_TABLE_ID + " = ?", new String[]{ pst.getId() });
+    }
+
+    public static void delete(SQLiteDatabase db, Object model) {
+        // Cast the model to post
+        Post pst = (Post)model;
+
+        db.delete(POST_TABLE, POST_TABLE_ID + " = ?", new String[]{ pst.getId() });
     }
 
     public static String getLastUpdateDate(SQLiteDatabase db){

@@ -69,4 +69,19 @@ public class ModelCloudinary {
         return photo;
     }
 
+    public void destoryImage(final String photoId) {
+        Thread t = new Thread(new Runnable() {
+            @Override
+            public void run() {
+                try {
+                    String name = photoId.substring(0,photoId.lastIndexOf("."));
+                    Map res = cloudinary.uploader().destroy(name , ObjectUtils.emptyMap());
+                    Log.d("TAG","destroy image " + name);
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
+            }
+        });
+        t.start();
+    }
 }

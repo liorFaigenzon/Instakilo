@@ -8,5 +8,5 @@ public interface IModelFirebase {
     void add(Object model, Model.AddListener listener);
     void update(Object model, Model.UpdateListener listener);
     void delete(Object model, Model.DeleteListener listener);
-    void attachCacheListener();
+    void attachCacheListener(Model.AttachCacheListener listner);
 }

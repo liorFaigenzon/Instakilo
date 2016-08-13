@@ -211,7 +211,7 @@ public class CommentFirebase implements IModelFirebase {
     }
 
     @Override
-    public void attachCacheListener() {
+    public void attachCacheListener(Model.AttachCacheListener listener) {
 
         ModelFirebase.getDatabase().child("comments").addChildEventListener(new ChildEventListener() {
 
