@@ -4,9 +4,14 @@ import android.animation.Animator;
 import android.animation.AnimatorListenerAdapter;
 import android.annotation.TargetApi;
 import android.content.Intent;
+import android.content.pm.PackageInfo;
+import android.content.pm.PackageManager;
+import android.content.pm.Signature;
 import android.os.Build;
 import android.os.Bundle;
+import android.support.annotation.NonNull;
 import android.support.v7.app.AppCompatActivity;
+import android.util.Base64;
 import android.util.Log;
 import android.view.View;
 import android.widget.Toast;
@@ -17,18 +22,37 @@ import com.facebook.FacebookCallback;
 import com.facebook.FacebookException;
 import com.facebook.login.LoginResult;
 import com.facebook.login.widget.LoginButton;
+import com.google.android.gms.auth.api.Auth;
+import com.google.android.gms.auth.api.signin.GoogleSignInAccount;
+import com.google.android.gms.auth.api.signin.GoogleSignInOptions;
+import com.google.android.gms.auth.api.signin.GoogleSignInResult;
+import com.google.android.gms.common.ConnectionResult;
+import com.google.android.gms.common.Scopes;
+import com.google.android.gms.common.SignInButton;
+import com.google.android.gms.common.api.GoogleApiClient;
+import com.google.android.gms.common.api.Scope;
+import com.google.android.gms.tasks.OnCompleteListener;
+import com.google.android.gms.tasks.Task;
+import com.google.firebase.auth.AuthCredential;
+import com.google.firebase.auth.AuthResult;
 import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.auth.GoogleAuthProvider;
+
+import java.security.MessageDigest;
+import java.security.NoSuchAlgorithmException;
 
 /**
  * A login screen that offers login via email/password.
  */
-public class LoginActivity extends AppCompatActivity {
+public class LoginActivity extends AppCompatActivity implements GoogleApiClient.OnConnectionFailedListener {
 
+    public static final int SIGN_IN_GOOGLE = -1;
 
     private CallbackManager callbackManager;
     private View progressView;
     private View loginFormView;
     private LoginButton loginButton;
+    private GoogleApiClient googleApiClient;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -48,6 +72,39 @@ public class LoginActivity extends AppCompatActivity {
             startActivity(intent);
             finish();
         } else {
+
+            // Configure Google Sign In
+            GoogleSignInOptions gso = new GoogleSignInOptions.Builder(GoogleSignInOptions.DEFAULT_SIGN_IN)
+                    .requestIdToken(getString(R.string.google_client_id))
+                    .requestScopes(new Scope(Scopes.PLUS_LOGIN))
+                    .requestEmail()
+                    .build();
+
+            // Build a GoogleApiClient with access to the Google Sign-In API and the
+            // options specified by gso.
+            googleApiClient = new GoogleApiClient.Builder(this)
+                    .enableAutoManage(this /* FragmentActivity */, this /* OnConnectionFailedListener */)
+                    .addApi(Auth.GOOGLE_SIGN_IN_API, gso)
+                    .build();
+
+            // Customize sign-in button. The sign-in button can be displayed in
+            // multiple sizes and color schemes. It can also be contextually
+            // rendered based on the requested scopes. For example. a red button may
+            // be displayed when Google+ scopes are requested, but a white button
+            // may be displayed when only basic profile is requested. Try adding the
+            // Scopes.PLUS_LOGIN scope to the GoogleSignInOptions to see the
+            // difference.
+            SignInButton signInButton = (SignInButton) findViewById(R.id.button_google_login);
+            signInButton.setSize(SignInButton.SIZE_WIDE);
+            signInButton.setScopes(gso.getScopeArray());
+
+            findViewById(R.id.button_google_login).setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    Intent signInIntent = Auth.GoogleSignInApi.getSignInIntent(googleApiClient);
+                    startActivityForResult(signInIntent, SIGN_IN_GOOGLE);
+                }
+            });
 
             // Initialize Facebook Login button
             callbackManager = CallbackManager.Factory.create();
@@ -138,7 +195,55 @@ public class LoginActivity extends AppCompatActivity {
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
-        callbackManager.onActivityResult(requestCode, resultCode, data);
+        Log.d("Nir", "ReqCode: " + requestCode + ", ResCode: " + resultCode + ", FaceCode: " + loginButton.getRequestCode());
+        if (requestCode == loginButton.getRequestCode()) {
+            callbackManager.onActivityResult(requestCode, resultCode, data);
+        } else if (resultCode == RESULT_OK && requestCode == SIGN_IN_GOOGLE) {
+            GoogleSignInResult result = Auth.GoogleSignInApi.getSignInResultFromIntent(data);
+            handleGoogleSignInResult(result);
+        }
+    }
+
+    private void handleGoogleSignInResult(GoogleSignInResult result) {
+        Log.d("Nir", "handleGoogleSignInResult:" + result.isSuccess());
+
+        if (result.isSuccess()) {
+
+            // Signed in successfully, show authenticated UI.
+            GoogleSignInAccount account = result.getSignInAccount();
+            firebaseAuthWithGoogle(account);
+        }
+    }
+
+    private void firebaseAuthWithGoogle(GoogleSignInAccount account) {
+        Log.d("Nir", "firebaseAuthWithGoogle: " + account.getId());
+
+        AuthCredential credential = GoogleAuthProvider.getCredential(account.getIdToken(), null);
+        FirebaseAuth.getInstance().signInWithCredential(credential)
+                .addOnCompleteListener(this, new OnCompleteListener<AuthResult>() {
+                    @Override
+                    public void onComplete(@NonNull Task<AuthResult> task) {
+                        Log.d("Nir", "signInWithCredential:onComplete: " + task.isSuccessful());
+
+                        // Start the main activity
+                        Intent intent = new Intent(LoginActivity.this, MainActivity.class);
+                        startActivity(intent);
+                        finish();
+
+                        // If sign in fails, display a message to the user. If sign in succeeds
+                        // the auth state listener will be notified and logic to handle the
+                        // signed in user can be handled in the listener.
+                        if (!task.isSuccessful()) {
+                            Log.w("Nir", "signInWithCredential", task.getException());
+                            Toast.makeText(LoginActivity.this, "Authentication failed.", Toast.LENGTH_SHORT).show();
+                        }
+                    }
+                });
+    }
+
+    @Override
+    public void onConnectionFailed(@NonNull ConnectionResult connectionResult) {
+        Log.d("Nir", "Google:onConnectionFailed");
     }
 
     /**

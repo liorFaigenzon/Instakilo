@@ -20,4 +20,7 @@
     <!-- Facebook -->
     <string name="facebook_app_id">279817729056117</string>
     <string name="facebook_application_id">279817729056117</string>
+
+    <!-- Google -->
+    <string name="google_client_id">DF:86:7B:7A:16:78:C7:54:6D:FD:B2:BC:4B:09:EF:28:06:80:E2:23</string>
 </resources>

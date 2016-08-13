@@ -23,6 +23,13 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent">
 
+        <com.google.android.gms.common.SignInButton
+            android:id="@+id/button_google_login"
+            android:layout_width="309dp"
+            android:layout_height="56dp"
+            android:layout_above="@+id/button_facebook_login"
+            android:layout_centerHorizontal="true" />
+
         <com.facebook.login.widget.LoginButton
             android:id="@+id/button_facebook_login"
             android:layout_width="300dp"
