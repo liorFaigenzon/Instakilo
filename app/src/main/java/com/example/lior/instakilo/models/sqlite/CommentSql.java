@@ -22,17 +22,18 @@ public class CommentSql {
     final static String COMMENT_TABLE_POST_ID = "likeCounter";
     final static String COMMENT_TABLE_CONTENT = "photo_id";
 
-    static public void create(SQLiteDatabase db) {
-        db.execSQL("create table " + COMMENT_TABLE + " (" +
+    public static void create(SQLiteDatabase db) {
+        db.execSQL("create table " +
+                COMMENT_TABLE + " (" +
                 COMMENT_TABLE_ID + " TEXT PRIMARY KEY," +
                 COMMENT_TABLE_AUTHOR_ID + " TEXT," +
                 COMMENT_TABLE_AUTHOR_NAME + " TEXT," +
                 COMMENT_TABLE_POST_ID + " TEXT," +
-                COMMENT_TABLE_CONTENT + " TEXT");
+                COMMENT_TABLE_CONTENT + " TEXT);");
     }
 
     public static void drop(SQLiteDatabase db) {
-        db.execSQL("drop table " + COMMENT_TABLE + ";");
+        db.execSQL("drop table " + COMMENT_TABLE);
     }
 
     public static List<Object> getAllComments(SQLiteDatabase db) {

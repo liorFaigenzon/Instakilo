@@ -17,17 +17,18 @@ public class PostSql {
     final static String POST_TABLE_LIKE_COUNTER = "likeCounter";
     final static String POST_TABLE_PHOTO_ID = "photo_id";
 
-    static public void create(SQLiteDatabase db) {
-        db.execSQL("create table " + POST_TABLE + " (" +
+    public static void create(SQLiteDatabase db) {
+        db.execSQL("create table " +
+                POST_TABLE + " (" +
                 POST_TABLE_ID + " TEXT PRIMARY KEY," +
                 POST_TABLE_AUTHOR_ID + " TEXT," +
                 POST_TABLE_AUTHOR_NAME + " TEXT," +
                 POST_TABLE_LIKE_COUNTER + " TEXT," +
-                POST_TABLE_PHOTO_ID + " TEXT");
+                POST_TABLE_PHOTO_ID + " TEXT);");
     }
 
     public static void drop(SQLiteDatabase db) {
-        db.execSQL("drop table " + POST_TABLE + ";");
+        db.execSQL("drop table " + POST_TABLE);
     }
 
     public static List<Object> getAllPosts(SQLiteDatabase db) {

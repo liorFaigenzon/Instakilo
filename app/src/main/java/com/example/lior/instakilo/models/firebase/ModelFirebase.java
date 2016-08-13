@@ -128,15 +128,15 @@ public class ModelFirebase {
         }
     }
 
-    public void attachCacheListener(Model.ModelClass model) {
+    public void attachCacheListener(Model.ModelClass model, Model.AttachCacheListener listener) {
 
         // Check the type of the model to attache to it the listener
         switch (model){
             case POST:
-                postFirebase.attachCacheListener();
+                postFirebase.attachCacheListener(listener);
                 break;
             case COMMENT:
-                commentFirebase.attachCacheListener();
+                commentFirebase.attachCacheListener(listener);
                 break;
         }
     }

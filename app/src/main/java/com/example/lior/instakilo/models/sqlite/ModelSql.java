@@ -17,7 +17,7 @@ import com.example.lior.instakilo.models.Post;
  * Created by eliav.menachi on 13/05/2015.
  */
 public class ModelSql {
-    final static int VERSION = 7;
+    final static int VERSION = 8;
 
     Helper sqlDb;
 
@@ -50,19 +50,41 @@ public class ModelSql {
     public void add(Object model) {
         SQLiteDatabase db = getWritableDB();
 
-        if (model instanceof  Post)
+        if (model instanceof  Post) {
             PostSql.add(db, model);
-        if (model instanceof  Comment)
+            PostSql.setLastUpdateDate(db, ((Post)model).getLastUpdated());
+        }
+        if (model instanceof  Comment) {
             CommentSql.add(db, model);
+            CommentSql.setLastUpdateDate(db, ((Comment)model).getLastUpdated());
+        }
+    }
+
+    public void update(Object model) {
+        SQLiteDatabase db = getWritableDB();
+
+        if (model instanceof  Post) {
+            PostSql.update(db, model);
+            PostSql.setLastUpdateDate(db, ((Post)model).getLastUpdated());
+        }
+        if (model instanceof  Comment) {
+            CommentSql.update(db, model);
+            CommentSql.setLastUpdateDate(db, ((Comment)model).getLastUpdated());
+
+        }
     }
 
     public void delete(Object model) {
         SQLiteDatabase db = getWritableDB();
 
-        if (model instanceof  Post)
+        if (model instanceof  Post) {
             PostSql.delete(db, model);
-        if (model instanceof  Comment)
+            PostSql.setLastUpdateDate(db, ((Post)model).getLastUpdated());
+        }
+        if (model instanceof  Comment) {
             CommentSql.delete(db, model);
+            CommentSql.setLastUpdateDate(db, ((Comment)model).getLastUpdated());
+        }
     }
 
     public String getLastUpdateData(Model.ModelClass model)
@@ -100,12 +122,14 @@ public class ModelSql {
         @Override
         public void onCreate(SQLiteDatabase db) {
             PostSql.create(db);
+            CommentSql.create(db);
             LastUpdateSql.create(db);
         }
 
         @Override
         public void onUpgrade(SQLiteDatabase db, int oldVersion, int newVersion) {
             PostSql.drop(db);
+            CommentSql.drop(db);
             LastUpdateSql.drop(db);
             onCreate(db);
         }

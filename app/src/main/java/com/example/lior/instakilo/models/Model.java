@@ -149,8 +149,33 @@ public class Model {
         modelFirebase.delete(model, listener);
     }
 
+    public interface AttachCacheListener
+    {
+        void onChildAdded(Object model);
+        void onChildRemoved(Object model);
+        void onChildChanged(Object model);
+    }
+
     public void attachCacheListener(ModelClass model) {
-        modelFirebase.attachCacheListener(model);
+        modelFirebase.attachCacheListener(model, new AttachCacheListener() {
+            @Override
+            public void onChildAdded(Object model) {
+                // Add object to local db
+                modelSql.add(model);
+            }
+
+            @Override
+            public void onChildRemoved(Object model) {
+                // Remove object from local db
+                modelSql.delete(model);
+            }
+
+            @Override
+            public void onChildChanged(Object model) {
+                // Update object in local db
+                modelSql.update(model);
+            }
+        });
     }
 
     public void savePhoto(final Bitmap photoBitmap, final String photoName) {
@@ -188,12 +213,12 @@ public class Model {
         task.execute();
     }
 
-    public void deleteImage(final String imageName) {
-        deleteImageFile(imageName);
+    public void deletePhoto(final String photoName) {
+        deleteImageFile(photoName);
         Thread d = new Thread(new Runnable() {  // asynchronously save image to parse
             @Override
             public void run() {
-                modelCloudinary.destoryImage(imageName);
+                modelCloudinary.destoryImage(photoName);
             }
         });
         d.start();
