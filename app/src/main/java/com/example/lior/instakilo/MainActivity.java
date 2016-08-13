@@ -2,6 +2,7 @@ package com.example.lior.instakilo;
 
 
 import android.content.Intent;
+import android.graphics.AvoidXfermode;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.net.Uri;
@@ -152,7 +153,7 @@ public class MainActivity extends FragmentActivity implements UserMainFragment.O
     public void saveCamera() {
         onCapturePhotoResult(new Intent());//dispatchCameraIntent();
     }
-
+    
     @Override
     public void saveGallary() {
         dispatchGalleryIntent();

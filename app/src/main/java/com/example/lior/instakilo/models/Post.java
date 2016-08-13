@@ -82,12 +82,16 @@ public class Post implements Parcelable {
         return likeCounter;
     }
 
-    public void incLikeCounter() {
+    public void incLikeCounter(String userId) {
+        this.likeUsers.put(userId, true);
         this.likeCounter++;
     }
 
-    public void decLikeCounter() {
-        this.likeCounter--;
+    public void decLikeCounter(String userId) {
+        if (this.likeUsers.containsKey(userId)) {
+            this.likeUsers.remove(userId);
+            this.likeCounter--;
+        }
     }
 
     public String getLastUpdated() {
@@ -124,7 +128,7 @@ public class Post implements Parcelable {
             result.put("lastUpdated", lastUpdated);
         }
 
-        if (likeUsers != null || likeUsers.size() != 0) {
+        if (likeUsers != null/* || likeUsers.size() != 0*/) {
             result.put("likeUsers", likeUsers);
         }
 

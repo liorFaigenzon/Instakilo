@@ -175,22 +175,34 @@ public class PostFirebase implements IModelFirebase {
     }
 
     @Override
-    public void attachCacheListener() {
+    public void attachCacheListener(final Model.AttachCacheListener listener) {
         ModelFirebase.getDatabase().child("posts").addChildEventListener(new ChildEventListener() {
 
             @Override
             public void onChildAdded(DataSnapshot dataSnapshot, String previousChildName) {
                 Log.d("Nir", "Post:onChildAdded:" + dataSnapshot.getKey());
+
+                // Retrieve the post
+                Post post = dataSnapshot.getValue(Post.class);
+                listener.onChildAdded(post);
             }
 
             @Override
             public void onChildChanged(DataSnapshot dataSnapshot, String previousChildName) {
                 Log.d("Nir", "Post:onChildChanged:" + dataSnapshot.getKey());
+
+                // Retrieve the post
+                Post post = dataSnapshot.getValue(Post.class);
+                listener.onChildChanged(post);
             }
 
             @Override
             public void onChildRemoved(DataSnapshot dataSnapshot) {
                 Log.d("Nir", "Post:onChildRemoved:" + dataSnapshot.getKey());
+
+                // Retrieve the post
+                Post post = dataSnapshot.getValue(Post.class);
+                listener.onChildRemoved(post);
             }
 
             @Override

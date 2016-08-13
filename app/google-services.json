@@ -15,6 +15,14 @@
       },
       "oauth_client": [
         {
+          "client_id": "755316057746-2cvmvm8jl9trkn5rvn8dog9ubvjt39s3.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.example.lior.instakilo",
+            "certificate_hash": "DF867B7A1678C7546DFDB2BC4B09EF280680E223"
+          }
+        },
+        {
           "client_id": "755316057746-e8gtn507jur6ido9628pqdee1rb9mt0j.apps.googleusercontent.com",
           "client_type": 3
         }
