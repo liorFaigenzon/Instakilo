@@ -20,4 +20,12 @@
     <!-- Facebook -->
     <string name="facebook_app_id">1291911370822068</string>
     <string name="facebook_application_id">1291911370822068</string>
+
+
+    <string name="dialog_new_record_title">New</string>
+    <string name="dialog_confirm_button">Confirm</string>
+    <string name="dialog_new_record_hint">Enter text here..</string>
+    <string name="dialog_empty_string"> </string>
+    <string name="dialog_cancel_button">Cancel</string>
+
 </resources>

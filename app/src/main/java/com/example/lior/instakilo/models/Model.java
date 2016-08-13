@@ -25,6 +25,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
 import java.util.List;
+import java.util.concurrent.ExecutionException;
 
 public class Model {
 
@@ -73,12 +74,12 @@ public class Model {
 
     public void getAll(final ModelClass model, final GetManyListener listener){
 
-        final String lastUpdateDate = modelSql.getLastUpdateData(model);
+        final String lastUpdateDate = "2016-06-12 15:25:";//modelSql.getLastUpdateData(model);
 
         modelFirebase.getAll(model, lastUpdateDate, new GetManyListener() {
             @Override
             public void onResult(List<Object> objects) {
-                if(objects != null && objects.size() > 0) {
+                /*if(objects != null && objects.size() > 0) {
                     //update the local DB
                     String reacentUpdate = lastUpdateDate;
 
@@ -105,8 +106,8 @@ public class Model {
                 }
 
                 //return the complete objects list to the caller
-                List<Object> res = modelSql.getAll(model);
-                listener.onResult(res);
+                List<Object> res = modelSql.getAll(model);*/
+                listener.onResult(objects);
             }
 
             @Override
@@ -168,7 +169,7 @@ public class Model {
         void onResult(Bitmap photo);
     }
 
-    public void loadPhoto(final String photoId, final LoadPhotoListener listener) {
+    public void loadPhoto(final String photoId, final LoadPhotoListener listener) throws ExecutionException, InterruptedException {
         AsyncTask<String,String,Bitmap> task = new AsyncTask<String, String, Bitmap >() {
             @Override
             protected Bitmap doInBackground(String... params) {
@@ -239,7 +240,15 @@ public class Model {
 
             //File dir = context.getExternalFilesDir(null);
             InputStream inputStream = new FileInputStream(imageFile);
-            bitmap = BitmapFactory.decodeStream(inputStream);
+
+            /**
+             * This code section is for utilizing the size of bitmaps on the server side stroage
+             * It is needed because large files will throw OutOfMemoryException error on calling this code
+             */
+            BitmapFactory.Options sizeOptions = new BitmapFactory.Options();
+            sizeOptions.inSampleSize = 8;
+
+            bitmap = BitmapFactory.decodeStream(inputStream, null, sizeOptions);
             Log.d("tag","got image from cache: " + imageFileName);
 
         } catch (FileNotFoundException e) {

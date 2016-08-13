@@ -7,7 +7,6 @@
         android:layout_margin="1dp"
         android:id="@+id/topImg"
         android:layout_width="fill_parent"
-        android:layout_height="115dp"
-        android:background="@drawable/login"/>
+        android:layout_height="115dp"/>
 
 </RelativeLayout>

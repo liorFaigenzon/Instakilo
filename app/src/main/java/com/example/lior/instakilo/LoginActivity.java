@@ -44,7 +44,7 @@ public class LoginActivity extends AppCompatActivity {
         if (FirebaseAuth.getInstance().getCurrentUser() == null) {
 
             // Start the main activity
-            Intent intent = new Intent(LoginActivity.this, Main2Activity.class);
+            Intent intent = new Intent(LoginActivity.this, MainActivity.class);
             startActivity(intent);
             finish();
         } else {

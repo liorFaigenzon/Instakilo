@@ -7,19 +7,34 @@ import android.view.ViewGroup;
 import android.widget.TextView;
 
 import com.example.lior.instakilo.CommentFragment.OnListFragmentInteractionListener;
+import com.example.lior.instakilo.dummy.CommentContent;
 import com.example.lior.instakilo.models.Comment;
+import com.example.lior.instakilo.models.Post;
+import com.example.lior.instakilo.models.callbacks.OnItemsLoadedCallback;
 
 import java.util.List;
 
 
 public class MyCommentRecyclerViewAdapter extends RecyclerView.Adapter<MyCommentRecyclerViewAdapter.ViewHolder> {
 
-    private final List<Comment> mValues;
+    private  List<Comment> mValues;
     private final OnListFragmentInteractionListener mListener;
 
     public MyCommentRecyclerViewAdapter(List<Comment> items, OnListFragmentInteractionListener listener) {
         mValues = items;
         mListener = listener;
+        CommentContent.getInstance().setCallback(new OnItemsLoadedCallback() {
+            @Override
+            public void onLoadedPost(List<Post> items) {
+
+            }
+
+            @Override
+            public void onLoadedComment(List<Comment> items) {
+                mValues = items;
+                notifyDataSetChanged();
+            }
+        });
     }
 
     @Override

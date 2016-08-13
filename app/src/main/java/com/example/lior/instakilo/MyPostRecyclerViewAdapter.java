@@ -1,5 +1,7 @@
 package com.example.lior.instakilo;
 
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -8,9 +10,14 @@ import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.example.lior.instakilo.PostListFragment.OnListFragmentInteractionListener;
+import com.example.lior.instakilo.dummy.PostContent;
+import com.example.lior.instakilo.models.Comment;
+import com.example.lior.instakilo.models.Model;
 import com.example.lior.instakilo.models.Post;
+import com.example.lior.instakilo.models.callbacks.OnItemsLoadedCallback;
 
 import java.util.List;
+import java.util.concurrent.ExecutionException;
 
 //
 
@@ -20,7 +27,7 @@ public class MyPostRecyclerViewAdapter extends RecyclerView.Adapter<MyPostRecycl
     private static final int TYPE_DETAIL = 1;
     private static final int TYPE_MATRIX = 2;
     public  int mViewType =  1;
-    private final List<Post> mValues;
+    private List<Post> mValues;
     //private final List<DummyItem> mValues;
     private final OnListFragmentInteractionListener mListener;
     private int mResource;
@@ -29,6 +36,18 @@ public class MyPostRecyclerViewAdapter extends RecyclerView.Adapter<MyPostRecycl
         mValues = items;
         mListener = listener;
         mResource = R.layout.fragment_post_row;
+        PostContent.getInstance().setCallback(new OnItemsLoadedCallback() {
+            @Override
+            public void onLoadedPost(List<Post> items) {
+                mValues = items;
+                notifyDataSetChanged();
+            }
+
+            @Override
+            public void onLoadedComment(List<Comment> items) {
+
+            }
+        });
     }
 
     @Override
@@ -49,6 +68,7 @@ public class MyPostRecyclerViewAdapter extends RecyclerView.Adapter<MyPostRecycl
 
         return new ViewMatrixHolder(view);
     }
+
 
     public void changeResource(int resource) {
         this.mResource = resource;
@@ -72,30 +92,60 @@ public class MyPostRecyclerViewAdapter extends RecyclerView.Adapter<MyPostRecycl
 
             case TYPE_DETAIL:
 
-                ViewDetailHolder ViewDetailHolder = (ViewDetailHolder)holder;
+                final ViewDetailHolder viewDetailHolder = (ViewDetailHolder)holder;
+
+
+
+                try {
+                    Model.getInstance().loadPhoto(holder.mItem.getPhotoId(), new Model.LoadPhotoListener() {
+                        @Override
+                        public void onResult(Bitmap photo) {
+                            holder.mtopImg.setImageBitmap(photo);
+                        }
+                    });
+                } catch (ExecutionException e) {
+                    e.printStackTrace();
+                } catch (InterruptedException e) {
+                    e.printStackTrace();
+                }
                 // check to see if each individual textview is null.
                 // if not, assign some text!
-                if (ViewDetailHolder.likes != null) {
-                    ViewDetailHolder.likes.setText("Likes: ");
+                if (viewDetailHolder.mAuthorName != null) {
+                    viewDetailHolder.mAuthorName.setText(holder.mItem.getAuthorName());
                 }
-                if (ViewDetailHolder.mlikesTxt != null) {
-                    ViewDetailHolder.mlikesTxt.setText(Integer.toString(holder.mItem.getLikeCounter()));
+                if (viewDetailHolder.likes != null) {
+                    viewDetailHolder.likes.setText("Likes: ");
+                }
+                if (viewDetailHolder.mlikesTxt != null) {
+                    viewDetailHolder.mlikesTxt.setText(Integer.toString(holder.mItem.getLikeCounter()));
                 }
 
 
-                if (ViewDetailHolder.likePic != null) {
-                    ViewDetailHolder.likePic.setTag(position);
-                    ViewDetailHolder.likePic.setOnClickListener(mOnLikeClickListener);
+                if (viewDetailHolder.likePic != null) {
+                    viewDetailHolder.likePic.setTag(position);
+                    viewDetailHolder.likePic.setOnClickListener(mOnLikeClickListener);
                  }
 
 
-                if (ViewDetailHolder.commentPic != null) {
-                    ViewDetailHolder.commentPic.setTag(position);
-                    ViewDetailHolder.commentPic.setOnClickListener(mOnCommentClickListener);
-                 }
+
                 break;
             case TYPE_MATRIX:
 
+                try {
+                    BitmapFactory.Options sg;
+                    Model.getInstance().loadPhoto(holder.mItem.getPhotoId(), new Model.LoadPhotoListener() {
+                        @Override
+                        public void onResult(Bitmap photo) {
+                            holder.mtopImg.setImageBitmap(photo);
+
+
+                        }
+                    });
+                } catch (ExecutionException e) {
+                    e.printStackTrace();
+                } catch (InterruptedException e) {
+                    e.printStackTrace();
+                }
              break;
         }
 
@@ -145,15 +195,7 @@ public class MyPostRecyclerViewAdapter extends RecyclerView.Adapter<MyPostRecycl
 
     };
 
-    private View.OnClickListener mOnCommentClickListener = new View.OnClickListener() {
-        @Override
-        public void onClick(View v) {
-            int position = (Integer) v.getTag();
-            // Access the row position here to get the correct data item
-            //Post pst = objects.get(position);
 
-        }
-    };
 
     @Override
     public int getItemCount() {
@@ -164,11 +206,12 @@ public class MyPostRecyclerViewAdapter extends RecyclerView.Adapter<MyPostRecycl
     public class ViewHolder extends RecyclerView.ViewHolder {
         public final View mView;
         public Post mItem;
-
+        public final ImageView mtopImg;
 
         public ViewHolder(View view) {
             super(view);
             mView = view;
+            mtopImg = (ImageView)  mView.findViewById(R.id.topImg);
         }
 
         @Override
@@ -185,7 +228,6 @@ public class MyPostRecyclerViewAdapter extends RecyclerView.Adapter<MyPostRecycl
         public final TextView likes;
         public final TextView mlikesTxt;
         public final ImageView likePic;
-        public final ImageView commentPic;
         public Post mItem;
 
 
@@ -194,10 +236,9 @@ public class MyPostRecyclerViewAdapter extends RecyclerView.Adapter<MyPostRecycl
             mView = view;
             mAuthorName = (TextView) mView.findViewById(R.id.authorName);
             likes = (TextView) mView.findViewById(R.id.likes);
+
             mlikesTxt = (TextView)  mView.findViewById(R.id.likesTxt);
             likePic = (ImageView)  mView.findViewById(R.id.likePic);
-            commentPic = (ImageView) mView.findViewById(R.id.commentPic);
-
         }
 
         @Override

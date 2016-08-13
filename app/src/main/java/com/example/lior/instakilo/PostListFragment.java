@@ -10,7 +10,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
-import com.example.lior.instakilo.dummy.DummyContent;
+import com.example.lior.instakilo.dummy.PostContent;
 import com.example.lior.instakilo.models.Post;
 
 /**
@@ -71,7 +71,7 @@ public class PostListFragment extends Fragment {
             mRecyclerView = (RecyclerView) view;
             mContext = context;
             populateRecyclerView(mRecyclerView, mContext);
-            mAdapter = new MyPostRecyclerViewAdapter(DummyContent.ITEMS, mListener);
+            mAdapter = new MyPostRecyclerViewAdapter(PostContent.ITEMS, mListener);
             mRecyclerView.setAdapter(mAdapter);
         }
         return view;
@@ -80,7 +80,7 @@ public class PostListFragment extends Fragment {
     public static void populateRecyclerView(RecyclerView recyclerView, Context context) {
 
         if(mAdapter == null) {
-            mAdapter = new MyPostRecyclerViewAdapter(DummyContent.ITEMS, mListener);
+            mAdapter = new MyPostRecyclerViewAdapter(PostContent.ITEMS, mListener);
         }
 
         if (mColumnCount <= 1) {

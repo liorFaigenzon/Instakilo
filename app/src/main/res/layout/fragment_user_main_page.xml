@@ -41,6 +41,7 @@
                 android:layout_height="wrap_content"
                 android:orientation="horizontal"
                 android:layout_weight="1">
+
                 <ImageView
                     android:id="@+id/listPic"
                     android:layout_width="50dp"
@@ -49,7 +50,8 @@
                     android:layout_marginStart="11dp"
                     android:layout_marginLeft="35dp"
                     android:layout_marginRight="35dp"
-                    android:layout_marginEnd="35dp" />
+                    android:layout_marginEnd="35dp"
+                    android:scaleType="fitXY"/>
 
                 <ImageView
                     android:id="@+id/matrixPic"
@@ -57,7 +59,9 @@
                     android:layout_height="50dp"
                     android:background="@drawable/black_matrix"
                     android:layout_marginRight="30dp"
-                    android:layout_marginEnd="30dp"/>
+                    android:layout_marginEnd="30dp"
+                    android:adjustViewBounds="true"
+                    android:scaleType="centerCrop"/>
 
                 <ImageView
                     android:id="@+id/gpsPic"

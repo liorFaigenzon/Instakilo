@@ -1,6 +1,7 @@
 package com.example.lior.instakilo;
 
 import android.content.Context;
+import android.graphics.Bitmap;
 import android.net.Uri;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
@@ -10,7 +11,10 @@ import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.TextView;
 
+import com.example.lior.instakilo.models.Model;
 import com.example.lior.instakilo.models.Post;
+
+import java.util.concurrent.ExecutionException;
 
 
 /**
@@ -76,10 +80,27 @@ public class PostDetailFragment extends Fragment {
         TextView mAuthorName = (TextView) mView.findViewById(R.id.authorName);
         TextView likes = (TextView) mView.findViewById(R.id.likes);
         TextView mlikesTxt = (TextView)  mView.findViewById(R.id.likesTxt);
+        final ImageView topImg = (ImageView)  mView.findViewById(R.id.topImg);
         ImageView likePic = (ImageView)  mView.findViewById(R.id.likePic);
-        ImageView commentPic = (ImageView) mView.findViewById(R.id.commentPic);
 
 
+        try {
+            Model.getInstance().loadPhoto(post.getPhotoId(), new Model.LoadPhotoListener() {
+                @Override
+                public void onResult(Bitmap photo) {
+                    topImg.setImageBitmap(photo);
+                }
+            });
+        } catch (ExecutionException e) {
+            e.printStackTrace();
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        }
+
+
+        if (mAuthorName != null) {
+            mAuthorName.setText(post.getAuthorName());
+        }
         if (likes != null) {
             likes.setText("Likes: ");
         }
@@ -93,11 +114,6 @@ public class PostDetailFragment extends Fragment {
             likePic.setOnClickListener(mOnLikeClickListener);
         }
 
-
-        if (commentPic != null) {
-            //commentPic.setTag(position);
-            commentPic.setOnClickListener(mOnCommentClickListener);
-        }
         
         return mView;
     }
@@ -128,17 +144,6 @@ public class PostDetailFragment extends Fragment {
 
 
     };
-
-    private View.OnClickListener mOnCommentClickListener = new View.OnClickListener() {
-        @Override
-        public void onClick(View v) {
-            int position = (Integer) v.getTag();
-            // Access the row position here to get the correct data item
-            //Post pst = objects.get(position);
-
-        }
-    };
-
 
     // TODO: Rename method, update argument and hook method into UI event
     public void onButtonPressed(Uri uri) {

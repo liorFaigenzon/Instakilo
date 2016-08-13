@@ -1,11 +1,11 @@
 package com.example.lior.instakilo.dummy;
 
 import com.example.lior.instakilo.models.Comment;
+import com.example.lior.instakilo.models.Model;
+import com.example.lior.instakilo.models.callbacks.OnItemsLoadedCallback;
 
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 
 /**
  * Helper class for providing sample content for user interfaces created by
@@ -15,32 +15,45 @@ import java.util.Map;
  */
 public class CommentContent {
 
-    /**
-     * An array of sample (dummy) items.
-     */
+
     public static final List<Comment> ITEMS = new ArrayList<Comment>();
 
-    /**
-     * A map of sample (dummy) items, by ID.
-     */
-    public static final Map<String, Comment> ITEM_MAP = new HashMap<String, Comment>();
+    private static CommentContent INSTANCE;
 
-    private static final int COUNT = 9;
+    private static OnItemsLoadedCallback mCallback;
+
+    public static CommentContent getInstance() {
+        if(INSTANCE == null) {
+            INSTANCE = new CommentContent();
+        }
+        return INSTANCE;
+    }
+
+    public static void setCallback(OnItemsLoadedCallback callback) {
+        mCallback = callback;
+    }
+
 
     static {
-        // Add some sample items.
-        for (int i = 1; i <= COUNT; i++) {
-            addItem(createDummyItem(i));
-        }
-    }
+        Model.getInstance().getAll(Model.ModelClass.COMMENT, new Model.GetManyListener() {
+            @Override
+            public void onResult(List<Object> objects) {
 
-    private static void addItem(Comment Comment) {
-        ITEMS.add(Comment);
-        ITEM_MAP.put(Comment.getId(), Comment);
-    }
+                // Add some sample items.
+                for (Object comment:  objects) {
+                    ITEMS.add((Comment) comment);
+                }
 
-    private static Comment createDummyItem(int position) {
-        return new Comment("me","me","1","1");
+                if(mCallback !=null) {
+                    mCallback.onLoadedComment(ITEMS);
+                }
+            }
+
+            @Override
+            public void onCancel() {
+
+            }
+        });
     }
 
 }
