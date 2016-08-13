@@ -16,7 +16,7 @@ import java.util.List;
 public class CommentContent {
 
 
-    public static final List<Comment> ITEMS = new ArrayList<Comment>();
+    public static List<Comment> ITEMS = new ArrayList<Comment>();
 
     private static CommentContent INSTANCE;
 
@@ -38,9 +38,10 @@ public class CommentContent {
         mCallback.onLoadedComment(ITEMS);
     }
 
-    static {
-
-        Model.getInstance().getAll(Model.ModelClass.COMMENT, new Model.GetManyListener() {
+    public  static void getCommentByPostId(String postId)
+    {
+        ITEMS = new ArrayList<>();
+        Model.getInstance().getCommentsByPostId(postId, new Model.GetManyListener() {
             @Override
             public void onResult(List<Object> objects) {
 
@@ -59,8 +60,6 @@ public class CommentContent {
 
             }
         });
-
-
     }
 
 }

@@ -32,6 +32,12 @@ public class Comment {
         this.id = id;
     }
 
+    public Comment(String id, String authorId, String authorName, String postId, String content, String creationDate) {
+        this(authorId, authorName, postId, content);
+        this.id = id;
+        this.lastUpdated = creationDate;
+    }
+
     public String getId() {
         return id;
     }

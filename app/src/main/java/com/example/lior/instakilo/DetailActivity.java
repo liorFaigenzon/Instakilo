@@ -21,6 +21,8 @@ import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 
+import java.util.ArrayList;
+
 public class DetailActivity extends AppCompatActivity implements PostDetailFragment.OnFragmentInteractionListener,
                                                                  CommentFragment.OnListFragmentInteractionListener, View.OnClickListener{
 
@@ -39,6 +41,7 @@ public class DetailActivity extends AppCompatActivity implements PostDetailFragm
     private void setupFragment() {
         Intent i = getIntent();
         post = i.getParcelableExtra("com.example.instakilo.Post");
+        CommentContent.getCommentByPostId(post.getId());
         FragmentManager fm = getSupportFragmentManager();
         FragmentTransaction ft = fm.beginTransaction();
         postDetailFragment =new PostDetailFragment();
@@ -97,5 +100,9 @@ public class DetailActivity extends AppCompatActivity implements PostDetailFragm
 
     }
 
-
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        CommentContent.ITEMS = new ArrayList<>();
+    }
 }

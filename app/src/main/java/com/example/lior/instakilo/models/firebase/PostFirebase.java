@@ -176,6 +176,7 @@ public class PostFirebase implements IModelFirebase {
 
                 // Retrieve the post
                 Post post = dataSnapshot.getValue(Post.class);
+                post.setId(dataSnapshot.getKey());
                 listener.onChildAdded(post);
             }
 
@@ -185,6 +186,7 @@ public class PostFirebase implements IModelFirebase {
 
                 // Retrieve the post
                 Post post = dataSnapshot.getValue(Post.class);
+                post.setId(dataSnapshot.getKey());
                 listener.onChildChanged(post);
             }
 
@@ -194,6 +196,7 @@ public class PostFirebase implements IModelFirebase {
 
                 // Retrieve the post
                 Post post = dataSnapshot.getValue(Post.class);
+                post.setId(dataSnapshot.getKey());
                 listener.onChildRemoved(post);
             }
 

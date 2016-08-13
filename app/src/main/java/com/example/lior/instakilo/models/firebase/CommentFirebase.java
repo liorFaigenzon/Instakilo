@@ -218,6 +218,7 @@ public class CommentFirebase implements IModelFirebase {
 
                 // Retrieve the comment
                 Comment comment = dataSnapshot.getValue(Comment.class);
+                comment.setId(dataSnapshot.getKey());
                 listener.onChildAdded(comment);
             }
 
@@ -227,6 +228,7 @@ public class CommentFirebase implements IModelFirebase {
 
                 // Retrieve the comment
                 Comment comment = dataSnapshot.getValue(Comment.class);
+                comment.setId(dataSnapshot.getKey());
                 listener.onChildChanged(comment);
             }
 
@@ -236,6 +238,7 @@ public class CommentFirebase implements IModelFirebase {
 
                 // Retrieve the comment
                 Comment comment = dataSnapshot.getValue(Comment.class);
+                comment.setId(dataSnapshot.getKey());
                 listener.onChildRemoved(comment);
             }
 

@@ -39,6 +39,14 @@ public class Post implements Parcelable {
         this.likeUsers = new HashMap<>();
     }
 
+    public Post(String id, String authorId, String authorName, String photoId, int likeCounter, String creationDate) {
+        this(authorId, authorName, photoId);
+        this.id = id;
+        this.likeCounter = likeCounter;
+        this.likeUsers = new HashMap<>();
+        this.lastUpdated = creationDate;
+    }
+
     public Post(String authorId, String authorName, String photoId, int likeCounter, Map<String, Boolean> likeUsers) {
         this(authorId, authorName, photoId, likeCounter);
         this.likeUsers = likeUsers;
@@ -47,6 +55,12 @@ public class Post implements Parcelable {
     public Post(String id, String authorId, String authorName, String photoId, int likeCounter, Map<String, Boolean> likeUsers) {
         this(authorId, authorName, photoId, likeCounter, likeUsers);
         this.id = id;
+    }
+
+    public Post(String id, String authorId, String authorName, String photoId, int likeCounter, Map<String, Boolean> likeUsers, String creationDate) {
+        this(authorId, authorName, photoId, likeCounter, likeUsers);
+        this.id = id;
+        this.lastUpdated = creationDate;
     }
 
     public String getId() {
@@ -160,7 +174,8 @@ public class Post implements Parcelable {
                 this.authorId,
                 this.authorName,
                 this.photoId,
-                Integer.toString(this.likeCounter)
+                Integer.toString(this.likeCounter),
+                
         });
     }
 
