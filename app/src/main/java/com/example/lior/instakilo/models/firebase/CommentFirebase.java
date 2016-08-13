@@ -1,10 +1,12 @@
 package com.example.lior.instakilo.models.firebase;
 
 import android.util.Log;
+import android.widget.Toast;
 
+import com.example.lior.instakilo.MyApplication;
 import com.example.lior.instakilo.models.Comment;
 import com.example.lior.instakilo.models.Model;
-import com.example.lior.instakilo.models.Post;
+import com.google.firebase.database.ChildEventListener;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
@@ -22,12 +24,12 @@ import java.util.TimeZone;
 public class CommentFirebase implements IModelFirebase {
 
     @Override
-    public void getAll(String lastUpdateDate, final Model.GetAllListener listener) {
+    public void getAll(String lastUpdateDate, final Model.GetManyListener listener) {
 
         // Get all recent comments that are not cached already
-        Query queryPosts = ModelFirebase.getDatabase().child("comments").orderByChild("lastUpdated").startAt(lastUpdateDate);
+        Query queryComments = ModelFirebase.getDatabase().child("comments").orderByChild("lastUpdated").startAt(lastUpdateDate);
 
-        queryPosts.addListenerForSingleValueEvent(new ValueEventListener() {
+        queryComments.addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
             public void onDataChange(DataSnapshot snapshot) {
                 final List<Object> commentList = new LinkedList<>();
@@ -35,6 +37,7 @@ public class CommentFirebase implements IModelFirebase {
                 // Gather all the comments to a list
                 for (DataSnapshot commentSnapshot : snapshot.getChildren()) {
                     Comment comment = commentSnapshot.getValue(Comment.class);
+                    comment.setId(snapshot.getKey());
                     commentList.add(comment);
                 }
 
@@ -68,6 +71,42 @@ public class CommentFirebase implements IModelFirebase {
             @Override
             public void onCancelled(DatabaseError databaseError) {
                 Log.w("Nir", "getOneComment:onCancelled", databaseError.toException());
+                listener.onCancel();
+            }
+        });
+    }
+
+    public void getByPostId(String id, String lastUpdateDate, final Model.GetManyListener listener) {
+        Query queryPostComments;
+
+        if (lastUpdateDate != null) {
+
+            // Get all recent comments of specific post that are not cached already
+            queryPostComments = ModelFirebase.getDatabase().child("post-comments").child(id).orderByChild("lastUpdated").startAt(lastUpdateDate);
+        } else {
+
+            // Get all comments of specific post
+            queryPostComments = ModelFirebase.getDatabase().child("post-comments").child(id).orderByChild("lastUpdated");
+        }
+
+        queryPostComments.addListenerForSingleValueEvent(new ValueEventListener() {
+            @Override
+            public void onDataChange(DataSnapshot snapshot) {
+                final List<Object> commentList = new LinkedList<>();
+
+                // Gather all the comments to a list
+                for (DataSnapshot commentSnapshot : snapshot.getChildren()) {
+                    Comment comment = commentSnapshot.getValue(Comment.class);
+                    commentList.add(comment);
+                }
+
+                // Return the list as a result
+                listener.onResult(commentList);
+            }
+
+            @Override
+            public void onCancelled(DatabaseError databaseError) {
+                Log.w("Nir", "getAllComments:onCancelled", databaseError.toException());
                 listener.onCancel();
             }
         });
@@ -167,6 +206,40 @@ public class CommentFirebase implements IModelFirebase {
             @Override
             public void onComplete(DatabaseError databaseError, DatabaseReference databaseReference) {
                 listener.onComplete(databaseError, databaseReference, comment.getId());
+            }
+        });
+    }
+
+    @Override
+    public void attachCacheListener() {
+
+        ModelFirebase.getDatabase().child("comments").addChildEventListener(new ChildEventListener() {
+
+            @Override
+            public void onChildAdded(DataSnapshot dataSnapshot, String previousChildName) {
+                Log.d("Nir", "Comment:onChildAdded:" + dataSnapshot.getKey());
+            }
+
+            @Override
+            public void onChildChanged(DataSnapshot dataSnapshot, String previousChildName) {
+                Log.d("Nir", "Comment:onChildChanged:" + dataSnapshot.getKey());
+            }
+
+            @Override
+            public void onChildRemoved(DataSnapshot dataSnapshot) {
+                Log.d("Nir", "Comment:onChildRemoved:" + dataSnapshot.getKey());
+            }
+
+            @Override
+            public void onChildMoved(DataSnapshot dataSnapshot, String previousChildName) {
+                Log.d("Nir", "Comment:onChildMoved:" + dataSnapshot.getKey());
+            }
+
+            @Override
+            public void onCancelled(DatabaseError databaseError) {
+                Log.w("Nir", "Comment:onCancelled", databaseError.toException());
+                Toast.makeText(MyApplication.getAppContext(), "Failed to load comments.",
+                        Toast.LENGTH_SHORT).show();
             }
         });
     }

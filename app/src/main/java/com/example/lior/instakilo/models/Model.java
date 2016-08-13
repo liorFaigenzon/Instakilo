@@ -29,7 +29,8 @@ import java.util.List;
 public class Model {
 
     public enum ModelClass {
-        POST
+        POST,
+        COMMENT
     }
 
     private final static Model instance = new Model();
@@ -41,7 +42,7 @@ public class Model {
     private Model(){
         context = MyApplication.getAppContext();
         modelFirebase = new ModelFirebase(MyApplication.getAppContext());
-        //modelCloudinary = new ModelCloudinary();
+        modelCloudinary = new ModelCloudinary();
         modelSql = new ModelSql(MyApplication.getAppContext());
     }
 
@@ -65,32 +66,46 @@ public class Model {
         return modelFirebase.getUserId();
     }
 
-    public interface GetAllListener{
+    public interface GetManyListener {
         void onResult(List<Object> objects);
         void onCancel();
     }
 
-    public void getAll(ModelClass model, final GetAllListener listener){
+    public void getAll(final ModelClass model, final GetManyListener listener){
 
-        // TODO: Change the hole method to use cache
-        /*final String lastUpdateDate = "";// PostSql.getLastUpdateDate(modelSql.getReadbleDB());
-        modelFirebase.getAll(model, lastUpdateDate, new GetAllListener() {
+        final String lastUpdateDate = modelSql.getLastUpdateData(model);
+
+        modelFirebase.getAll(model, lastUpdateDate, new GetManyListener() {
             @Override
-            public void onResult(List<Post> posts) {
-                if(posts != null && posts.size() > 0) {
+            public void onResult(List<Object> objects) {
+                if(objects != null && objects.size() > 0) {
                     //update the local DB
                     String reacentUpdate = lastUpdateDate;
-                    for (Post s : posts) {
-                        PostSql.add(modelSql.getWritableDB(), s);
-                        if (reacentUpdate == null || s.getLastUpdated().compareTo(reacentUpdate) > 0) {
-                            reacentUpdate = s.getLastUpdated();
+
+                    for (Object m : objects) {
+                        modelSql.add(m);
+
+                        switch (model) {
+                            case POST:
+                                if (reacentUpdate == null || ((Post)m).getLastUpdated().compareTo(reacentUpdate) > 0) {
+                                    reacentUpdate = ((Post)m).getLastUpdated();
+                                }
+                                Log.d("TAG", "updating: " + ((Post)m).toString());
+                                break;
+                            case COMMENT:
+                                if (reacentUpdate == null || ((Comment)m).getLastUpdated().compareTo(reacentUpdate) > 0) {
+                                    reacentUpdate = ((Comment)m).getLastUpdated();
+                                }
+                                Log.d("TAG", "updating: " + ((Comment)m).toString());
+                                break;
                         }
-                        Log.d("TAG","updating: " + s.toString());
                     }
-                    PostSql.setLastUpdateDate(modelSql.getWritableDB(), reacentUpdate);
+
+                    modelSql.setLastUpdateData(model, reacentUpdate);
                 }
-                //return the complete student list to the caller
-                List<Post> res = PostSql.getAllPosts(modelSql.getReadbleDB());
+
+                //return the complete objects list to the caller
+                List<Object> res = modelSql.getAll(model);
                 listener.onResult(res);
             }
 
@@ -98,7 +113,7 @@ public class Model {
             public void onCancel() {
                 listener.onCancel();
             }
-        });*/
+        });
     }
 
     public interface GetOneListener{
@@ -134,25 +149,33 @@ public class Model {
         modelFirebase.delete(model, listener);
     }
 
-    public void saveImage(final Bitmap imageBitmap, final String imageName) {
-        saveImageToFile(imageBitmap,imageName); // synchronously save image locally
+    public void attachCacheListener(ModelClass model) {
+        modelFirebase.attachCacheListener(model);
+    }
+
+    public void savePhoto(final Bitmap photoBitmap, final String photoName) {
+        saveImageToFile(photoBitmap,photoName); // synchronously save image locally
         Thread d = new Thread(new Runnable() {  // asynchronously save image to parse
             @Override
             public void run() {
-                modelCloudinary.saveImage(imageBitmap,imageName);
+                modelCloudinary.savePhoto(photoBitmap,photoName);
             }
         });
         d.start();
     }
 
-    public void loadImage(final String imageName, final LoadImageListener listener) {
+    public interface LoadPhotoListener {
+        void onResult(Bitmap photo);
+    }
+
+    public void loadPhoto(final String photoId, final LoadPhotoListener listener) {
         AsyncTask<String,String,Bitmap> task = new AsyncTask<String, String, Bitmap >() {
             @Override
             protected Bitmap doInBackground(String... params) {
-                Bitmap bmp = loadImageFromFile(imageName);              //first try to fin the image on the device
+                Bitmap bmp = loadImageFromFile(photoId);              //first try to fin the image on the device
                 if (bmp == null) {                                      //if image not found - try downloading it from parse
-                    bmp = modelCloudinary.loadImage(imageName);
-                    if (bmp != null) saveImageToFile(bmp,imageName);    //save the image locally for next time
+                    bmp = modelCloudinary.loadPhoto(photoId);
+                    if (bmp != null) saveImageToFile(bmp,photoId);    //save the image locally for next time
                 }
                 return bmp;
             }
@@ -165,22 +188,22 @@ public class Model {
         task.execute();
     }
 
+    public void deleteImage(final String imageName) {
+        deleteImageFile(imageName);
+        Thread d = new Thread(new Runnable() {  // asynchronously save image to parse
+            @Override
+            public void run() {
+                modelCloudinary.destoryImage(imageName);
+            }
+        });
+        d.start();
+    }
+
     private void saveImageToFile(Bitmap imageBitmap, String imageFileName){
         FileOutputStream fos;
         OutputStream out = null;
         try {
-
             //File dir = context.getExternalFilesDir(null);
-//            boolean hasPermission = (MyApplication.getAppContext().checkPermission(Manifest.permission.) == PackageManager.PERMISSION_GRANTED);
-//            if (!hasPermission) {
-//                Log.d(TAG, "Has no permission! Ask!");
-//                ActivityCompat.requestPermissions(this, new String[]{Manifest.permission.WRITE_EXTERNAL_STORAGE}, REQUEST_WRITE_STORAGE);
-//            } else {
-//                Log.d(TAG, "Permission already given!");
-//                write();
-//            }
-
-
             File dir = Environment.getExternalStoragePublicDirectory(
                     Environment.DIRECTORY_PICTURES);
             if (!dir.exists()) {
@@ -227,7 +250,21 @@ public class Model {
         return bitmap;
     }
 
-    public interface LoadImageListener{
-        public void onResult(Bitmap imageBmp);
+    private Bitmap deleteImageFile(String photoFileName){
+        Bitmap bitmap = null;
+
+        try {
+            File dir = Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_PICTURES);
+            File imageFile = new File(dir, photoFileName);
+
+            if (imageFile.exists())
+                imageFile.delete();
+            else
+                Log.d("tag", "File " + imageFile + " doesn't exist");
+        } catch (SecurityException e) {
+            e.printStackTrace();
+        }
+
+        return bitmap;
     }
 }

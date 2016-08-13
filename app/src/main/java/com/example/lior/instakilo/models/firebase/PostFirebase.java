@@ -1,13 +1,15 @@
 package com.example.lior.instakilo.models.firebase;
 
 import android.util.Log;
+import android.widget.Toast;
 
+import com.example.lior.instakilo.MyApplication;
 import com.example.lior.instakilo.models.Model;
 import com.example.lior.instakilo.models.Post;
+import com.google.firebase.database.ChildEventListener;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
-import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.Query;
 import com.google.firebase.database.ValueEventListener;
 
@@ -22,7 +24,7 @@ import java.util.TimeZone;
 public class PostFirebase implements IModelFirebase {
 
     @Override
-    public void getAll(String lastUpdateDate, final Model.GetAllListener listener) {
+    public void getAll(String lastUpdateDate, final Model.GetManyListener listener) {
 
         // Get all recent posts that are not cached already
         Query queryPosts = ModelFirebase.getDatabase().child("posts").orderByChild("lastUpdated").startAt(lastUpdateDate);
@@ -35,6 +37,7 @@ public class PostFirebase implements IModelFirebase {
                 // Gather all the posts to a list
                 for (DataSnapshot postSnapshot : snapshot.getChildren()) {
                     Post post = postSnapshot.getValue(Post.class);
+                    post.setId(postSnapshot.getKey());
                     postList.add(post);
                 }
 
@@ -167,6 +170,39 @@ public class PostFirebase implements IModelFirebase {
             @Override
             public void onComplete(DatabaseError databaseError, DatabaseReference databaseReference) {
                 listener.onComplete(databaseError, databaseReference, post.getId());
+            }
+        });
+    }
+
+    @Override
+    public void attachCacheListener() {
+        ModelFirebase.getDatabase().child("posts").addChildEventListener(new ChildEventListener() {
+
+            @Override
+            public void onChildAdded(DataSnapshot dataSnapshot, String previousChildName) {
+                Log.d("Nir", "Post:onChildAdded:" + dataSnapshot.getKey());
+            }
+
+            @Override
+            public void onChildChanged(DataSnapshot dataSnapshot, String previousChildName) {
+                Log.d("Nir", "Post:onChildChanged:" + dataSnapshot.getKey());
+            }
+
+            @Override
+            public void onChildRemoved(DataSnapshot dataSnapshot) {
+                Log.d("Nir", "Post:onChildRemoved:" + dataSnapshot.getKey());
+            }
+
+            @Override
+            public void onChildMoved(DataSnapshot dataSnapshot, String previousChildName) {
+                Log.d("Nir", "Post:onChildMoved:" + dataSnapshot.getKey());
+            }
+
+            @Override
+            public void onCancelled(DatabaseError databaseError) {
+                Log.w("Nir", "Post:onCancelled", databaseError.toException());
+                Toast.makeText(MyApplication.getAppContext(), "Failed to load posts.",
+                        Toast.LENGTH_SHORT).show();
             }
         });
     }

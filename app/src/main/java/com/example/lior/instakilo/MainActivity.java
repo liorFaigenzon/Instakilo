@@ -1,9 +1,12 @@
 package com.example.lior.instakilo;
 
 import android.app.ListActivity;
+import android.content.Intent;
+import android.graphics.Bitmap;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
+import android.provider.MediaStore;
 import android.util.Log;
 import android.view.View;
 import android.widget.AdapterView;
@@ -11,13 +14,23 @@ import android.widget.GridView;
 import android.widget.ImageView;
 import android.widget.ListView;
 
+import com.example.lior.instakilo.models.Model;
 import com.example.lior.instakilo.models.PicModeSelectDialogFragment;
 import com.example.lior.instakilo.models.Post;
 import com.example.lior.instakilo.models.PostAdapter;
+import com.google.firebase.database.DatabaseError;
+import com.google.firebase.database.DatabaseReference;
 
+import java.io.IOException;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Date;
+import java.util.List;
 
-public class MainActivity extends ListActivity {
+public class MainActivity extends ListActivity{
+
+    static final int REQUEST_IMAGE_CAPTURE = 100;
+    static final int REQUEST_IMAGE_SELECT = 200;
 
     // declare class variables
     private ArrayList<Post> m_parts = new ArrayList<Post>();
@@ -34,7 +47,6 @@ public class MainActivity extends ListActivity {
         ImageView matrixPic = (ImageView) findViewById(R.id.matrixPic);
         ImageView listPic = (ImageView) findViewById(R.id.listPic);
         ImageView takePic = (ImageView) findViewById(R.id.takePic);
-        //FrameLayout fragment_container = (FrameLayout) findViewById(R.id.fragment_container);
 
         takePic.setOnClickListener(new DialogPicActivity());
 
@@ -59,7 +71,6 @@ public class MainActivity extends ListActivity {
 
             @Override
             public void onClick(View v) {
-
                 ImageView matrixPic = (ImageView) findViewById(R.id.matrixPic);
                 ImageView listPic = (ImageView) findViewById(R.id.listPic);
                 ListView list = getListView();
@@ -74,41 +85,30 @@ public class MainActivity extends ListActivity {
             }
         });
 
-        //fragment_container.setVisibility(View.GONE);
         gridview.setVisibility(View.GONE);
 
         // instantiate our PostAdapter class
-       // m_adapter = new PostAdapter(this, R.layout.activity_login, m_parts);
-       // setListAdapter(m_adapter);
-        //gridview.setAdapter(m_adapter);
+        m_adapter = new PostAdapter(this, R.layout.post_listview, m_parts);
+        setListAdapter(m_adapter);
+        gridview.setAdapter(m_adapter);
 
 
         gridview.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             public void onItemClick(AdapterView<?> parent, View v,
                                     int position, long id) {
-                //FrameLayout fragment_container = (FrameLayout) findViewById(R.id.fragment_container);
-                //PostDetailFragment fragmentInstance = new PostDetailFragment();
                 Post post = (Post)m_adapter.getItem(position);
-                Bundle bundle = new Bundle();
-                bundle.putParcelable("com.example.instakilo.Post", post);
-                //fragmentInstance.setArguments(bundle);
-                //FragmentManager fragmentManager = getFragmentManager();
-                //FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
-                // add fragment to the fragment container layout
-                //fragment_container.addView(R.id.fragment_container, fragmentInstance).commit();;
-
-                //Intent intent = new Intent(v.getContext(), PostDetailActivity.class);
-                //intent.putExtra("com.example.instakilo.Post", post);
-                //startActivity(intent);
+                Intent intent = new Intent(v.getContext(), PostDetailActivity.class);
+                intent.putExtra("com.example.instakilo.Post", post);
+                startActivity(intent);
             }
         });
         list.setOnItemClickListener(new AdapterView.OnItemClickListener() {
            public void onItemClick(AdapterView<?> parent, View v,
                                   int position, long id) {
                Post post = (Post)m_adapter.getItem(position);
-              // Intent intent = new Intent(v.getContext(), PostDetailActivity.class);
-              // intent.putExtra("com.example.instakilo.Post", post);
-              // startActivity(intent);
+               Intent intent = new Intent(v.getContext(), PostDetailActivity.class);
+               intent.putExtra("com.example.instakilo.Post", post);
+               startActivity(intent);
             }
         });
 
@@ -124,6 +124,75 @@ public class MainActivity extends ListActivity {
         thread.start();
     }
 
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+
+        if (resultCode == RESULT_OK) {
+            if (requestCode == REQUEST_IMAGE_SELECT)
+                onSelectFromGalleryResult(data);
+            else if (requestCode == REQUEST_IMAGE_CAPTURE)
+                onCapturePhotoResult(data);
+        }
+    }
+
+    private void onCapturePhotoResult(Intent data) {
+
+        // Get thumbnail photo
+        Bitmap thumbnail = (Bitmap) data.getExtras().get("data");
+
+        // Save the thumbnail to cloudinary
+        String timeStamp = new SimpleDateFormat("yyyyMMdd_HHmmss").format(new Date());
+        Model.getInstance().savePhoto(thumbnail, "test1" + timeStamp + ".jpg");
+    }
+
+    private void onSelectFromGalleryResult(Intent data) {
+        Bitmap thumbnail = null;
+
+        // Check if selected photo
+        if (data != null) {
+            try {
+
+                // Get a bitmap object from the selected photo
+                thumbnail = MediaStore.Images.Media.getBitmap(getApplicationContext().getContentResolver(), data.getData());
+
+                // Save the thumbnail to cloudinary
+                String timeStamp = new SimpleDateFormat("yyyyMMdd_HHmmss").format(new Date());
+                Model.getInstance().savePhoto(thumbnail, "test1" + timeStamp + ".jpg");
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+        } else {
+            Log.d("Nir", "onSelectFromGalleryResult:noPhotoSelected");
+        }
+    }
+
+    private void dispatchCameraIntent() {
+
+        // Create camera intent
+        Intent cameraIntent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
+
+        // Check that there is an activity that can handle such request
+        if (cameraIntent.resolveActivity(getPackageManager()) != null) {
+
+            // Start camera intent
+            startActivityForResult(cameraIntent, REQUEST_IMAGE_CAPTURE);
+        }
+    }
+
+    private void dispatchGalleryIntent() {
+
+        // Create camera intent
+        Intent galleryIntent = new Intent(Intent.ACTION_GET_CONTENT);
+        galleryIntent.setType("image/*");
+
+        // Check that there is an activity that can handle such request
+        if (galleryIntent.resolveActivity(getPackageManager()) != null) {
+
+            // Start gallery intent to select single image
+            startActivityForResult(Intent.createChooser(galleryIntent, "Select File"), REQUEST_IMAGE_SELECT);
+        }
+    }
+
     private Handler handler = new Handler()
     {
         public void handleMessage(final Message msg)
@@ -132,23 +201,55 @@ public class MainActivity extends ListActivity {
             // here is where you could also request data from a server
             // and then create objects from that data.
 
-            Post firstPost = new Post("2", "Nir Kigelman", "photo2");
+            final Post firstPost = new Post("2", "Nir Kigelman", "photo2");
             firstPost.incLikeCounter();
-            firstPost.getLikeUsers().put("3", true);
+            firstPost.getLikeUsers().put("a", true);
             firstPost.incLikeCounter();
-            firstPost.getLikeUsers().put("4", true);
+            firstPost.getLikeUsers().put("c", true);
             firstPost.incLikeCounter();
-            firstPost.getLikeUsers().put("2", true);
+            firstPost.getLikeUsers().put("b", true);
 
             m_parts.add(firstPost);
             m_parts.add(firstPost);
             m_parts.add(firstPost);
             m_parts.add(firstPost);
 
-            //m_adapter = new PostAdapter(MainActivity.this, R.layout.post_listview, m_parts);
+            Model.getInstance().attachCacheListener(Model.ModelClass.POST);
+
+            Model.getInstance().getAll(Model.ModelClass.POST, new Model.GetManyListener() {
+                @Override
+                public void onResult(List<Object> objects) {
+                    Log.d("Nir", "Objects returned: " + objects.size());
+
+                    Model.getInstance().add(firstPost, new Model.AddListener() {
+                        @Override
+                        public void onComplete(DatabaseError databaseError, DatabaseReference databaseReference, String key) {
+                            Log.d("Nir", key);
+                        }
+                    });
+                }
+
+                @Override
+                public void onCancel() {
+
+                }
+            });
+
+            //dispatchCameraIntent();
+            //dispatchGalleryIntent();
+            /*Model.getInstance().loadPhoto("test120160812_141416", new Model.LoadPhotoListener() {
+                @Override
+                public void onResult(Bitmap photo) {
+                    if (photo != null) {
+                        Log.d("Nir", "Download photo from cloudinary succeeded");
+                    }
+                }
+            });*/
+
+            m_adapter = new PostAdapter(MainActivity.this, R.layout.post_listview, m_parts);
 
             // display the list.
-            //setListAdapter(m_adapter);
+            setListAdapter(m_adapter);
         }
 
 

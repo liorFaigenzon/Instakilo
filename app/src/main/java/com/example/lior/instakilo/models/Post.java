@@ -11,6 +11,7 @@ import java.util.Map;
 
 @IgnoreExtraProperties
 public class Post implements Parcelable {
+
     private String id;
     private String authorId;
     private String authorName;
@@ -47,6 +48,10 @@ public class Post implements Parcelable {
 
     public String getId() {
         return id;
+    }
+
+    public void setId(String id) {
+        this.id = id;
     }
 
     public String getAuthorId() {
