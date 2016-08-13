@@ -13,13 +13,10 @@ import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.Query;
 import com.google.firebase.database.ValueEventListener;
 
-import java.text.SimpleDateFormat;
-import java.util.Date;
 import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
-import java.util.TimeZone;
 
 public class PostFirebase implements IModelFirebase {
 
@@ -33,9 +30,14 @@ public class PostFirebase implements IModelFirebase {
             @Override
             public void onDataChange(DataSnapshot snapshot) {
                 final List<Object> postList = new LinkedList<>();
+                Iterable<DataSnapshot> children =  snapshot.getChildren();
+
+                if (snapshot.getChildrenCount() != 0) {
+                    children.iterator().next();
+                }
 
                 // Gather all the posts to a list
-                for (DataSnapshot postSnapshot : snapshot.getChildren()) {
+                for (DataSnapshot postSnapshot : children) {
                     Post post = postSnapshot.getValue(Post.class);
                     post.setId(postSnapshot.getKey());
                     postList.add(post);
@@ -82,13 +84,8 @@ public class PostFirebase implements IModelFirebase {
         // Cast the model to post
         Post post = (Post)model;
 
-        // Create date object with now's date to save as the last update of the post
-        SimpleDateFormat dateFormatGmt = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
-        dateFormatGmt.setTimeZone(TimeZone.getTimeZone("GMT"));
-        String date = dateFormatGmt.format(new Date()).toString();
-
         // Set the last update of the post to now's date
-        post.setLastUpdated(date);
+        post.setLastUpdated();
 
         // Create new post at /user-posts/$userid/$postid and at
         // /posts/$postid simultaneously
@@ -121,13 +118,8 @@ public class PostFirebase implements IModelFirebase {
                         // Update the post if it exists
                         if (dataSnapshot.getValue(Post.class) != null) {
 
-                            // Create date object with now's date to save as the last update of the post
-                            SimpleDateFormat dateFormatGmt = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
-                            dateFormatGmt.setTimeZone(TimeZone.getTimeZone("GMT"));
-                            String date = dateFormatGmt.format(new Date()).toString();
-
                             // Set the last update of the post to now's date
-                            post.setLastUpdated(date);
+                            post.setLastUpdated();
 
                             // Update the post at /user-posts/$userid/$postid and at
                             // /posts/$postid simultaneously

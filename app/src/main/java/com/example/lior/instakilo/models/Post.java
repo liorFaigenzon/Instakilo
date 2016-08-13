@@ -6,8 +6,11 @@ import android.os.Parcelable;
 import com.google.firebase.database.Exclude;
 import com.google.firebase.database.IgnoreExtraProperties;
 
+import java.text.SimpleDateFormat;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.TimeZone;
 
 @IgnoreExtraProperties
 public class Post implements Parcelable {
@@ -98,8 +101,13 @@ public class Post implements Parcelable {
         return lastUpdated;
     }
 
-    public void setLastUpdated(String lastUpdated) {
-        this.lastUpdated = lastUpdated;
+    public void setLastUpdated() {
+        // Create date object with now's date to save as the last update of the post
+        SimpleDateFormat dateFormatGmt = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+        dateFormatGmt.setTimeZone(TimeZone.getTimeZone("GMT"));
+        String date = dateFormatGmt.format(new Date()).toString();
+
+        this.lastUpdated = date;
     }
 
     public Map<String, Boolean> getLikeUsers() {
@@ -147,11 +155,13 @@ public class Post implements Parcelable {
     // write your object's data to the passed-in Parcel
     @Override
     public void writeToParcel(Parcel dest, int flags) {
-        dest.writeStringArray(new String[] {this.id,
+        dest.writeStringArray(new String[] {
+                this.id,
                 this.authorId,
                 this.authorName,
                 this.photoId,
-                Integer.toString(this.likeCounter)});
+                Integer.toString(this.likeCounter)
+        });
     }
 
     // this is used to regenerate your object. All Parcelables must have a CREATOR that implements these two methods

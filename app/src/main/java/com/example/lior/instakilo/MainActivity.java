@@ -2,9 +2,7 @@ package com.example.lior.instakilo;
 
 
 import android.content.Intent;
-import android.graphics.AvoidXfermode;
 import android.graphics.Bitmap;
-import android.graphics.BitmapFactory;
 import android.net.Uri;
 import android.os.Bundle;
 import android.provider.MediaStore;
@@ -13,8 +11,10 @@ import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentTransaction;
 import android.util.Log;
 
+import com.example.lior.instakilo.dummy.PostContent;
 import com.example.lior.instakilo.models.Model;
 import com.example.lior.instakilo.models.Post;
+import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 
@@ -38,6 +38,8 @@ public class MainActivity extends FragmentActivity implements UserMainFragment.O
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
+        Model.getInstance().attachCacheListener(Model.ModelClass.POST);
+        Model.getInstance().attachCacheListener(Model.ModelClass.COMMENT);
     }
 
     @Override
@@ -81,24 +83,8 @@ public class MainActivity extends FragmentActivity implements UserMainFragment.O
     private void onCapturePhotoResult(Intent data) {
 
         // Get thumbnail photo
-        final Bitmap thumbnail = BitmapFactory.decodeResource(getResources(), R.drawable.black_gps);;//(Bitmap) data.getExtras().get("data");
-
-        // Save the thumbnail to cloudinary
-        final String timeStamp = new SimpleDateFormat("yyyyMMdd_HHmmss").format(new Date());
-
-        // Add a new post
-        final String photoId = /*FirebaseAuth.getInstance().getCurrentUser().getUid() +*/ timeStamp + ".jpg";
-        Post newPost = new Post("lior123",//FirebaseAuth.getInstance().getCurrentUser().getUid(),
-                "lior",//FirebaseAuth.getInstance().getCurrentUser().getDisplayName(),
-                photoId);
-
-        // Add the photo
-        Model.getInstance().add(newPost, new Model.AddListener() {
-            @Override
-            public void onComplete(DatabaseError databaseError, DatabaseReference databaseReference, String key) {
-                Model.getInstance().savePhoto(thumbnail, photoId);
-            }
-        });
+        final Bitmap thumbnail = (Bitmap) data.getExtras().get("data");
+        addPost(thumbnail);
     }
 
     private void onSelectFromGalleryResult(Intent data) {
@@ -110,16 +96,34 @@ public class MainActivity extends FragmentActivity implements UserMainFragment.O
 
                 // Get a bitmap object from the selected photo
                 thumbnail = MediaStore.Images.Media.getBitmap(getApplicationContext().getContentResolver(), data.getData());
+                addPost(thumbnail);
 
-                // Save the thumbnail to cloudinary
-                String timeStamp = new SimpleDateFormat("yyyyMMdd_HHmmss").format(new Date());
-                //Model.getInstance().savePhoto(thumbnail, "test1" + timeStamp + ".jpg");
             } catch (IOException e) {
                 e.printStackTrace();
             }
         } else {
             Log.d("Nir", "onSelectFromGalleryResult:noPhotoSelected");
         }
+    }
+
+    private void addPost(final Bitmap thumbnail) {
+        // Save the thumbnail to cloudinary
+        final String timeStamp = new SimpleDateFormat("yyyyMMdd_HHmmss").format(new Date());
+
+        // Add a new post
+        final String photoId = FirebaseAuth.getInstance().getCurrentUser().getUid() + timeStamp + ".jpg";
+        final Post newPost = new Post(FirebaseAuth.getInstance().getCurrentUser().getUid(), FirebaseAuth.getInstance().getCurrentUser().getDisplayName(), photoId);
+
+        // Add the photo
+        Model.getInstance().add(newPost, new Model.AddListener() {
+            @Override
+            public void onComplete(DatabaseError databaseError, DatabaseReference databaseReference, String key) {
+                Model.getInstance().savePhoto(thumbnail, photoId);
+                PostContent.getInstance().addPost(newPost);
+            }
+        });
+
+
     }
 
     private void dispatchCameraIntent() {
@@ -153,7 +157,7 @@ public class MainActivity extends FragmentActivity implements UserMainFragment.O
     public void saveCamera() {
         onCapturePhotoResult(new Intent());//dispatchCameraIntent();
     }
-    
+
     @Override
     public void saveGallary() {
         dispatchGalleryIntent();

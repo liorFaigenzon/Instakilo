@@ -15,6 +15,7 @@ import com.example.lior.instakilo.models.Comment;
 import com.example.lior.instakilo.models.Model;
 import com.example.lior.instakilo.models.Post;
 import com.example.lior.instakilo.models.callbacks.OnItemsLoadedCallback;
+import com.google.firebase.auth.FirebaseAuth;
 
 import java.util.List;
 import java.util.concurrent.ExecutionException;
@@ -179,7 +180,7 @@ public class MyPostRecyclerViewAdapter extends RecyclerView.Adapter<MyPostRecycl
             //if(((ImageView)v).getDrawable().equals(R.drawable.heart_outline))
             {
                 // Access the row position here to get the correct data item
-                mValues.get(position).incLikeCounter();
+                mValues.get(position).incLikeCounter(FirebaseAuth.getInstance().getCurrentUser().getUid());
                 ((ImageView) v).setImageResource(R.drawable.heart_full);
             }
             //else

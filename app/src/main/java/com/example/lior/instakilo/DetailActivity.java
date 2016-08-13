@@ -9,19 +9,23 @@ import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentTransaction;
 import android.support.v7.app.AppCompatActivity;
 import android.view.View;
-import android.widget.Toast;
 
 import com.afollestad.materialdialogs.DialogAction;
 import com.afollestad.materialdialogs.MaterialDialog;
+import com.example.lior.instakilo.dummy.CommentContent;
 import com.example.lior.instakilo.models.Comment;
+import com.example.lior.instakilo.models.Model;
 import com.example.lior.instakilo.models.Post;
 import com.example.lior.instakilo.models.dialogs.DialogicFactory;
+import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.database.DatabaseError;
+import com.google.firebase.database.DatabaseReference;
 
 public class DetailActivity extends AppCompatActivity implements PostDetailFragment.OnFragmentInteractionListener,
                                                                  CommentFragment.OnListFragmentInteractionListener, View.OnClickListener{
 
     PostDetailFragment postDetailFragment ;
-
+    Post post;
     private FloatingActionButton mAddNewRecordFab;
 
     @Override
@@ -34,7 +38,7 @@ public class DetailActivity extends AppCompatActivity implements PostDetailFragm
 
     private void setupFragment() {
         Intent i = getIntent();
-        Post post = i.getParcelableExtra("com.example.instakilo.Post");
+        post = i.getParcelableExtra("com.example.instakilo.Post");
         FragmentManager fm = getSupportFragmentManager();
         FragmentTransaction ft = fm.beginTransaction();
         postDetailFragment =new PostDetailFragment();
@@ -68,7 +72,16 @@ public class DetailActivity extends AppCompatActivity implements PostDetailFragm
         materialDialog.getBuilder().onPositive(new MaterialDialog.SingleButtonCallback() {
             @Override
             public void onClick(@NonNull MaterialDialog dialog, @NonNull DialogAction which) {
-                Toast.makeText(DetailActivity.this, dialog.getInputEditText().getText().toString(), Toast.LENGTH_SHORT).show();
+                String content = dialog.getInputEditText().getText().toString().trim();
+                if (content != "") {
+                    final Comment newComment = new Comment(FirebaseAuth.getInstance().getCurrentUser().getUid(), FirebaseAuth.getInstance().getCurrentUser().getDisplayName(), post.getId(), content);
+                    Model.getInstance().add(newComment, new Model.AddListener() {
+                        @Override
+                        public void onComplete(DatabaseError databaseError, DatabaseReference databaseReference, String key) {
+                            CommentContent.addComment(newComment);
+                        }
+                    });
+                }
             }
         }).onNegative(new MaterialDialog.SingleButtonCallback() {
             @Override

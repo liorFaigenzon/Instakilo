@@ -34,6 +34,11 @@ public class PostContent {
         mCallback = callback;
     }
 
+    public static void addPost(Post post) {
+        ITEMS.add(post);
+        mCallback.onLoadedPost(ITEMS);
+    }
+
     static {
         Model.getInstance().getAll(Model.ModelClass.POST, new Model.GetManyListener() {
             @Override

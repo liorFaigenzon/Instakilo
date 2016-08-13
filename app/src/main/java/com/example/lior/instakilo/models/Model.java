@@ -74,12 +74,12 @@ public class Model {
 
     public void getAll(final ModelClass model, final GetManyListener listener){
 
-        final String lastUpdateDate = "2016-06-12 15:25:";//modelSql.getLastUpdateData(model);
+        final String lastUpdateDate = modelSql.getLastUpdateData(model);
 
         modelFirebase.getAll(model, lastUpdateDate, new GetManyListener() {
             @Override
             public void onResult(List<Object> objects) {
-                /*if(objects != null && objects.size() > 0) {
+                if(objects != null && objects.size() > 0) {
                     //update the local DB
                     String reacentUpdate = lastUpdateDate;
 
@@ -106,8 +106,44 @@ public class Model {
                 }
 
                 //return the complete objects list to the caller
-                List<Object> res = modelSql.getAll(model);*/
-                listener.onResult(objects);
+                List<Object> res = modelSql.getAll(model);
+                listener.onResult(res);
+            }
+
+            @Override
+            public void onCancel() {
+                listener.onCancel();
+            }
+        });
+    }
+
+    public void getCommentsByPostId(final String postId, final GetManyListener listener) {
+
+        final String lastUpdateDate = modelSql.getLastUpdateData(ModelClass.COMMENT);
+
+        modelFirebase.getCommentsByPostId(postId, lastUpdateDate, new GetManyListener() {
+            @Override
+            public void onResult(List<Object> objects) {
+                if(objects != null && objects.size() > 0) {
+                    //update the local DB
+                    String reacentUpdate = lastUpdateDate;
+
+                    for (Object m : objects) {
+                        modelSql.add(m);
+
+                        if (reacentUpdate == null || ((Comment)m).getLastUpdated().compareTo(reacentUpdate) > 0) {
+                            reacentUpdate = ((Comment)m).getLastUpdated();
+                        }
+                        Log.d("TAG", "updating: " + ((Comment)m).toString());
+                        break;
+                    }
+
+                    modelSql.setLastUpdateData(ModelClass.COMMENT, reacentUpdate);
+                }
+
+                //return the complete objects list to the caller
+                List<Object> res = modelSql.getCommentsByPostId(postId);
+                listener.onResult(res);
             }
 
             @Override

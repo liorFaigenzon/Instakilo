@@ -13,6 +13,7 @@ import android.widget.TextView;
 
 import com.example.lior.instakilo.models.Model;
 import com.example.lior.instakilo.models.Post;
+import com.google.firebase.auth.FirebaseAuth;
 
 import java.util.concurrent.ExecutionException;
 
@@ -126,7 +127,7 @@ public class PostDetailFragment extends Fragment {
             //if(((ImageView)v).getDrawable().equals(R.drawable.heart_outline))
             {
                 // Access the row position here to get the correct data item
-                post.incLikeCounter();
+                post.incLikeCounter(FirebaseAuth.getInstance().getCurrentUser().getUid());
                 ((ImageView) v).setImageResource(R.drawable.heart_full);
                 //Delegate delegate = (Delegate) getActivity();
                 //delegate.like();

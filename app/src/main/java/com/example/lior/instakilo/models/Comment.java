@@ -3,8 +3,11 @@ package com.example.lior.instakilo.models;
 import com.google.firebase.database.Exclude;
 import com.google.firebase.database.IgnoreExtraProperties;
 
+import java.text.SimpleDateFormat;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.TimeZone;
 
 @IgnoreExtraProperties
 public class Comment {
@@ -73,8 +76,13 @@ public class Comment {
         return lastUpdated;
     }
 
-    public void setLastUpdated(String lastUpdated) {
-        this.lastUpdated = lastUpdated;
+    public void setLastUpdated() {
+        // Create date object with now's date to save as the last update of the post
+        SimpleDateFormat dateFormatGmt = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+        dateFormatGmt.setTimeZone(TimeZone.getTimeZone("GMT"));
+        String date = dateFormatGmt.format(new Date()).toString();
+
+        this.lastUpdated = date;
     }
 
     @Exclude

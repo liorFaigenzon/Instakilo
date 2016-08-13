@@ -33,8 +33,13 @@ public class CommentContent {
         mCallback = callback;
     }
 
+    public static void addComment(Comment comment) {
+        ITEMS.add(comment);
+        mCallback.onLoadedComment(ITEMS);
+    }
 
     static {
+
         Model.getInstance().getAll(Model.ModelClass.COMMENT, new Model.GetManyListener() {
             @Override
             public void onResult(List<Object> objects) {
@@ -54,6 +59,8 @@ public class CommentContent {
 
             }
         });
+
+
     }
 
 }
