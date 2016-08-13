@@ -41,6 +41,8 @@ public class ModelSql {
         {
             case POST:
                 return PostSql.getAllPosts(db);
+            case COMMENT:
+                return CommentSql.getAllComments(db);
         }
         return null;
     }
@@ -50,6 +52,17 @@ public class ModelSql {
 
         if (model instanceof  Post)
             PostSql.add(db, model);
+        if (model instanceof  Comment)
+            CommentSql.add(db, model);
+    }
+
+    public void delete(Object model) {
+        SQLiteDatabase db = getWritableDB();
+
+        if (model instanceof  Post)
+            PostSql.delete(db, model);
+        if (model instanceof  Comment)
+            CommentSql.delete(db, model);
     }
 
     public String getLastUpdateData(Model.ModelClass model)
@@ -60,6 +73,8 @@ public class ModelSql {
         {
             case POST:
                 return PostSql.getLastUpdateDate(db);
+            case COMMENT:
+                return CommentSql.getLastUpdateDate(db);
         }
         return null;
     }
@@ -72,26 +87,10 @@ public class ModelSql {
         {
             case POST:
                 PostSql.setLastUpdateDate(db, date);
+            case COMMENT:
+                CommentSql.setLastUpdateDate(db, date);
         }
     }
-
-    public List<Comment> getAllComments() {
-        SQLiteDatabase db = getReadbleDB();
-        return CommentSql.getAllComments(db);
-    }
-
-    public String getCommentsLastUpdateData()
-    {
-        SQLiteDatabase db = getReadbleDB();
-        return CommentSql.getLastUpdateDate(db);
-    }
-
-    public void setCommentsLastUpdateData(String date)
-    {
-        SQLiteDatabase db = getWritableDB();
-        CommentSql.setLastUpdateDate(db, date);
-    }
-
 
     class Helper extends SQLiteOpenHelper {
         public Helper(Context context) {

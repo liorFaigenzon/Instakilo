@@ -9,6 +9,7 @@ import com.example.lior.instakilo.models.Post;
 
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Objects;
 
 /**
  * Created by Alon on 10/08/2016.
@@ -34,9 +35,9 @@ public class CommentSql {
         db.execSQL("drop table " + COMMENT_TABLE + ";");
     }
 
-    public static List<Comment> getAllComments(SQLiteDatabase db) {
+    public static List<Object> getAllComments(SQLiteDatabase db) {
         Cursor cursor = db.query(COMMENT_TABLE, null, null , null, null, null, null);
-        List<Comment> comments = new LinkedList<Comment>();
+        List<Object> comments = new LinkedList<Object>();
 
         if (cursor.moveToFirst()) {
             int idIndex = cursor.getColumnIndex(COMMENT_TABLE_ID);
@@ -57,11 +58,11 @@ public class CommentSql {
         return comments;
     }
 
-    public static List<Comment> getCommentsByPostId(SQLiteDatabase db, String postId) {
+    public static List<Object> getCommentsByPostId(SQLiteDatabase db, String postId) {
         String where  = COMMENT_TABLE_POST_ID + " = ?";
         String[] args = {postId};
         Cursor cursor = db.query(COMMENT_TABLE, null, where , args, null, null, null);
-        List<Comment> comments = new LinkedList<Comment>();
+        List<Object> comments = new LinkedList<Object>();
 
         if (cursor.moveToFirst()) {
             int idIndex = cursor.getColumnIndex(COMMENT_TABLE_ID);
@@ -82,7 +83,7 @@ public class CommentSql {
         return comments;
     }
 
-    public static Comment getCommentById(SQLiteDatabase db, String id) {
+    public static Object getCommentById(SQLiteDatabase db, String id) {
         String where = COMMENT_TABLE_ID + " = ?";
         String[] args = {id};
         Cursor cursor = db.query(COMMENT_TABLE, null, where, args, null, null, null);
@@ -103,7 +104,10 @@ public class CommentSql {
         return null;
     }
 
-    public static void add(SQLiteDatabase db, Comment cmt) {
+    public static void add(SQLiteDatabase db, Object model) {
+        // Cast the model to comment
+        Comment cmt = (Comment)model;
+
         ContentValues values = new ContentValues();
         values.put(COMMENT_TABLE_ID, cmt.getId());
         values.put(COMMENT_TABLE_AUTHOR_ID, cmt.getAuthorId());
@@ -113,7 +117,10 @@ public class CommentSql {
         db.insertWithOnConflict(COMMENT_TABLE, COMMENT_TABLE_ID, values, SQLiteDatabase.CONFLICT_REPLACE);
     }
 
-    public static void update(SQLiteDatabase db, Comment cmt) {
+    public static void update(SQLiteDatabase db, Object model) {
+        // Cast the model to comment
+        Comment cmt = (Comment)model;
+
         ContentValues values = new ContentValues();
         //values.put(COMMENT_TABLE_ID, pst.getId());
         values.put(COMMENT_TABLE_ID, cmt.getId());
@@ -124,7 +131,10 @@ public class CommentSql {
         db.update(COMMENT_TABLE, values, COMMENT_TABLE_ID + " = ?", new String[]{ cmt.getId() });
     }
 
-    public static void delete(SQLiteDatabase db, Comment cmt) {
+    public static void delete(SQLiteDatabase db, Object model) {
+        // Cast the model to comment
+        Comment cmt = (Comment)model;
+
         db.delete(COMMENT_TABLE, COMMENT_TABLE_ID + " = ?", new String[]{ cmt.getId() });
     }
 
