@@ -1,9 +1,12 @@
 package com.example.lior.instakilo.models.firebase;
 
 import android.util.Log;
+import android.widget.Toast;
 
+import com.example.lior.instakilo.MyApplication;
 import com.example.lior.instakilo.models.Comment;
 import com.example.lior.instakilo.models.Model;
+import com.google.firebase.database.ChildEventListener;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
@@ -34,6 +37,7 @@ public class CommentFirebase implements IModelFirebase {
                 // Gather all the comments to a list
                 for (DataSnapshot commentSnapshot : snapshot.getChildren()) {
                     Comment comment = commentSnapshot.getValue(Comment.class);
+                    comment.setId(snapshot.getKey());
                     commentList.add(comment);
                 }
 
@@ -202,6 +206,40 @@ public class CommentFirebase implements IModelFirebase {
             @Override
             public void onComplete(DatabaseError databaseError, DatabaseReference databaseReference) {
                 listener.onComplete(databaseError, databaseReference, comment.getId());
+            }
+        });
+    }
+
+    @Override
+    public void attachCacheListener() {
+
+        ModelFirebase.getDatabase().child("comments").addChildEventListener(new ChildEventListener() {
+
+            @Override
+            public void onChildAdded(DataSnapshot dataSnapshot, String previousChildName) {
+                Log.d("Nir", "Comment:onChildAdded:" + dataSnapshot.getKey());
+            }
+
+            @Override
+            public void onChildChanged(DataSnapshot dataSnapshot, String previousChildName) {
+                Log.d("Nir", "Comment:onChildChanged:" + dataSnapshot.getKey());
+            }
+
+            @Override
+            public void onChildRemoved(DataSnapshot dataSnapshot) {
+                Log.d("Nir", "Comment:onChildRemoved:" + dataSnapshot.getKey());
+            }
+
+            @Override
+            public void onChildMoved(DataSnapshot dataSnapshot, String previousChildName) {
+                Log.d("Nir", "Comment:onChildMoved:" + dataSnapshot.getKey());
+            }
+
+            @Override
+            public void onCancelled(DatabaseError databaseError) {
+                Log.w("Nir", "Comment:onCancelled", databaseError.toException());
+                Toast.makeText(MyApplication.getAppContext(), "Failed to load comments.",
+                        Toast.LENGTH_SHORT).show();
             }
         });
     }

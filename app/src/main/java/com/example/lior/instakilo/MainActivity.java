@@ -18,11 +18,14 @@ import com.example.lior.instakilo.models.Model;
 import com.example.lior.instakilo.models.PicModeSelectDialogFragment;
 import com.example.lior.instakilo.models.Post;
 import com.example.lior.instakilo.models.PostAdapter;
+import com.google.firebase.database.DatabaseError;
+import com.google.firebase.database.DatabaseReference;
 
 import java.io.IOException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
+import java.util.List;
 
 public class MainActivity extends ListActivity{
 
@@ -198,29 +201,50 @@ public class MainActivity extends ListActivity{
             // here is where you could also request data from a server
             // and then create objects from that data.
 
-            Post firstPost = new Post("2", "Nir Kigelman", "photo2");
+            final Post firstPost = new Post("2", "Nir Kigelman", "photo2");
             firstPost.incLikeCounter();
-            firstPost.getLikeUsers().put("3", true);
+            firstPost.getLikeUsers().put("a", true);
             firstPost.incLikeCounter();
-            firstPost.getLikeUsers().put("4", true);
+            firstPost.getLikeUsers().put("c", true);
             firstPost.incLikeCounter();
-            firstPost.getLikeUsers().put("2", true);
+            firstPost.getLikeUsers().put("b", true);
 
             m_parts.add(firstPost);
             m_parts.add(firstPost);
             m_parts.add(firstPost);
             m_parts.add(firstPost);
+
+            Model.getInstance().attachCacheListener(Model.ModelClass.POST);
+
+            Model.getInstance().getAll(Model.ModelClass.POST, new Model.GetManyListener() {
+                @Override
+                public void onResult(List<Object> objects) {
+                    Log.d("Nir", "Objects returned: " + objects.size());
+
+                    Model.getInstance().add(firstPost, new Model.AddListener() {
+                        @Override
+                        public void onComplete(DatabaseError databaseError, DatabaseReference databaseReference, String key) {
+                            Log.d("Nir", key);
+                        }
+                    });
+                }
+
+                @Override
+                public void onCancel() {
+
+                }
+            });
 
             //dispatchCameraIntent();
             //dispatchGalleryIntent();
-            Model.getInstance().loadPhoto("test120160812_141416", new Model.LoadPhotoListener() {
+            /*Model.getInstance().loadPhoto("test120160812_141416", new Model.LoadPhotoListener() {
                 @Override
                 public void onResult(Bitmap photo) {
                     if (photo != null) {
                         Log.d("Nir", "Download photo from cloudinary succeeded");
                     }
                 }
-            });
+            });*/
 
             m_adapter = new PostAdapter(MainActivity.this, R.layout.post_listview, m_parts);
 
