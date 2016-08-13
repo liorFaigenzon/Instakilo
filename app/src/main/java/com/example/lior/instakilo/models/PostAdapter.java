@@ -15,6 +15,7 @@ import android.widget.ListView;
 import android.widget.TextView;
 
 import com.example.lior.instakilo.R;
+import com.google.firebase.auth.FirebaseAuth;
 
 import java.util.ArrayList;
 
@@ -139,13 +140,13 @@ public class PostAdapter extends ArrayAdapter<Post> {
             //if(((ImageView)v).getDrawable().equals(R.drawable.heart_outline))
             {
                 // Access the row position here to get the correct data item
-                objects.get(position).incLikeCounter();
+                objects.get(position).incLikeCounter(FirebaseAuth.getInstance().getCurrentUser().getUid());
                 ((ImageView) v).setImageResource(R.drawable.heart_full);
             }
             //else
             {
                 // Access the row position here to get the correct data item
-                objects.get(position).decLikeCounter();
+                objects.get(position).decLikeCounter(FirebaseAuth.getInstance().getCurrentUser().getUid());
                 ((ImageView) v).setImageResource(R.drawable.heart_outline);
             }
 

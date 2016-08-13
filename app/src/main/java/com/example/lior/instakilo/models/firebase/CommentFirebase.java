@@ -211,23 +211,35 @@ public class CommentFirebase implements IModelFirebase {
     }
 
     @Override
-    public void attachCacheListener(Model.AttachCacheListener listener) {
+    public void attachCacheListener(final Model.AttachCacheListener listener) {
 
         ModelFirebase.getDatabase().child("comments").addChildEventListener(new ChildEventListener() {
 
             @Override
             public void onChildAdded(DataSnapshot dataSnapshot, String previousChildName) {
                 Log.d("Nir", "Comment:onChildAdded:" + dataSnapshot.getKey());
+
+                // Retrieve the comment
+                Comment comment = dataSnapshot.getValue(Comment.class);
+                listener.onChildAdded(comment);
             }
 
             @Override
             public void onChildChanged(DataSnapshot dataSnapshot, String previousChildName) {
                 Log.d("Nir", "Comment:onChildChanged:" + dataSnapshot.getKey());
+
+                // Retrieve the comment
+                Comment comment = dataSnapshot.getValue(Comment.class);
+                listener.onChildChanged(comment);
             }
 
             @Override
             public void onChildRemoved(DataSnapshot dataSnapshot) {
                 Log.d("Nir", "Comment:onChildRemoved:" + dataSnapshot.getKey());
+
+                // Retrieve the comment
+                Comment comment = dataSnapshot.getValue(Comment.class);
+                listener.onChildRemoved(comment);
             }
 
             @Override

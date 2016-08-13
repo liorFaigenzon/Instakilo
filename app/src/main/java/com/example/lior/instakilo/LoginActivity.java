@@ -59,14 +59,13 @@ public class LoginActivity extends AppCompatActivity implements GoogleApiClient.
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_login);
 
-        Model.getInstance().signOut();
+        //Model.getInstance().signOut();
 
         progressView = findViewById(R.id.login_progress);
         loginFormView = findViewById(R.id.login_form);
 
-        // TODO: change to != null
         // Check if the user already signed in
-        if (FirebaseAuth.getInstance().getCurrentUser() == null) {
+        if (FirebaseAuth.getInstance().getCurrentUser() != null) {
 
             // Start the main activity
             Intent intent = new Intent(LoginActivity.this, MainActivity.class);

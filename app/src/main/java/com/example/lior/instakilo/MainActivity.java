@@ -2,6 +2,7 @@ package com.example.lior.instakilo;
 
 import android.app.ListActivity;
 import android.content.Intent;
+import android.graphics.AvoidXfermode;
 import android.graphics.Bitmap;
 import android.os.Bundle;
 import android.os.Handler;
@@ -201,20 +202,21 @@ public class MainActivity extends ListActivity{
             // here is where you could also request data from a server
             // and then create objects from that data.
 
-            final Post firstPost = new Post("2", "Nir Kigelman", "photo2");
-            firstPost.incLikeCounter();
-            firstPost.getLikeUsers().put("a", true);
-            firstPost.incLikeCounter();
-            firstPost.getLikeUsers().put("c", true);
-            firstPost.incLikeCounter();
-            firstPost.getLikeUsers().put("b", true);
+            Model.getInstance().getAll(Model.ModelClass.POST, new Model.GetManyListener() {
+                @Override
+                public void onResult(List<Object> objects) {
+                    for (Object post : objects) {
+                        m_parts.add((Post)post);
+                    }
+                }
 
-            m_parts.add(firstPost);
-            m_parts.add(firstPost);
-            m_parts.add(firstPost);
-            m_parts.add(firstPost);
+                @Override
+                public void onCancel() {
 
-            Model.getInstance().attachCacheListener(Model.ModelClass.POST);
+                }
+            });
+
+            /*Model.getInstance().attachCacheListener(Model.ModelClass.POST);
 
             Model.getInstance().getAll(Model.ModelClass.POST, new Model.GetManyListener() {
                 @Override
@@ -233,7 +235,7 @@ public class MainActivity extends ListActivity{
                 public void onCancel() {
 
                 }
-            });
+            });*/
 
             //dispatchCameraIntent();
             //dispatchGalleryIntent();
