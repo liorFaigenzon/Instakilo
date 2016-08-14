@@ -5,11 +5,9 @@ import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 
 import com.example.lior.instakilo.models.Comment;
-import com.example.lior.instakilo.models.Post;
 
 import java.util.LinkedList;
 import java.util.List;
-import java.util.Objects;
 
 /**
  * Created by Alon on 10/08/2016.
@@ -21,6 +19,7 @@ public class CommentSql {
     final static String COMMENT_TABLE_AUTHOR_NAME = "authorName";
     final static String COMMENT_TABLE_POST_ID = "likeCounter";
     final static String COMMENT_TABLE_CONTENT = "photo_id";
+    final static String COMMENT_TABLE_DATE = "creationDate";
 
     public static void create(SQLiteDatabase db) {
         db.execSQL("create table " +
@@ -29,6 +28,7 @@ public class CommentSql {
                 COMMENT_TABLE_AUTHOR_ID + " TEXT," +
                 COMMENT_TABLE_AUTHOR_NAME + " TEXT," +
                 COMMENT_TABLE_POST_ID + " TEXT," +
+                COMMENT_TABLE_DATE + " TEXT," +
                 COMMENT_TABLE_CONTENT + " TEXT);");
     }
 
@@ -45,14 +45,16 @@ public class CommentSql {
             int authorIdIndex = cursor.getColumnIndex(COMMENT_TABLE_AUTHOR_ID);
             int authorNameIndex = cursor.getColumnIndex(COMMENT_TABLE_AUTHOR_NAME);
             int postIdIndex = cursor.getColumnIndex(COMMENT_TABLE_POST_ID);
+            int creationDateIndex = cursor.getColumnIndex(COMMENT_TABLE_DATE);
             int contentIndex = cursor.getColumnIndex(COMMENT_TABLE_CONTENT);
             do {
                 String id = cursor.getString(idIndex);
                 String authorId = cursor.getString(authorIdIndex);
                 String authorName = cursor.getString(authorNameIndex);
                 String postId = cursor.getString(postIdIndex);
+                String creationDate = cursor.getString(creationDateIndex);
                 String content = cursor.getString(contentIndex);
-                Comment cmt = new Comment(id, authorId, authorName, postId, content);
+                Comment cmt = new Comment(id, authorId, authorName, postId, content, creationDate);
                 comments.add(cmt);
             } while (cursor.moveToNext());
         }
@@ -70,14 +72,16 @@ public class CommentSql {
             int authorIdIndex = cursor.getColumnIndex(COMMENT_TABLE_AUTHOR_ID);
             int authorNameIndex = cursor.getColumnIndex(COMMENT_TABLE_AUTHOR_NAME);
             //int postIdIndex = cursor.getColumnIndex(COMMENT_TABLE_POST_ID);
+            int creationDateIndex = cursor.getColumnIndex(COMMENT_TABLE_DATE);
             int contentIndex = cursor.getColumnIndex(COMMENT_TABLE_CONTENT);
             do {
                 String id = cursor.getString(idIndex);
                 String authorId = cursor.getString(authorIdIndex);
                 String authorName = cursor.getString(authorNameIndex);
                 //String postId = cursor.getString(postIdIndex);
+                String creationDate = cursor.getString(creationDateIndex);
                 String content = cursor.getString(contentIndex);
-                Comment cmt = new Comment(id, authorId, authorName, postId, content);
+                Comment cmt = new Comment(id, authorId, authorName, postId, content, creationDate);
                 comments.add(cmt);
             } while (cursor.moveToNext());
         }
@@ -93,13 +97,15 @@ public class CommentSql {
             int authorIdIndex = cursor.getColumnIndex(COMMENT_TABLE_AUTHOR_ID);
             int authorNameIndex = cursor.getColumnIndex(COMMENT_TABLE_AUTHOR_NAME);
             int postIdIndex = cursor.getColumnIndex(COMMENT_TABLE_POST_ID);
+            int creationDateIndex = cursor.getColumnIndex(COMMENT_TABLE_DATE);
             int contentIndex = cursor.getColumnIndex(COMMENT_TABLE_CONTENT);
             //String id = cursor.getString(idIndex);
             String authorId = cursor.getString(authorIdIndex);
             String authorName = cursor.getString(authorNameIndex);
             String postId = cursor.getString(postIdIndex);
+            String creationDate = cursor.getString(creationDateIndex);
             String content = cursor.getString(contentIndex);
-            Comment cmt = new Comment(id, authorId, authorName, postId, content);
+            Comment cmt = new Comment(id, authorId, authorName, postId, content, creationDate);
             return cmt;
         }
         return null;
@@ -114,6 +120,7 @@ public class CommentSql {
         values.put(COMMENT_TABLE_AUTHOR_ID, cmt.getAuthorId());
         values.put(COMMENT_TABLE_AUTHOR_NAME, cmt.getAuthorName());
         values.put(COMMENT_TABLE_POST_ID, cmt.getPostId());
+        values.put(COMMENT_TABLE_DATE, cmt.getLastUpdated());
         values.put(COMMENT_TABLE_CONTENT, cmt.getContent());
         db.insertWithOnConflict(COMMENT_TABLE, COMMENT_TABLE_ID, values, SQLiteDatabase.CONFLICT_REPLACE);
     }

@@ -21,6 +21,12 @@
     <string name="facebook_app_id">279817729056117</string>
     <string name="facebook_application_id">279817729056117</string>
 
+    <string name="dialog_new_record_title">New</string>
+    <string name="dialog_confirm_button">Confirm</string>
+    <string name="dialog_new_record_hint">Enter text here..</string>
+    <string name="dialog_empty_string"> </string>
+    <string name="dialog_cancel_button">Cancel</string>
+
     <!-- Google -->
     <string name="google_client_id">755316057746-e8gtn507jur6ido9628pqdee1rb9mt0j.apps.googleusercontent.com</string>
 </resources>

@@ -92,6 +92,10 @@ public class ModelFirebase {
         }
     }
 
+    public void getCommentsByPostId(String postId, String lastUpdateDate, Model.GetManyListener listener) {
+        commentFirebase.getByPostId(postId, lastUpdateDate, listener);
+    }
+
     public void add(Object model, Model.AddListener listener) {
 
         // Check the type of the model to add

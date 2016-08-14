@@ -16,6 +16,7 @@ public class PostSql {
     final static String POST_TABLE_AUTHOR_NAME = "authorName";
     final static String POST_TABLE_LIKE_COUNTER = "likeCounter";
     final static String POST_TABLE_PHOTO_ID = "photo_id";
+    final static String POST_TABLE_DATE = "creationDate";
 
     public static void create(SQLiteDatabase db) {
         db.execSQL("create table " +
@@ -24,6 +25,7 @@ public class PostSql {
                 POST_TABLE_AUTHOR_ID + " TEXT," +
                 POST_TABLE_AUTHOR_NAME + " TEXT," +
                 POST_TABLE_LIKE_COUNTER + " TEXT," +
+                POST_TABLE_DATE + " TEXT," +
                 POST_TABLE_PHOTO_ID + " TEXT);");
     }
 
@@ -40,14 +42,16 @@ public class PostSql {
             int authorIdIndex = cursor.getColumnIndex(POST_TABLE_AUTHOR_ID);
             int authorNameIndex = cursor.getColumnIndex(POST_TABLE_AUTHOR_NAME);
             int likeCounterIndex = cursor.getColumnIndex(POST_TABLE_LIKE_COUNTER);
+            int creationDateIndex = cursor.getColumnIndex(POST_TABLE_DATE);
             int photoIdIndex = cursor.getColumnIndex(POST_TABLE_PHOTO_ID);
             do {
                 String id = cursor.getString(idIndex);
                 String authorId = cursor.getString(authorIdIndex);
                 String authorName = cursor.getString(authorNameIndex);
                 int likeCounter = cursor.getInt(likeCounterIndex);
+                String creationDate = cursor.getString(creationDateIndex);
                 String photoId = cursor.getString(photoIdIndex);
-                Post pst = new Post(id, authorId, authorName, photoId, likeCounter, null);
+                Post pst = new Post(id, authorId, authorName, photoId, likeCounter, creationDate);
                 posts.add(pst);
             } while (cursor.moveToNext());
         }
@@ -64,12 +68,14 @@ public class PostSql {
             int authorIdIndex = cursor.getColumnIndex(POST_TABLE_AUTHOR_ID);
             int authorNameIndex = cursor.getColumnIndex(POST_TABLE_AUTHOR_NAME);
             int likeCounterIndex = cursor.getColumnIndex(POST_TABLE_LIKE_COUNTER);
+            int creationDateIndex = cursor.getColumnIndex(POST_TABLE_DATE);
             int photoIdIndex = cursor.getColumnIndex(POST_TABLE_PHOTO_ID);
             String authorId = cursor.getString(authorIdIndex);
             String authorName = cursor.getString(authorNameIndex);
             int likeCounter = cursor.getInt(likeCounterIndex);
+            String creationDate = cursor.getString(creationDateIndex);
             String photoId = cursor.getString(photoIdIndex);
-            Post pst = new Post(id, authorId, authorName, photoId, likeCounter, null);
+            Post pst = new Post(id, authorId, authorName, photoId, likeCounter, creationDate);
             return pst;
         }
         return null;
@@ -84,6 +90,7 @@ public class PostSql {
         values.put(POST_TABLE_AUTHOR_ID, pst.getAuthorId());
         values.put(POST_TABLE_AUTHOR_NAME, pst.getAuthorName());
         values.put(POST_TABLE_LIKE_COUNTER, pst.getLikeCounter());
+        values.put(POST_TABLE_DATE, pst.getLastUpdated());
         values.put(POST_TABLE_PHOTO_ID, pst.getPhotoId());
         db.insertWithOnConflict(POST_TABLE, POST_TABLE_ID, values, SQLiteDatabase.CONFLICT_REPLACE);
     }

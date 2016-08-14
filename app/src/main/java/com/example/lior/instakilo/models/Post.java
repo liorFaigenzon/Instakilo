@@ -6,8 +6,11 @@ import android.os.Parcelable;
 import com.google.firebase.database.Exclude;
 import com.google.firebase.database.IgnoreExtraProperties;
 
+import java.text.SimpleDateFormat;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.TimeZone;
 
 @IgnoreExtraProperties
 public class Post implements Parcelable {
@@ -36,6 +39,14 @@ public class Post implements Parcelable {
         this.likeUsers = new HashMap<>();
     }
 
+    public Post(String id, String authorId, String authorName, String photoId, int likeCounter, String creationDate) {
+        this(authorId, authorName, photoId);
+        this.id = id;
+        this.likeCounter = likeCounter;
+        this.likeUsers = new HashMap<>();
+        this.lastUpdated = creationDate;
+    }
+
     public Post(String authorId, String authorName, String photoId, int likeCounter, Map<String, Boolean> likeUsers) {
         this(authorId, authorName, photoId, likeCounter);
         this.likeUsers = likeUsers;
@@ -44,6 +55,12 @@ public class Post implements Parcelable {
     public Post(String id, String authorId, String authorName, String photoId, int likeCounter, Map<String, Boolean> likeUsers) {
         this(authorId, authorName, photoId, likeCounter, likeUsers);
         this.id = id;
+    }
+
+    public Post(String id, String authorId, String authorName, String photoId, int likeCounter, Map<String, Boolean> likeUsers, String creationDate) {
+        this(authorId, authorName, photoId, likeCounter, likeUsers);
+        this.id = id;
+        this.lastUpdated = creationDate;
     }
 
     public String getId() {
@@ -82,24 +99,35 @@ public class Post implements Parcelable {
         return likeCounter;
     }
 
-    public void incLikeCounter(String userId) {
-        this.likeUsers.put(userId, true);
-        this.likeCounter++;
-    }
-
-    public void decLikeCounter(String userId) {
+    public boolean toggleLikeCounter(String userId) {
         if (this.likeUsers.containsKey(userId)) {
             this.likeUsers.remove(userId);
             this.likeCounter--;
+
+            return false;
+        } else {
+            this.likeUsers.put(userId, true);
+            this.likeCounter++;
+
+            return true;
         }
+    }
+
+    public boolean isUserLiked(String userId) {
+        return this.likeUsers.containsKey(userId);
     }
 
     public String getLastUpdated() {
         return lastUpdated;
     }
 
-    public void setLastUpdated(String lastUpdated) {
-        this.lastUpdated = lastUpdated;
+    public void setLastUpdated() {
+        // Create date object with now's date to save as the last update of the post
+        SimpleDateFormat dateFormatGmt = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+        dateFormatGmt.setTimeZone(TimeZone.getTimeZone("GMT"));
+        String date = dateFormatGmt.format(new Date()).toString();
+
+        this.lastUpdated = date;
     }
 
     public Map<String, Boolean> getLikeUsers() {
@@ -147,11 +175,20 @@ public class Post implements Parcelable {
     // write your object's data to the passed-in Parcel
     @Override
     public void writeToParcel(Parcel dest, int flags) {
-        dest.writeStringArray(new String[] {this.id,
+        dest.writeStringArray(new String[] {
+                this.id,
                 this.authorId,
                 this.authorName,
                 this.photoId,
-                Integer.toString(this.likeCounter)});
+                Integer.toString(this.likeCounter),
+                this.lastUpdated
+        });
+
+        dest.writeInt(this.likeUsers.size());
+        for(Map.Entry<String, Boolean> entry : this.likeUsers.entrySet()){
+            dest.writeString(entry.getKey());
+            dest.writeString(entry.getValue().toString());
+        }
     }
 
     // this is used to regenerate your object. All Parcelables must have a CREATOR that implements these two methods
@@ -167,7 +204,7 @@ public class Post implements Parcelable {
 
     // example constructor that takes a Parcel and gives you an object populated with it's values
     private Post(Parcel in) {
-        String[] data = new String[5];
+        String[] data = new String[6];
 
         in.readStringArray(data);
         this.id = data[0];
@@ -175,6 +212,15 @@ public class Post implements Parcelable {
         this.authorName = data[2];
         this.photoId = data[3];
         this.likeCounter = Integer.parseInt(data[4]);
+        this.lastUpdated = data[5];
+
+        int size = in.readInt();
+        this.likeUsers =  new HashMap<>();
+        for(int i = 0; i < size; i++){
+            String key = in.readString();
+            boolean value = Boolean.valueOf(in.readString());
+            this.likeUsers.put(key,value);
+        }
 
     }
 }

@@ -25,6 +25,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
 import java.util.List;
+import java.util.concurrent.ExecutionException;
 
 public class Model {
 
@@ -116,6 +117,42 @@ public class Model {
         });
     }
 
+    public void getCommentsByPostId(final String postId, final GetManyListener listener) {
+
+        final String lastUpdateDate = modelSql.getLastUpdateData(ModelClass.COMMENT);
+
+        modelFirebase.getCommentsByPostId(postId, lastUpdateDate, new GetManyListener() {
+            @Override
+            public void onResult(List<Object> objects) {
+                if(objects != null && objects.size() > 0) {
+                    //update the local DB
+                    String reacentUpdate = lastUpdateDate;
+
+                    for (Object m : objects) {
+                        modelSql.add(m);
+
+                        if (reacentUpdate == null || ((Comment)m).getLastUpdated().compareTo(reacentUpdate) > 0) {
+                            reacentUpdate = ((Comment)m).getLastUpdated();
+                        }
+                        Log.d("TAG", "updating: " + ((Comment)m).toString());
+                        break;
+                    }
+
+                    modelSql.setLastUpdateData(ModelClass.COMMENT, reacentUpdate);
+                }
+
+                //return the complete objects list to the caller
+                List<Object> res = modelSql.getCommentsByPostId(postId);
+                listener.onResult(res);
+            }
+
+            @Override
+            public void onCancel() {
+                listener.onCancel();
+            }
+        });
+    }
+
     public interface GetOneListener{
         void onResult(Object object);
         void onCancel();
@@ -193,7 +230,7 @@ public class Model {
         void onResult(Bitmap photo);
     }
 
-    public void loadPhoto(final String photoId, final LoadPhotoListener listener) {
+    public void loadPhoto(final String photoId, final LoadPhotoListener listener) throws ExecutionException, InterruptedException {
         AsyncTask<String,String,Bitmap> task = new AsyncTask<String, String, Bitmap >() {
             @Override
             protected Bitmap doInBackground(String... params) {
@@ -264,7 +301,15 @@ public class Model {
 
             //File dir = context.getExternalFilesDir(null);
             InputStream inputStream = new FileInputStream(imageFile);
-            bitmap = BitmapFactory.decodeStream(inputStream);
+
+            /**
+             * This code section is for utilizing the size of bitmaps on the server side stroage
+             * It is needed because large files will throw OutOfMemoryException error on calling this code
+             */
+            BitmapFactory.Options sizeOptions = new BitmapFactory.Options();
+            sizeOptions.inSampleSize = 8;
+
+            bitmap = BitmapFactory.decodeStream(inputStream, null, sizeOptions);
             Log.d("tag","got image from cache: " + imageFileName);
 
         } catch (FileNotFoundException e) {

@@ -1,11 +1,6 @@
 package com.example.lior.instakilo.models.sqlite;
 
-/**
- * Created by eliav.menachi on 08/06/2016.
- */
 import android.content.Context;
-import java.util.LinkedList;
-import java.util.List;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
 
@@ -13,11 +8,10 @@ import com.example.lior.instakilo.models.Comment;
 import com.example.lior.instakilo.models.Model;
 import com.example.lior.instakilo.models.Post;
 
-/**
- * Created by eliav.menachi on 13/05/2015.
- */
+import java.util.List;
+
 public class ModelSql {
-    final static int VERSION = 8;
+    final static int VERSION = 16;
 
     Helper sqlDb;
 
@@ -45,6 +39,11 @@ public class ModelSql {
                 return CommentSql.getAllComments(db);
         }
         return null;
+    }
+
+    public List<Object> getCommentsByPostId(String PostId) {
+        SQLiteDatabase db = getReadbleDB();
+        return CommentSql.getCommentsByPostId(db, PostId);
     }
 
     public void add(Object model) {

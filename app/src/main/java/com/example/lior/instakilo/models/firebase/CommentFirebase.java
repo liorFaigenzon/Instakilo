@@ -13,13 +13,10 @@ import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.Query;
 import com.google.firebase.database.ValueEventListener;
 
-import java.text.SimpleDateFormat;
-import java.util.Date;
 import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
-import java.util.TimeZone;
 
 public class CommentFirebase implements IModelFirebase {
 
@@ -33,9 +30,14 @@ public class CommentFirebase implements IModelFirebase {
             @Override
             public void onDataChange(DataSnapshot snapshot) {
                 final List<Object> commentList = new LinkedList<>();
+                Iterable<DataSnapshot> children =  snapshot.getChildren();
+
+                if (snapshot.getChildrenCount() != 0) {
+                    children.iterator().next();
+                }
 
                 // Gather all the comments to a list
-                for (DataSnapshot commentSnapshot : snapshot.getChildren()) {
+                for (DataSnapshot commentSnapshot : children) {
                     Comment comment = commentSnapshot.getValue(Comment.class);
                     comment.setId(snapshot.getKey());
                     commentList.add(comment);
@@ -76,7 +78,7 @@ public class CommentFirebase implements IModelFirebase {
         });
     }
 
-    public void getByPostId(String id, String lastUpdateDate, final Model.GetManyListener listener) {
+    public void getByPostId(String id, final String lastUpdateDate, final Model.GetManyListener listener) {
         Query queryPostComments;
 
         if (lastUpdateDate != null) {
@@ -93,9 +95,14 @@ public class CommentFirebase implements IModelFirebase {
             @Override
             public void onDataChange(DataSnapshot snapshot) {
                 final List<Object> commentList = new LinkedList<>();
+                Iterable<DataSnapshot> children =  snapshot.getChildren();
+
+                if (snapshot.getChildrenCount() != 0 && lastUpdateDate != null) {
+                    children.iterator().next();
+                }
 
                 // Gather all the comments to a list
-                for (DataSnapshot commentSnapshot : snapshot.getChildren()) {
+                for (DataSnapshot commentSnapshot : children) {
                     Comment comment = commentSnapshot.getValue(Comment.class);
                     commentList.add(comment);
                 }
@@ -118,13 +125,8 @@ public class CommentFirebase implements IModelFirebase {
         // Cast the model to comment
         Comment comment = (Comment)model;
 
-        // Create date object with now's date to save as the last update of the comment
-        SimpleDateFormat dateFormatGmt = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
-        dateFormatGmt.setTimeZone(TimeZone.getTimeZone("GMT"));
-        String date = dateFormatGmt.format(new Date()).toString();
-
         // Set the last update of the comment to now's date
-        comment.setLastUpdated(date);
+        comment.setLastUpdated();
 
         // Create new comment at /post-comments/$postid/$commentid and at
         // /comments/$commentid simultaneously
@@ -157,13 +159,8 @@ public class CommentFirebase implements IModelFirebase {
                         // Update the comment if it exists
                         if (dataSnapshot.getValue(Comment.class) != null) {
 
-                            // Create date object with now's date to save as the last update of the comment
-                            SimpleDateFormat dateFormatGmt = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
-                            dateFormatGmt.setTimeZone(TimeZone.getTimeZone("GMT"));
-                            String date = dateFormatGmt.format(new Date()).toString();
-
                             // Set the last update of the comment to now's date
-                            comment.setLastUpdated(date);
+                            comment.setLastUpdated();
 
                             // Update the comment at /post-comments/$postid/$commentid and at
                             // /comments/$commentid simultaneously
@@ -221,6 +218,7 @@ public class CommentFirebase implements IModelFirebase {
 
                 // Retrieve the comment
                 Comment comment = dataSnapshot.getValue(Comment.class);
+                comment.setId(dataSnapshot.getKey());
                 listener.onChildAdded(comment);
             }
 
@@ -230,6 +228,7 @@ public class CommentFirebase implements IModelFirebase {
 
                 // Retrieve the comment
                 Comment comment = dataSnapshot.getValue(Comment.class);
+                comment.setId(dataSnapshot.getKey());
                 listener.onChildChanged(comment);
             }
 
@@ -239,6 +238,7 @@ public class CommentFirebase implements IModelFirebase {
 
                 // Retrieve the comment
                 Comment comment = dataSnapshot.getValue(Comment.class);
+                comment.setId(dataSnapshot.getKey());
                 listener.onChildRemoved(comment);
             }
 

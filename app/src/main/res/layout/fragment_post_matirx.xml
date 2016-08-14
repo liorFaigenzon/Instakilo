@@ -1,13 +1,12 @@
 <?xml version="1.0" encoding="utf-8"?>
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="fill_parent"
-    android:layout_height="fill_parent">
+    android:layout_height="115dp">
 
     <ImageView
         android:layout_margin="1dp"
         android:id="@+id/topImg"
         android:layout_width="fill_parent"
-        android:layout_height="115dp"
-        android:background="@drawable/login"/>
+        android:layout_height="115dp"/>
 
 </RelativeLayout>

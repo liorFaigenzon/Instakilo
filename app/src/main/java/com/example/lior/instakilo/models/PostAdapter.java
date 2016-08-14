@@ -10,12 +10,9 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
 import android.widget.GridView;
-import android.widget.ImageView;
 import android.widget.ListView;
-import android.widget.TextView;
 
 import com.example.lior.instakilo.R;
-import com.google.firebase.auth.FirebaseAuth;
 
 import java.util.ArrayList;
 
@@ -76,7 +73,7 @@ public class PostAdapter extends ArrayAdapter<Post> {
 
             if (parent instanceof GridView)
             {
-                v = inflater.inflate(R.layout.post_matrixview,null);
+                v = inflater.inflate(R.layout.fragment_post_matirx,null);
                 //ImageView img = (ImageView) v.findViewById(R.id.topImg);
                 //img.getLayoutParams().height = 200;
                 //img.getLayoutParams().width = 300;
@@ -84,39 +81,12 @@ public class PostAdapter extends ArrayAdapter<Post> {
             }
             else if (parent instanceof ListView)
             {
-                v = inflater.inflate(R.layout.post_listview, null);
+                v = inflater.inflate(R.layout.fragment_post_row, null);
                 // This is how you obtain a reference to the TextViews.
                 // These TextViews are created in the XML files we defined.
 
-                //TextView tt = (TextView) v.findViewById(R.id.toptext);
-                TextView ttd = (TextView) v.findViewById(R.id.toptextdata);
-                TextView mt = (TextView) v.findViewById(R.id.middletext);
-                TextView mtd = (TextView) v.findViewById(R.id.middletextdata);
-                TextView bt = (TextView) v.findViewById(R.id.bottomtext);
-                TextView btd = (TextView) v.findViewById(R.id.desctext);
-                ImageView likePic = (ImageView) v.findViewById(R.id.likePic);
-                ImageView commentPic = (ImageView) v.findViewById(R.id.commentPic);
-
-                likePic.setTag(position);
-                likePic.setOnClickListener(mOnLikeClickListener);
-                commentPic.setTag(position);
-                commentPic.setOnClickListener(mOnCommentClickListener);
 
 
-                // check to see if each individual textview is null.
-                // if not, assign some text!
-                if (mt != null){
-                    mt.setText("Content: ");
-                }
-                if (mtd != null){
-                    mtd.setText(i.getPhotoId());
-                }
-                if (bt != null){
-                    bt.setText("Likes: ");
-                }
-                if (btd != null){
-                    btd.setText(Integer.toString(i.getLikeCounter()));
-                }
             }
         }
 
@@ -140,14 +110,14 @@ public class PostAdapter extends ArrayAdapter<Post> {
             //if(((ImageView)v).getDrawable().equals(R.drawable.heart_outline))
             {
                 // Access the row position here to get the correct data item
-                objects.get(position).incLikeCounter(FirebaseAuth.getInstance().getCurrentUser().getUid());
-                ((ImageView) v).setImageResource(R.drawable.heart_full);
+                //objects.get(position).incLikeCounter(FirebaseAuth.getInstance().getCurrentUser().getUid());
+                //((ImageView) v).setImageResource(R.drawable.heart_full);
             }
             //else
             {
                 // Access the row position here to get the correct data item
-                objects.get(position).decLikeCounter(FirebaseAuth.getInstance().getCurrentUser().getUid());
-                ((ImageView) v).setImageResource(R.drawable.heart_outline);
+                //objects.get(position).decLikeCounter(FirebaseAuth.getInstance().getCurrentUser().getUid());
+                //((ImageView) v).setImageResource(R.drawable.heart_outline);
             }
 
             notifyDataSetChanged();
