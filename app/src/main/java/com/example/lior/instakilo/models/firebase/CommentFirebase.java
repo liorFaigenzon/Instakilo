@@ -21,7 +21,7 @@ import java.util.Map;
 public class CommentFirebase implements IModelFirebase {
 
     @Override
-    public void getAll(String lastUpdateDate, final Model.GetManyListener listener) {
+    public void getAll(final String lastUpdateDate, final Model.GetManyListener listener) {
 
         // Get all recent comments that are not cached already
         Query queryComments = ModelFirebase.getDatabase().child("comments").orderByChild("lastUpdated").startAt(lastUpdateDate);
@@ -32,7 +32,7 @@ public class CommentFirebase implements IModelFirebase {
                 final List<Object> commentList = new LinkedList<>();
                 Iterable<DataSnapshot> children =  snapshot.getChildren();
 
-                if (snapshot.getChildrenCount() != 0) {
+                if (snapshot.getChildrenCount() != 0 && lastUpdateDate != null) {
                     children.iterator().next();
                 }
 
