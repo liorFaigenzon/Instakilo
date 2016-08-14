@@ -81,15 +81,8 @@ public class CommentFirebase implements IModelFirebase {
     public void getByPostId(String id, final String lastUpdateDate, final Model.GetManyListener listener) {
         Query queryPostComments;
 
-        if (lastUpdateDate != null) {
-
-            // Get all recent comments of specific post that are not cached already
-            queryPostComments = ModelFirebase.getDatabase().child("post-comments").child(id).orderByChild("lastUpdated").startAt(lastUpdateDate);
-        } else {
-
-            // Get all comments of specific post
-            queryPostComments = ModelFirebase.getDatabase().child("post-comments").child(id).orderByChild("lastUpdated");
-        }
+        // Get all recent comments of specific post that are not cached already
+        queryPostComments = ModelFirebase.getDatabase().child("post-comments").child(id).orderByChild("lastUpdated").startAt(lastUpdateDate);
 
         queryPostComments.addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
