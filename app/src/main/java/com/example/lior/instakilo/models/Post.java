@@ -99,16 +99,22 @@ public class Post implements Parcelable {
         return likeCounter;
     }
 
-    public void incLikeCounter(String userId) {
-        this.likeUsers.put(userId, true);
-        this.likeCounter++;
-    }
-
-    public void decLikeCounter(String userId) {
+    public boolean toggleLikeCounter(String userId) {
         if (this.likeUsers.containsKey(userId)) {
             this.likeUsers.remove(userId);
             this.likeCounter--;
+
+            return false;
+        } else {
+            this.likeUsers.put(userId, true);
+            this.likeCounter++;
+
+            return true;
         }
+    }
+
+    public boolean isUserLiked(String userId) {
+        return this.likeUsers.containsKey(userId);
     }
 
     public String getLastUpdated() {
@@ -175,8 +181,14 @@ public class Post implements Parcelable {
                 this.authorName,
                 this.photoId,
                 Integer.toString(this.likeCounter),
-                
+                this.lastUpdated
         });
+
+        dest.writeInt(this.likeUsers.size());
+        for(Map.Entry<String, Boolean> entry : this.likeUsers.entrySet()){
+            dest.writeString(entry.getKey());
+            dest.writeString(entry.getValue().toString());
+        }
     }
 
     // this is used to regenerate your object. All Parcelables must have a CREATOR that implements these two methods
@@ -192,7 +204,7 @@ public class Post implements Parcelable {
 
     // example constructor that takes a Parcel and gives you an object populated with it's values
     private Post(Parcel in) {
-        String[] data = new String[5];
+        String[] data = new String[6];
 
         in.readStringArray(data);
         this.id = data[0];
@@ -200,6 +212,15 @@ public class Post implements Parcelable {
         this.authorName = data[2];
         this.photoId = data[3];
         this.likeCounter = Integer.parseInt(data[4]);
+        this.lastUpdated = data[5];
+
+        int size = in.readInt();
+        this.likeUsers =  new HashMap<>();
+        for(int i = 0; i < size; i++){
+            String key = in.readString();
+            boolean value = Boolean.valueOf(in.readString());
+            this.likeUsers.put(key,value);
+        }
 
     }
 }

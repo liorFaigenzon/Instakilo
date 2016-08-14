@@ -27,14 +27,7 @@
         android:layout_below="@id/commentFragment"
         android:gravity="bottom">
 
-        <TextView
-            android:id="@+id/enq"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:text="*Marked services do not run on sunday."
-            android:textAppearance="?android:attr/textAppearanceSmall"
-            android:textColor="#800000"
-            android:typeface="serif" />
+
 
     </LinearLayout>
 

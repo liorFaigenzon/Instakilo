@@ -6,13 +6,16 @@ import android.graphics.Bitmap;
 import android.net.Uri;
 import android.os.Bundle;
 import android.provider.MediaStore;
+import android.support.design.widget.FloatingActionButton;
 import android.support.v4.app.FragmentActivity;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentTransaction;
 import android.util.Log;
+import android.view.View;
 
 import com.example.lior.instakilo.dummy.PostContent;
 import com.example.lior.instakilo.models.Model;
+import com.example.lior.instakilo.models.PicModeSelectDialogFragment;
 import com.example.lior.instakilo.models.Post;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.database.DatabaseError;
@@ -24,12 +27,12 @@ import java.util.Date;
 
 public class MainActivity extends FragmentActivity implements UserMainFragment.OnFragmentInteractionListener,
                                                                PostListFragment.OnListFragmentInteractionListener,
-                                                               PostDetailFragment.OnFragmentInteractionListener,
-                                                                UserMainFragment.Delegate
+                                                               PostDetailFragment.OnFragmentInteractionListener
 {
 
     static final int REQUEST_IMAGE_CAPTURE = 100;
     static final int REQUEST_IMAGE_SELECT = 200;
+    private FloatingActionButton mAddNewRecordFab;
 
 
 
@@ -37,9 +40,9 @@ public class MainActivity extends FragmentActivity implements UserMainFragment.O
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
-
         Model.getInstance().attachCacheListener(Model.ModelClass.POST);
         Model.getInstance().attachCacheListener(Model.ModelClass.COMMENT);
+        setup();
     }
 
     @Override
@@ -67,7 +70,15 @@ public class MainActivity extends FragmentActivity implements UserMainFragment.O
        // ft.replace(R.id.main_frag_container2,fragment);
         //ft.addToBackStack(null);
         //ft.commit();
+
     }
+
+    private void setup() {
+        mAddNewRecordFab = (FloatingActionButton) findViewById(R.id.activity_Post_AddNewRecord_FloatingActionButton);
+        mAddNewRecordFab.setOnClickListener(new DialogPicActivity(this));
+    }
+
+
 
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
@@ -153,13 +164,31 @@ public class MainActivity extends FragmentActivity implements UserMainFragment.O
         }
     }
 
-    @Override
-    public void saveCamera() {
-        onCapturePhotoResult(new Intent());//dispatchCameraIntent();
-    }
+    public class DialogPicActivity implements View.OnClickListener, PicModeSelectDialogFragment.IPicModeSelectListener{
 
-    @Override
-    public void saveGallary() {
-        dispatchGalleryIntent();
+        MainActivity muserMainFragment;
+
+        DialogPicActivity(MainActivity userMainFragment)
+        {
+            muserMainFragment = userMainFragment;
+        }
+
+        @Override
+        public void onPicModeSelected(String mode) {
+            if (mode.equalsIgnoreCase("camera"))
+                muserMainFragment.dispatchCameraIntent();
+            else if (mode.equalsIgnoreCase("gallery"))
+                muserMainFragment.dispatchGalleryIntent();
+            else Log.i("FragmentAlertDialog", "cancel click!");
+        }
+
+        @Override
+        public void onClick(View v) {
+            PicModeSelectDialogFragment frag = new PicModeSelectDialogFragment();
+            frag.setiPicModeSelectListener(this);
+            frag.show(getFragmentManager(), "Choose way");
+        }
+
+
     }
 }

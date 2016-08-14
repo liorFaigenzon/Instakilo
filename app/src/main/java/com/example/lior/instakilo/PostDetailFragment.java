@@ -30,9 +30,9 @@ public class PostDetailFragment extends Fragment {
 
     // TODO: Rename parameter arguments, choose names that match
     // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
-    private static final String ARG_PARAM1 = "param1";
-    private static final String ARG_PARAM2 = "param2";
+    private static PostDetailFragment fragment;
     Post post;
+    TextView mlikesTxt;
 
     // TODO: Rename and change types of parameters
     private String mParam1;
@@ -41,34 +41,24 @@ public class PostDetailFragment extends Fragment {
     private OnFragmentInteractionListener mListener;
 
     public PostDetailFragment() {
-        // Required empty public constructor
+
     }
 
-    /**
-     * Use this factory method to create a new instance of
-     * this fragment using the provided parameters.
-     *
-     * @param param1 Parameter 1.
-     * @param param2 Parameter 2.
-     * @return A new instance of fragment PostDetailFragment.
-     */
+
     // TODO: Rename and change types and number of parameters
-    public static PostDetailFragment newInstance(String param1, String param2) {
-        PostDetailFragment fragment = new PostDetailFragment();
-        Bundle args = new Bundle();
-        args.putString(ARG_PARAM1, param1);
-        args.putString(ARG_PARAM2, param2);
-        fragment.setArguments(args);
+    public static PostDetailFragment newInstance() {
+       if (fragment ==null)
+       {
+           fragment = new PostDetailFragment();
+       }
+
         return fragment;
     }
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        if (getArguments() != null) {
-            mParam1 = getArguments().getString(ARG_PARAM1);
-            mParam2 = getArguments().getString(ARG_PARAM2);
-        }
+
     }
 
     @Override
@@ -80,11 +70,13 @@ public class PostDetailFragment extends Fragment {
         View mView = inflater.inflate(R.layout.fragment_post_detail, container, false);
         TextView mAuthorName = (TextView) mView.findViewById(R.id.authorName);
         TextView likes = (TextView) mView.findViewById(R.id.likes);
-        TextView mlikesTxt = (TextView)  mView.findViewById(R.id.likesTxt);
+        mlikesTxt = (TextView)  mView.findViewById(R.id.likesTxt);
         final ImageView topImg = (ImageView)  mView.findViewById(R.id.topImg);
         ImageView likePic = (ImageView)  mView.findViewById(R.id.likePic);
-
-
+        if (post.isUserLiked(FirebaseAuth.getInstance().getCurrentUser().getUid())) {
+            likePic.setPressed(true);
+            //likePic.setImageResource(R.drawable.heart_full);
+        }
         try {
             Model.getInstance().loadPhoto(post.getPhotoId(), new Model.LoadPhotoListener() {
                 @Override
@@ -115,35 +107,23 @@ public class PostDetailFragment extends Fragment {
             likePic.setOnClickListener(mOnLikeClickListener);
         }
 
-        
+
+
         return mView;
+    }
+
+    private  void UpdateLike()
+    {
+        mlikesTxt.setText(Integer.toString(post.getLikeCounter()));
     }
 
     private View.OnClickListener mOnLikeClickListener = new View.OnClickListener() {
         @Override
         public void onClick(View v) {
             // int position = (Integer) v.getTag();
-
-            //if(((ImageView)v).getDrawable().equals(R.drawable.heart_outline))
-            {
-                // Access the row position here to get the correct data item
-                post.incLikeCounter(FirebaseAuth.getInstance().getCurrentUser().getUid());
-                ((ImageView) v).setImageResource(R.drawable.heart_full);
-                //Delegate delegate = (Delegate) getActivity();
-                //delegate.like();
-            }
-            //else
-            {
-                //Delegate delegate = (Delegate) getActivity();
-                //delegate.deslike();
-                // Access the row position here to get the correct data item
-                //mItem.decLikeCounter();
-                //((ImageView) v).setImageResource(R.drawable.heart_outline);
-            }
-
+            post.toggleLikeCounter(FirebaseAuth.getInstance().getCurrentUser().getUid());
+            //PostDetailFragment.newInstance().UpdateLike();
         }
-
-
     };
 
     // TODO: Rename method, update argument and hook method into UI event
