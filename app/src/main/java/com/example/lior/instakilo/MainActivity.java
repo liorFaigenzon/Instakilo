@@ -1,6 +1,8 @@
 package com.example.lior.instakilo;
 
 
+import android.*;
+import android.Manifest;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.graphics.Bitmap;
@@ -36,8 +38,10 @@ public class MainActivity extends FragmentActivity implements UserMainFragment.O
     static final int REQUEST_IMAGE_CAPTURE = 100;
     static final int REQUEST_IMAGE_SELECT = 200;
     static final int REQUEST_PERMISSIONS_CAMERA = 300;
+    static final int REQUEST_PERMISSIONS_STORAGE = 400;
     private FloatingActionButton mAddNewRecordFab;
     public static ProgressBar mainProgressBar = null;
+    private Bitmap thumbnail;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -111,6 +115,20 @@ public class MainActivity extends FragmentActivity implements UserMainFragment.O
 
                 return;
             }
+            case REQUEST_PERMISSIONS_STORAGE: {
+
+                // If request is cancelled, the result arrays are empty.
+                if (grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
+                    final String timeStamp = new SimpleDateFormat("yyyyMMdd_HHmmss").format(new Date());
+                    String photoId = FirebaseAuth.getInstance().getCurrentUser().getUid() + timeStamp + ".jpg";
+
+                    if (this.thumbnail != null) {
+                        Model.getInstance().savePhoto(thumbnail, photoId);
+                    }
+                }
+
+                return;
+            }
         }
     }
 
@@ -141,6 +159,8 @@ public class MainActivity extends FragmentActivity implements UserMainFragment.O
     }
 
     private void addPost(final Bitmap thumbnail) {
+        this.thumbnail = thumbnail;
+
         // Save the thumbnail to cloudinary
         final String timeStamp = new SimpleDateFormat("yyyyMMdd_HHmmss").format(new Date());
 
@@ -155,7 +175,13 @@ public class MainActivity extends FragmentActivity implements UserMainFragment.O
         Model.getInstance().add(newPost, new Model.AddListener() {
             @Override
             public void onComplete(DatabaseError databaseError, DatabaseReference databaseReference, String key) {
-                Model.getInstance().savePhoto(thumbnail, photoId);
+                if (ContextCompat.checkSelfPermission(MainActivity.this,
+                        Manifest.permission.WRITE_EXTERNAL_STORAGE) != PackageManager.PERMISSION_GRANTED) {
+                    ActivityCompat.requestPermissions(MainActivity.this,
+                            new String[]{android.Manifest.permission.WRITE_EXTERNAL_STORAGE}, REQUEST_PERMISSIONS_STORAGE);
+                } else {
+                    Model.getInstance().savePhoto(thumbnail, photoId);
+                }
                 newPost.setId(key);
                 PostContent.getInstance().addPost(newPost);
             }
@@ -200,13 +226,20 @@ public class MainActivity extends FragmentActivity implements UserMainFragment.O
 
         @Override
         public void onPicModeSelected(String mode) {
-            if (mode.equalsIgnoreCase("camera"))
-                if (ContextCompat.checkSelfPermission(MainActivity.this, android.Manifest.permission.CAMERA) != PackageManager.PERMISSION_GRANTED) {
-                    ActivityCompat.requestPermissions(MainActivity.this, new String[]{android.Manifest.permission.CAMERA}, REQUEST_PERMISSIONS_CAMERA);
+            if (mode.equalsIgnoreCase("camera")) {
+                if (ContextCompat.checkSelfPermission(MainActivity.this,
+                        android.Manifest.permission.CAMERA) != PackageManager.PERMISSION_GRANTED) {
+                    ActivityCompat.requestPermissions(MainActivity.this,
+                            new String[]{android.Manifest.permission.CAMERA}, REQUEST_PERMISSIONS_CAMERA);
+                } else {
+                    muserMainFragment.dispatchCameraIntent();
                 }
-            else if (mode.equalsIgnoreCase("gallery"))
+            }
+            else if (mode.equalsIgnoreCase("gallery")) {
                 muserMainFragment.dispatchGalleryIntent();
-            else Log.i("FragmentAlertDialog", "cancel click!");
+            } else {
+                Log.i("FragmentAlertDialog", "cancel click!");
+            }
         }
 
         @Override
