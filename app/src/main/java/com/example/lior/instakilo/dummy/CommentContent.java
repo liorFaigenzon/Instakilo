@@ -44,7 +44,6 @@ public class CommentContent {
     public  static void getCommentByPostId(String postId)
     {
         ITEMS = new ArrayList<>();
-        MainActivity.mainProgressBar.setVisibility(View.VISIBLE);
         Model.getInstance().getCommentsByPostId(postId, new Model.GetManyListener() {
             @Override
             public void onResult(List<Object> objects) {
