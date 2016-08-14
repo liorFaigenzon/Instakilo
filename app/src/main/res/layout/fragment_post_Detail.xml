@@ -23,8 +23,8 @@
         android:layout_below="@id/authorName"
         android:layout_marginTop="2dp"
         android:layout_width="fill_parent"
-        android:layout_height="220dp"
-        android:scaleType="centerCrop"/>
+        android:layout_height="300dp"
+        android:scaleType="centerInside"/>
     <!-- Item Name -->
     <LinearLayout
         android:id="@+id/topButtons"

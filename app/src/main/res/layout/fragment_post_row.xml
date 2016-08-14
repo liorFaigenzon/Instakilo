@@ -23,9 +23,9 @@
         android:layout_below="@id/authorName"
         android:layout_marginTop="2dp"
         android:layout_width="fill_parent"
-        android:layout_height="220dp"
+        android:layout_height="350dp"
         android:adjustViewBounds="true"
-        android:scaleType="centerCrop"/>
+        android:scaleType="centerInside"/>
     <!-- Item Name -->
     <LinearLayout
         android:id="@+id/topButtons"

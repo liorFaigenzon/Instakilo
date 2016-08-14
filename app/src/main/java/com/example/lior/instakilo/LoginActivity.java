@@ -62,7 +62,7 @@ public class LoginActivity extends AppCompatActivity implements GoogleApiClient.
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_login);
 
-        Model.getInstance().signOut();
+        //Model.getInstance().signOut();
 
         progressView = findViewById(R.id.login_progress);
         loginFormView = findViewById(R.id.login_form);
@@ -70,10 +70,22 @@ public class LoginActivity extends AppCompatActivity implements GoogleApiClient.
         // Check if the user already signed in
         if (FirebaseAuth.getInstance().getCurrentUser() != null) {
 
-            // Start the main activity
-            Intent intent = new Intent(LoginActivity.this, MainActivity.class);
-            startActivity(intent);
-            finish();
+            // Show a progress spinner, and kick off a background task to
+            // perform the user login attempt.
+            showProgress(true);
+
+            // Get profile picture
+            getProfilePicture(new OnProfilePictureListener() {
+                @Override
+                public void onCompleted(Bitmap profilePicture) {
+
+                    // Start the main activity
+                    Intent intent = new Intent(LoginActivity.this, MainActivity.class);
+                    intent.putExtra("profilePicture", profilePicture);
+                    startActivity(intent);
+                    finish();
+                }
+            });
         } else {
             configureGoogleAuthentication();
             configureFacebookAuthentication();
