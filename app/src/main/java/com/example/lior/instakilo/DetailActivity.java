@@ -38,7 +38,7 @@ public class DetailActivity extends AppCompatActivity implements PostDetailFragm
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_post_detail);
 
-        commentsProgressBar = (ProgressBar)findViewById(R.id.mainProgressBar);
+        commentsProgressBar = (ProgressBar)findViewById(R.id.commentProgressBar);
         DetailActivity.commentsProgressBar.setVisibility(View.VISIBLE);
 
         setupFragment();
