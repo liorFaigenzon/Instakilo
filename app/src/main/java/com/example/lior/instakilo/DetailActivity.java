@@ -10,6 +10,7 @@ import android.support.v4.app.FragmentTransaction;
 import android.support.v7.app.AppCompatActivity;
 import android.view.View;
 import android.view.Window;
+import android.widget.ProgressBar;
 
 import com.afollestad.materialdialogs.DialogAction;
 import com.afollestad.materialdialogs.MaterialDialog;
@@ -30,11 +31,16 @@ public class DetailActivity extends AppCompatActivity implements PostDetailFragm
     PostDetailFragment postDetailFragment ;
     Post post;
     private FloatingActionButton mAddNewRecordFab;
+    public static ProgressBar commentsProgressBar = null;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_post_detail);
+
+        commentsProgressBar = (ProgressBar)findViewById(R.id.mainProgressBar);
+        DetailActivity.commentsProgressBar.setVisibility(View.VISIBLE);
+
         setupFragment();
         setup();
     }
@@ -79,6 +85,10 @@ public class DetailActivity extends AppCompatActivity implements PostDetailFragm
                 String content = dialog.getInputEditText().getText().toString().trim();
                 if (content != "") {
                     final Comment newComment = new Comment(FirebaseAuth.getInstance().getCurrentUser().getUid(), FirebaseAuth.getInstance().getCurrentUser().getDisplayName(), post.getId(), content);
+
+                    // Show progress bar before adding the comment
+                    DetailActivity.commentsProgressBar.setVisibility(View.VISIBLE);
+
                     Model.getInstance().add(newComment, new Model.AddListener() {
                         @Override
                         public void onComplete(DatabaseError databaseError, DatabaseReference databaseReference, String key) {

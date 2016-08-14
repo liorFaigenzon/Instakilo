@@ -1,5 +1,8 @@
 package com.example.lior.instakilo.dummy;
 
+import android.view.View;
+
+import com.example.lior.instakilo.MainActivity;
 import com.example.lior.instakilo.models.Comment;
 import com.example.lior.instakilo.models.Model;
 import com.example.lior.instakilo.models.callbacks.OnItemsLoadedCallback;
@@ -57,7 +60,6 @@ public class CommentContent {
 
             @Override
             public void onCancel() {
-
             }
         });
     }
