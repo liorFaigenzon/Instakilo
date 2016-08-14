@@ -1,6 +1,7 @@
 package com.example.lior.instakilo;
 
 import android.content.Context;
+import android.graphics.Bitmap;
 import android.net.Uri;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
@@ -8,6 +9,10 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
+import android.widget.TextView;
+
+import com.firebase.client.Firebase;
+import com.google.firebase.auth.FirebaseAuth;
 
 
 /**
@@ -50,6 +55,12 @@ public class UserMainFragment extends Fragment{
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         View v = inflater.inflate(R.layout.fragment_user_main_page, container, false);
+
+        ImageView userImg = (ImageView) v.findViewById(R.id.userImg);
+        userImg.setImageBitmap((Bitmap) getActivity().getIntent().getParcelableExtra("profilePicture"));
+
+        TextView authorName = (TextView) v.findViewById(R.id.authorName);
+        authorName.setText(FirebaseAuth.getInstance().getCurrentUser().getDisplayName());
 
         ImageView matrixPic = (ImageView) v.findViewById(R.id.matrixPic);
         ImageView listPic = (ImageView) v.findViewById(R.id.listPic);

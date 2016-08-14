@@ -11,7 +11,7 @@ import com.example.lior.instakilo.models.Post;
 import java.util.List;
 
 public class ModelSql {
-    final static int VERSION = 24;
+    final static int VERSION = 27;
 
     Helper sqlDb;
 

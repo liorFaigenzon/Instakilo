@@ -29,12 +29,9 @@ public class MainActivity extends FragmentActivity implements UserMainFragment.O
                                                                PostListFragment.OnListFragmentInteractionListener,
                                                                PostDetailFragment.OnFragmentInteractionListener
 {
-
     static final int REQUEST_IMAGE_CAPTURE = 100;
     static final int REQUEST_IMAGE_SELECT = 200;
     private FloatingActionButton mAddNewRecordFab;
-
-
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -130,6 +127,7 @@ public class MainActivity extends FragmentActivity implements UserMainFragment.O
             @Override
             public void onComplete(DatabaseError databaseError, DatabaseReference databaseReference, String key) {
                 Model.getInstance().savePhoto(thumbnail, photoId);
+                newPost.setId(key);
                 PostContent.getInstance().addPost(newPost);
             }
         });

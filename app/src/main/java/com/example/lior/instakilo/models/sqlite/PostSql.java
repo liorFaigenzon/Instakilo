@@ -45,7 +45,7 @@ public class PostSql {
 
     public static void drop(SQLiteDatabase db) {
         db.execSQL("drop table " + POST_TABLE);
-       // db.execSQL("drop table " + POST_LIKE_TABLE);
+        db.execSQL("drop table " + POST_LIKE_TABLE);
     }
 
     public static List<Object> getAllPosts(SQLiteDatabase db) {
