@@ -6,6 +6,7 @@ import android.widget.Toast;
 import com.example.lior.instakilo.MyApplication;
 import com.example.lior.instakilo.models.Comment;
 import com.example.lior.instakilo.models.Model;
+import com.example.lior.instakilo.models.Post;
 import com.google.firebase.database.ChildEventListener;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
@@ -245,6 +246,21 @@ public class CommentFirebase implements IModelFirebase {
                 Log.w("Nir", "Comment:onCancelled", databaseError.toException());
                 Toast.makeText(MyApplication.getAppContext(), "Failed to load comments.",
                         Toast.LENGTH_SHORT).show();
+            }
+        });
+    }
+
+    @Override
+    public void attachUpdateUIListener(final Model.AttachUpdateUIListener listener) {
+        ModelFirebase.getDatabase().child("comments").addValueEventListener(new ValueEventListener() {
+            @Override
+            public void onDataChange(DataSnapshot dataSnapshot) {
+                listener.onDataChange(dataSnapshot.getValue(Post.class));
+            }
+
+            @Override
+            public void onCancelled(DatabaseError databaseError) {
+
             }
         });
     }

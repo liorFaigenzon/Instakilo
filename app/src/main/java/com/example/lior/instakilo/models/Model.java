@@ -186,8 +186,7 @@ public class Model {
         modelFirebase.delete(model, listener);
     }
 
-    public interface AttachCacheListener
-    {
+    public interface AttachCacheListener {
         void onChildAdded(Object model);
         void onChildRemoved(Object model);
         void onChildChanged(Object model);
@@ -213,6 +212,14 @@ public class Model {
                 modelSql.update(model);
             }
         });
+    }
+
+    public interface AttachUpdateUIListener {
+        void onDataChange(Object model);
+    }
+
+    public void attachUpdateUIListener(ModelClass model, AttachUpdateUIListener listener) {
+        modelFirebase.attachUpdateUIListener(model, listener);
     }
 
     public void savePhoto(final Bitmap photoBitmap, final String photoName) {

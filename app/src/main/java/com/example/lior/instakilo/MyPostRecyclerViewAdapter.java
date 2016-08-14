@@ -52,6 +52,17 @@ public class MyPostRecyclerViewAdapter extends RecyclerView.Adapter<MyPostRecycl
 
             }
         });
+
+        attachOnChangeListener();
+    }
+
+    private void attachOnChangeListener() {
+        Model.getInstance().attachUpdateUIListener(Model.ModelClass.POST, new Model.AttachUpdateUIListener() {
+            @Override
+            public void onDataChange(Object model) {
+                notifyDataSetChanged();
+            }
+        });
     }
 
     @Override

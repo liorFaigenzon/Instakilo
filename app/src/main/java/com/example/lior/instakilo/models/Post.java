@@ -185,9 +185,9 @@ public class Post implements Parcelable {
         });
 
         dest.writeInt(this.likeUsers.size());
-        for(Map.Entry<String, Boolean> entry : this.likeUsers.entrySet()){
+        for (Map.Entry<String, Boolean> entry : this.likeUsers.entrySet()) {
             dest.writeString(entry.getKey());
-            dest.writeString(entry.getValue().toString());
+            dest.writeString("true");
         }
     }
 

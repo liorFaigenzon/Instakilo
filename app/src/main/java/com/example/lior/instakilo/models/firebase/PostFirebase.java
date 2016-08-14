@@ -241,4 +241,19 @@ public class PostFirebase implements IModelFirebase {
             }
         });
     }
+
+    @Override
+    public void attachUpdateUIListener(final Model.AttachUpdateUIListener listener) {
+        ModelFirebase.getDatabase().child("posts").addValueEventListener(new ValueEventListener() {
+            @Override
+            public void onDataChange(DataSnapshot dataSnapshot) {
+                listener.onDataChange(dataSnapshot.getValue(Post.class));
+            }
+
+            @Override
+            public void onCancelled(DatabaseError databaseError) {
+
+            }
+        });
+    }
 }

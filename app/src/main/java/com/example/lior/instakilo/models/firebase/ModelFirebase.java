@@ -138,6 +138,19 @@ public class ModelFirebase {
                 break;
         }
     }
+
+    public void attachUpdateUIListener(Model.ModelClass model, Model.AttachUpdateUIListener listener) {
+
+        // Check the type of the model to attache to it the listener
+        switch (model){
+            case POST:
+                postFirebase.attachUpdateUIListener(listener);
+                break;
+            case COMMENT:
+                commentFirebase.attachUpdateUIListener(listener);
+                break;
+        }
+    }
 }
 
 
