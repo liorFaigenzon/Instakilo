@@ -314,7 +314,7 @@ public class Model {
              * It is needed because large files will throw OutOfMemoryException error on calling this code
              */
             BitmapFactory.Options sizeOptions = new BitmapFactory.Options();
-            sizeOptions.inSampleSize = 8;
+            sizeOptions.inSampleSize = 1;
 
             bitmap = BitmapFactory.decodeStream(inputStream, null, sizeOptions);
             Log.d("tag","got image from cache: " + imageFileName);
