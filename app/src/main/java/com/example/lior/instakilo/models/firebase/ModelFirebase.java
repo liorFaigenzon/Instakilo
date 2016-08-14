@@ -7,13 +7,11 @@ import android.util.Log;
 import com.example.lior.instakilo.models.Comment;
 import com.example.lior.instakilo.models.Model;
 import com.example.lior.instakilo.models.Post;
-import com.facebook.AccessToken;
 import com.firebase.client.Firebase;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.AuthCredential;
 import com.google.firebase.auth.AuthResult;
-import com.google.firebase.auth.FacebookAuthProvider;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
@@ -35,11 +33,7 @@ public class ModelFirebase {
         return database;
     }
 
-    public void signIn(AccessToken token, final Model.AuthListener listener) {
-        Log.d("Nir", "Login access token: " + token);
-
-        // Retrieve the credentials using the access token
-        AuthCredential credential = FacebookAuthProvider.getCredential(token.getToken());
+    public void signIn(AuthCredential credential, final Model.AuthListener listener) {
 
         // Sign in
         FirebaseAuth.getInstance().signInWithCredential(credential)

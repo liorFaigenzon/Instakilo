@@ -13,7 +13,7 @@ import com.example.lior.instakilo.MyApplication;
 import com.example.lior.instakilo.models.cloudinary.ModelCloudinary;
 import com.example.lior.instakilo.models.firebase.ModelFirebase;
 import com.example.lior.instakilo.models.sqlite.ModelSql;
-import com.facebook.AccessToken;
+import com.google.firebase.auth.AuthCredential;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 
@@ -54,8 +54,8 @@ public class Model {
         void onDone(String userId, Exception e);
     }
 
-    public void signIn(AccessToken token, AuthListener listener){
-        modelFirebase.signIn(token,  listener);
+    public void signIn(AuthCredential credential, AuthListener listener){
+        modelFirebase.signIn(credential,  listener);
     }
 
     public void signOut(){
