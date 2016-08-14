@@ -123,6 +123,11 @@ public class MyPostRecyclerViewAdapter extends RecyclerView.Adapter<MyPostRecycl
 
 
                 if (viewDetailHolder.likePic != null) {
+                    if(holder.mItem.isUserLiked(FirebaseAuth.getInstance().getCurrentUser().getUid()))
+                    {
+                        viewDetailHolder.likePic.setPressed(true);
+                    }
+
                     viewDetailHolder.likePic.setTag(position);
                     viewDetailHolder.likePic.setOnClickListener(mOnLikeClickListener);
                  }
@@ -175,13 +180,14 @@ public class MyPostRecyclerViewAdapter extends RecyclerView.Adapter<MyPostRecycl
         @Override
         public void onClick(View v) {
             int position = (Integer) v.getTag();
+            mValues.get(position).toggleLikeCounter(FirebaseAuth.getInstance().getCurrentUser().getUid());
             // int position = (Integer) v.getTag();
 
             //if(((ImageView)v).getDrawable().equals(R.drawable.heart_outline))
             {
                 // Access the row position here to get the correct data item
-                mValues.get(position).incLikeCounter(FirebaseAuth.getInstance().getCurrentUser().getUid());
-                ((ImageView) v).setImageResource(R.drawable.heart_full);
+                //mValues.get(position).incLikeCounter(FirebaseAuth.getInstance().getCurrentUser().getUid());
+                //((ImageView) v).setImageResource(R.drawable.heart_full);
             }
             //else
             {

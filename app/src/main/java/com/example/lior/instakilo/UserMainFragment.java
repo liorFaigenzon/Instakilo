@@ -4,13 +4,10 @@ import android.content.Context;
 import android.net.Uri;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
-
-import com.example.lior.instakilo.models.PicModeSelectDialogFragment;
 
 
 /**
@@ -22,10 +19,7 @@ import com.example.lior.instakilo.models.PicModeSelectDialogFragment;
  * create an instance of this fragment.
  */
 public class UserMainFragment extends Fragment{
-    interface  Delegate{
-        void saveCamera();
-        void saveGallary();
-    }
+
 
     // TODO: Rename parameter arguments, choose names that match
     // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
@@ -59,11 +53,7 @@ public class UserMainFragment extends Fragment{
 
         ImageView matrixPic = (ImageView) v.findViewById(R.id.matrixPic);
         ImageView listPic = (ImageView) v.findViewById(R.id.listPic);
-        ImageView takePic = (ImageView) v.findViewById(R.id.takePic);
 
-
-
-        takePic.setOnClickListener(new DialogPicActivity(this));
 
         listPic.setOnClickListener(new View.OnClickListener() {
 
@@ -96,19 +86,6 @@ public class UserMainFragment extends Fragment{
         });
         return v;
 
-    }
-
-    public void pictureFromCamera()
-    {
-        Delegate delegate = (Delegate) getActivity();
-        delegate.saveCamera();
-    }
-
-
-    public void pictureFromGallery()
-    {
-        Delegate delegate = (Delegate) getActivity();
-        delegate.saveGallary();
     }
 
     private void changeLayoutOrdering(int numColumns) {
@@ -164,36 +141,5 @@ public class UserMainFragment extends Fragment{
         // TODO: Update argument type and name
         void onFragmentInteraction(Uri uri);
     }
-
-
-    public class DialogPicActivity implements View.OnClickListener, PicModeSelectDialogFragment.IPicModeSelectListener{
-
-        UserMainFragment muserMainFragment;
-
-        DialogPicActivity(UserMainFragment userMainFragment)
-        {
-            muserMainFragment = userMainFragment;
-        }
-
-        @Override
-        public void onPicModeSelected(String mode) {
-            if (mode.equalsIgnoreCase("camera"))
-                muserMainFragment.pictureFromCamera();
-            else if (mode.equalsIgnoreCase("gallery"))
-                muserMainFragment.pictureFromGallery();
-            else Log.i("FragmentAlertDialog", "cancel click!");
-        }
-
-        @Override
-        public void onClick(View v) {
-            PicModeSelectDialogFragment frag = new PicModeSelectDialogFragment();
-            frag.setiPicModeSelectListener(this);
-            frag.show(getActivity().getFragmentManager(), "Choose way");
-        }
-
-
-    }
-
-
 
 }

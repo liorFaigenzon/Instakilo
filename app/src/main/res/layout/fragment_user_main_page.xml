@@ -71,14 +71,14 @@
                     android:layout_marginRight="35dp"
                     android:layout_marginEnd="35dp"/>
 
-                <ImageView
+                <!--ImageView
                     android:id="@+id/takePic"
                     android:layout_width="50dp"
                     android:layout_height="50dp"
                     android:background="@drawable/camera_icon"
                     android:layout_marginRight="35dp"
                     android:layout_marginEnd="35dp"
-                    android:layout_gravity="end"/>
+                    android:layout_gravity="end"/-->
 
             </LinearLayout>
             <View
