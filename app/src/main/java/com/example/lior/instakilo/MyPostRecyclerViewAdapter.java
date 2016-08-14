@@ -3,6 +3,7 @@ package com.example.lior.instakilo;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.support.v7.widget.RecyclerView;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -16,6 +17,8 @@ import com.example.lior.instakilo.models.Model;
 import com.example.lior.instakilo.models.Post;
 import com.example.lior.instakilo.models.callbacks.OnItemsLoadedCallback;
 import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.database.DatabaseError;
+import com.google.firebase.database.DatabaseReference;
 
 import java.util.List;
 import java.util.concurrent.ExecutionException;
@@ -181,6 +184,13 @@ public class MyPostRecyclerViewAdapter extends RecyclerView.Adapter<MyPostRecycl
         public void onClick(View v) {
             int position = (Integer) v.getTag();
             mValues.get(position).toggleLikeCounter(FirebaseAuth.getInstance().getCurrentUser().getUid());
+            Model.getInstance().update(mValues.get(position), new Model.UpdateListener() {
+                @Override
+                public void onComplete(DatabaseError databaseError, DatabaseReference databaseReference, String key) {
+                    Log.d("Alon", "Post liked:" + FirebaseAuth.getInstance().getCurrentUser().getUid());
+                }
+            });
+            //Model.getInstance().update();
             // int position = (Integer) v.getTag();
 
             //if(((ImageView)v).getDrawable().equals(R.drawable.heart_outline))

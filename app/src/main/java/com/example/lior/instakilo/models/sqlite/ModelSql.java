@@ -11,7 +11,7 @@ import com.example.lior.instakilo.models.Post;
 import java.util.List;
 
 public class ModelSql {
-    final static int VERSION = 17;
+    final static int VERSION = 18;
 
     Helper sqlDb;
 
@@ -108,8 +108,10 @@ public class ModelSql {
         {
             case POST:
                 PostSql.setLastUpdateDate(db, date);
+                break;
             case COMMENT:
                 CommentSql.setLastUpdateDate(db, date);
+                break;
         }
     }
 
