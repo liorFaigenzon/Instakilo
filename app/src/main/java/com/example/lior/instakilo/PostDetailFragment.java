@@ -5,6 +5,7 @@ import android.graphics.Bitmap;
 import android.net.Uri;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -14,6 +15,8 @@ import android.widget.TextView;
 import com.example.lior.instakilo.models.Model;
 import com.example.lior.instakilo.models.Post;
 import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.database.DatabaseError;
+import com.google.firebase.database.DatabaseReference;
 
 import java.util.concurrent.ExecutionException;
 
@@ -122,6 +125,12 @@ public class PostDetailFragment extends Fragment {
         public void onClick(View v) {
             // int position = (Integer) v.getTag();
             post.toggleLikeCounter(FirebaseAuth.getInstance().getCurrentUser().getUid());
+            Model.getInstance().update(post, new Model.UpdateListener() {
+                @Override
+                public void onComplete(DatabaseError databaseError, DatabaseReference databaseReference, String key) {
+                    Log.d("Alon", "Post liked:" + FirebaseAuth.getInstance().getCurrentUser().getUid());
+                }
+            });
             //PostDetailFragment.newInstance().UpdateLike();
         }
     };

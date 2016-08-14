@@ -108,8 +108,10 @@ public class ModelSql {
         {
             case POST:
                 PostSql.setLastUpdateDate(db, date);
+                break;
             case COMMENT:
                 CommentSql.setLastUpdateDate(db, date);
+                break;
         }
     }
 

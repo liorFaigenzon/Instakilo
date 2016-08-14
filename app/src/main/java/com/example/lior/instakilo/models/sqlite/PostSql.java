@@ -38,13 +38,14 @@ public class PostSql {
 
         db.execSQL("create table " +
                 POST_LIKE_TABLE + " (" +
-                POST_LIKE_POST_ID + " TEXT PRIMARY KEY," +
-                POST_LIKE_USER_ID + " TEXT PRIMARY KEY);");
+                POST_LIKE_POST_ID + " TEXT," +
+                POST_LIKE_USER_ID + " TEXT, " +
+                "PRIMARY KEY (" + POST_LIKE_POST_ID + ", " + POST_LIKE_USER_ID + "))");
     }
 
     public static void drop(SQLiteDatabase db) {
         db.execSQL("drop table " + POST_TABLE);
-        db.execSQL("drop table " + POST_LIKE_TABLE);
+       // db.execSQL("drop table " + POST_LIKE_TABLE);
     }
 
     public static List<Object> getAllPosts(SQLiteDatabase db) {
@@ -77,7 +78,7 @@ public class PostSql {
         String where = POST_LIKE_POST_ID + " = ?";
         String[] args = {id};
 
-        Cursor cursor = db.query(POST_TABLE, null, where, args, null, null, null);
+        Cursor cursor = db.query(POST_LIKE_TABLE, null, where, args, null, null, null);
         Map<String, Boolean> likes = new HashMap<>();
 
         if (cursor.moveToFirst()) {
@@ -132,7 +133,7 @@ public class PostSql {
         ContentValues values = new ContentValues();
         values.put(POST_LIKE_POST_ID, postId);
         values.put(POST_LIKE_USER_ID, userId);
-        db.insertWithOnConflict(POST_TABLE, POST_TABLE_ID, values, SQLiteDatabase.CONFLICT_REPLACE);
+        db.insertWithOnConflict(POST_LIKE_TABLE, POST_TABLE_ID, values, SQLiteDatabase.CONFLICT_REPLACE);
     }
 
 
@@ -152,9 +153,10 @@ public class PostSql {
         deletePostLikes(db, pst.getId());
 
         // Add all likes including new likes
-        for (String userId : pst.getLikeUsers().keySet())
-        {
-            addLike(db, pst.getId(), userId);
+        if (pst.getLikeUsers() != null) {
+            for (String userId : pst.getLikeUsers().keySet()) {
+                addLike(db, pst.getId(), userId);
+            }
         }
     }
 
