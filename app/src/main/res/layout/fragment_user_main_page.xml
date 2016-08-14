@@ -7,14 +7,14 @@
     <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
         xmlns:tools="http://schemas.android.com/tools"
         android:layout_width="fill_parent"
-        android:layout_height="fill_parent"
-        >
+        android:layout_height="fill_parent" >
 
         <ImageView
             android:id="@+id/userImg"
             android:layout_width="130dp"
             android:layout_height="100dp"
-            android:background="@drawable/mr_white"/>
+            android:background="@drawable/mr_white"
+            android:scaleType="centerCrop" />
 
         <TextView
             android:id="@+id/authorName"
@@ -22,12 +22,14 @@
             android:layout_height="60dp"
             android:layout_toRightOf="@id/userImg"
             android:text="user info."
+            android:textAppearance="?android:attr/textAppearanceLarge"
             android:gravity="top"/>
 
         <RelativeLayout
             android:layout_below="@id/userImg"
             android:layout_width="match_parent"
-            android:layout_height="wrap_content" >
+            android:layout_height="wrap_content">
+
             <View
                 android:id="@+id/TopSep"
                 android:layout_width="wrap_content"
@@ -40,7 +42,8 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:orientation="horizontal"
-                android:layout_weight="1">
+                android:layout_weight="1"
+                android:layout_centerHorizontal="true" >
 
                 <ImageView
                     android:id="@+id/listPic"
@@ -58,18 +61,10 @@
                     android:layout_width="50dp"
                     android:layout_height="50dp"
                     android:background="@drawable/black_matrix"
-                    android:layout_marginRight="30dp"
+                    android:layout_marginRight="50dp"
                     android:layout_marginEnd="30dp"
                     android:adjustViewBounds="true"
-                    android:scaleType="centerCrop"/>
-
-                <ImageView
-                    android:id="@+id/gpsPic"
-                    android:layout_width="50dp"
-                    android:layout_height="50dp"
-                    android:background="@drawable/black_gps"
-                    android:layout_marginRight="35dp"
-                    android:layout_marginEnd="35dp"/>
+                    android:scaleType="fitXY"/>
 
                 <!--ImageView
                     android:id="@+id/takePic"
