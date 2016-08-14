@@ -4,6 +4,9 @@ import android.animation.Animator;
 import android.animation.AnimatorListenerAdapter;
 import android.annotation.TargetApi;
 import android.content.Intent;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
+import android.os.AsyncTask;
 import android.os.Build;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
@@ -13,9 +16,13 @@ import android.view.View;
 import android.widget.Toast;
 
 import com.example.lior.instakilo.models.Model;
+import com.facebook.AccessToken;
 import com.facebook.CallbackManager;
 import com.facebook.FacebookCallback;
 import com.facebook.FacebookException;
+import com.facebook.GraphRequest;
+import com.facebook.GraphResponse;
+import com.facebook.HttpMethod;
 import com.facebook.login.LoginResult;
 import com.facebook.login.widget.LoginButton;
 import com.google.android.gms.auth.api.Auth;
@@ -32,6 +39,11 @@ import com.google.firebase.auth.FacebookAuthProvider;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.GoogleAuthProvider;
 
+import org.json.JSONObject;
+
+import java.io.IOException;
+import java.net.URL;
+
 /**
  * A login screen that offers login via email/password.
  */
@@ -44,16 +56,13 @@ public class LoginActivity extends AppCompatActivity implements GoogleApiClient.
     private View loginFormView;
     private LoginButton loginButton;
     private GoogleApiClient googleApiClient;
-    //private FirebaseAuth auth;
-    //private FirebaseAuth.AuthStateListener authListener;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_login);
 
-        //Model.getInstance().signOut();
-        //auth = FirebaseAuth.getInstance();
+        Model.getInstance().signOut();
 
         progressView = findViewById(R.id.login_progress);
         loginFormView = findViewById(R.id.login_form);
@@ -69,20 +78,10 @@ public class LoginActivity extends AppCompatActivity implements GoogleApiClient.
             configureGoogleAuthentication();
             configureFacebookAuthentication();
         }
+    }
 
-        /*authListener = new FirebaseAuth.AuthStateListener() {
-            @Override
-            public void onAuthStateChanged(@NonNull FirebaseAuth firebaseAuth) {
-                FirebaseUser user = firebaseAuth.getCurrentUser();
-                if (user != null) {
-                    // User is signed in
-                    Log.d("Nir", "onAuthStateChanged:signed_in:" + user.getUid());
-                } else {
-                    // User is signed out
-                    Log.d("Nir", "onAuthStateChanged:signed_out");
-                }
-            }
-        };*/
+    public interface OnProfilePictureListener {
+        void onCompleted(Bitmap profilePicture);
     }
 
     private void configureFacebookAuthentication() {
@@ -111,6 +110,27 @@ public class LoginActivity extends AppCompatActivity implements GoogleApiClient.
                 Log.d("Nir", "facebook:onError", error);
             }
         });
+    }
+
+    private void getProfilePicture(final OnProfilePictureListener listener) {
+        AsyncTask<Void, Void, Void> task = new AsyncTask<Void, Void, Void>() {
+            @Override
+            protected Void doInBackground(Void... params) {
+                Log.d("Nir", "Request for profile picture succeeded with a picture");
+                String profilePicUrl = FirebaseAuth.getInstance().getCurrentUser().getPhotoUrl().toString();
+                Bitmap profilePic = null;
+                try {
+                    profilePic = BitmapFactory.decodeStream(new URL(profilePicUrl).openConnection().getInputStream());
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
+
+                listener.onCompleted(profilePic);
+
+                return null;
+            }
+        };
+        task.execute();
     }
 
     private void configureGoogleAuthentication() {
@@ -163,16 +183,21 @@ public class LoginActivity extends AppCompatActivity implements GoogleApiClient.
                 // Check if the login was successful
                 if (userId != null) {
 
-                    // Start the main activity
-                    Intent intent = new Intent(LoginActivity.this, MainActivity.class);
-                    startActivity(intent);
-                    finish();
+                    // Get profile picture
+                    getProfilePicture(new OnProfilePictureListener() {
+                        @Override
+                        public void onCompleted(Bitmap profilePicture) {
+
+                            // Start the main activity
+                            Intent intent = new Intent(LoginActivity.this, MainActivity.class);
+                            intent.putExtra("profilePicture", profilePicture);
+                            startActivity(intent);
+                            finish();
+                        }
+                    });
                 } else {
                     Toast.makeText(LoginActivity.this, "Authentication failed.", Toast.LENGTH_SHORT).show();
                 }
-
-                // Hide the progress bar
-                //showProgress(false);
             }
         });
     }
@@ -180,15 +205,11 @@ public class LoginActivity extends AppCompatActivity implements GoogleApiClient.
     @Override
     public void onStart() {
         super.onStart();
-        //auth.addAuthStateListener(authListener);
     }
 
     @Override
     public void onStop() {
         super.onStop();
-        /*if (authListener != null) {
-            auth.removeAuthStateListener(authListener);
-        }*/
     }
 
     @Override

@@ -4,6 +4,7 @@ import android.util.Log;
 import android.widget.Toast;
 
 import com.example.lior.instakilo.MyApplication;
+import com.example.lior.instakilo.models.Comment;
 import com.example.lior.instakilo.models.Model;
 import com.example.lior.instakilo.models.Post;
 import com.google.firebase.database.ChildEventListener;
@@ -21,7 +22,7 @@ import java.util.Map;
 public class PostFirebase implements IModelFirebase {
 
     @Override
-    public void getAll(String lastUpdateDate, final Model.GetManyListener listener) {
+    public void getAll(final String lastUpdateDate, final Model.GetManyListener listener) {
 
         // Get all recent posts that are not cached already
         Query queryPosts = ModelFirebase.getDatabase().child("posts").orderByChild("lastUpdated").startAt(lastUpdateDate);
@@ -32,7 +33,7 @@ public class PostFirebase implements IModelFirebase {
                 final List<Object> postList = new LinkedList<>();
                 Iterable<DataSnapshot> children =  snapshot.getChildren();
 
-                if (snapshot.getChildrenCount() != 0) {
+                if (snapshot.getChildrenCount() != 0 && lastUpdateDate != null) {
                     children.iterator().next();
                 }
 
@@ -152,16 +153,43 @@ public class PostFirebase implements IModelFirebase {
         // Cast the model to post
         final Post post = (Post)model;
 
-        // Delete post at /user-posts/$userid/$postid and at
-        // /posts/$postid simultaneously
-        Map<String, Object> childUpdates = new HashMap<>();
-        childUpdates.put("/posts/" + post.getId(), null);
-        childUpdates.put("/user-posts/" + post.getAuthorId() + "/" + post.getId(), null);
+        // Get ref to the comments of the post
+        final DatabaseReference commentsOfPostRef = ModelFirebase.getDatabase().child("post-comments").child(post.getId());
 
-        ModelFirebase.getDatabase().updateChildren(childUpdates, new DatabaseReference.CompletionListener() {
+        commentsOfPostRef.addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
-            public void onComplete(DatabaseError databaseError, DatabaseReference databaseReference) {
-                listener.onComplete(databaseError, databaseReference, post.getId());
+            public void onDataChange(DataSnapshot dataSnapshot) {
+                Map<String, Object> commChildUpdates = new HashMap<>();
+
+                // Delete all the comments of the post
+                for (DataSnapshot commentSnapshot : dataSnapshot.getChildren()) {
+                    commChildUpdates.put("/comments/" + commentSnapshot.getKey(), null);
+                }
+
+                ModelFirebase.getDatabase().updateChildren(commChildUpdates, new DatabaseReference.CompletionListener() {
+                    @Override
+                    public void onComplete(DatabaseError databaseError, DatabaseReference databaseReference) {
+
+                        // Delete post at /user-posts/$userid/$postid and at
+                        // /posts/$postid simultaneously
+                        Map<String, Object> childUpdates = new HashMap<>();
+                        childUpdates.put("/posts/" + post.getId(), null);
+                        childUpdates.put("/user-posts/" + post.getAuthorId() + "/" + post.getId(), null);
+                        childUpdates.put("/post-comments/" + post.getId(), null);
+
+                        ModelFirebase.getDatabase().updateChildren(childUpdates, new DatabaseReference.CompletionListener() {
+                            @Override
+                            public void onComplete(DatabaseError databaseError, DatabaseReference databaseReference) {
+                                listener.onComplete(databaseError, databaseReference, post.getId());
+                            }
+                        });
+                    }
+                });
+            }
+
+            @Override
+            public void onCancelled(DatabaseError databaseError) {
+                listener.onComplete(databaseError, commentsOfPostRef.getRef(), post.getId());
             }
         });
     }
