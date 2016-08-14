@@ -2,14 +2,17 @@ package com.example.lior.instakilo;
 
 
 import android.content.Intent;
+import android.content.pm.PackageManager;
 import android.graphics.Bitmap;
 import android.net.Uri;
 import android.os.Bundle;
 import android.provider.MediaStore;
 import android.support.design.widget.FloatingActionButton;
+import android.support.v4.app.ActivityCompat;
 import android.support.v4.app.FragmentActivity;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentTransaction;
+import android.support.v4.content.ContextCompat;
 import android.util.Log;
 import android.view.View;
 import android.widget.ProgressBar;
@@ -32,6 +35,7 @@ public class MainActivity extends FragmentActivity implements UserMainFragment.O
 {
     static final int REQUEST_IMAGE_CAPTURE = 100;
     static final int REQUEST_IMAGE_SELECT = 200;
+    static final int REQUEST_PERMISSIONS_CAMERA = 300;
     private FloatingActionButton mAddNewRecordFab;
     public static ProgressBar mainProgressBar = null;
 
@@ -89,8 +93,24 @@ public class MainActivity extends FragmentActivity implements UserMainFragment.O
         if (resultCode == RESULT_OK) {
             if (requestCode == REQUEST_IMAGE_SELECT)
                 onSelectFromGalleryResult(data);
-            else if (requestCode == REQUEST_IMAGE_CAPTURE)
+            else if (requestCode == REQUEST_IMAGE_CAPTURE) {
                 onCapturePhotoResult(data);
+            }
+        }
+    }
+
+    @Override
+    public void onRequestPermissionsResult(int requestCode, String permissions[], int[] grantResults) {
+        switch (requestCode) {
+            case REQUEST_PERMISSIONS_CAMERA: {
+
+                // If request is cancelled, the result arrays are empty.
+                if (grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
+                    dispatchCameraIntent();
+                }
+
+                return;
+            }
         }
     }
 
@@ -181,7 +201,9 @@ public class MainActivity extends FragmentActivity implements UserMainFragment.O
         @Override
         public void onPicModeSelected(String mode) {
             if (mode.equalsIgnoreCase("camera"))
-                muserMainFragment.dispatchCameraIntent();
+                if (ContextCompat.checkSelfPermission(MainActivity.this, android.Manifest.permission.CAMERA) != PackageManager.PERMISSION_GRANTED) {
+                    ActivityCompat.requestPermissions(MainActivity.this, new String[]{android.Manifest.permission.CAMERA}, REQUEST_PERMISSIONS_CAMERA);
+                }
             else if (mode.equalsIgnoreCase("gallery"))
                 muserMainFragment.dispatchGalleryIntent();
             else Log.i("FragmentAlertDialog", "cancel click!");
