@@ -17,8 +17,8 @@ public class CommentSql {
     final static String COMMENT_TABLE_ID = "_id";
     final static String COMMENT_TABLE_AUTHOR_ID = "authorId";
     final static String COMMENT_TABLE_AUTHOR_NAME = "authorName";
-    final static String COMMENT_TABLE_POST_ID = "likeCounter";
-    final static String COMMENT_TABLE_CONTENT = "photo_id";
+    final static String COMMENT_TABLE_POST_ID = "post_id";
+    final static String COMMENT_TABLE_CONTENT = "content";
     final static String COMMENT_TABLE_DATE = "creationDate";
 
     public static void create(SQLiteDatabase db) {
