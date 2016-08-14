@@ -33,6 +33,8 @@ public class MyCommentRecyclerViewAdapter extends RecyclerView.Adapter<MyComment
             public void onLoadedComment(List<Comment> items) {
                 mValues = items;
                 notifyDataSetChanged();
+
+                MainActivity.mainProgressBar.setVisibility(View.GONE);
             }
         });
     }

@@ -12,6 +12,7 @@ import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentTransaction;
 import android.util.Log;
 import android.view.View;
+import android.widget.ProgressBar;
 
 import com.example.lior.instakilo.dummy.PostContent;
 import com.example.lior.instakilo.models.Model;
@@ -32,11 +33,16 @@ public class MainActivity extends FragmentActivity implements UserMainFragment.O
     static final int REQUEST_IMAGE_CAPTURE = 100;
     static final int REQUEST_IMAGE_SELECT = 200;
     private FloatingActionButton mAddNewRecordFab;
+    public static ProgressBar mainProgressBar = null;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+
+        mainProgressBar = (ProgressBar)findViewById(R.id.mainProgressBar);
+        MainActivity.mainProgressBar.setVisibility(View.VISIBLE);
+
         Model.getInstance().attachCacheListener(Model.ModelClass.POST);
         Model.getInstance().attachCacheListener(Model.ModelClass.COMMENT);
         setup();
@@ -122,6 +128,9 @@ public class MainActivity extends FragmentActivity implements UserMainFragment.O
         final String photoId = FirebaseAuth.getInstance().getCurrentUser().getUid() + timeStamp + ".jpg";
         final Post newPost = new Post(FirebaseAuth.getInstance().getCurrentUser().getUid(), FirebaseAuth.getInstance().getCurrentUser().getDisplayName(), photoId);
 
+        // Show progress bar before adding the post
+        MainActivity.mainProgressBar.setVisibility(View.VISIBLE);
+
         // Add the photo
         Model.getInstance().add(newPost, new Model.AddListener() {
             @Override
@@ -131,8 +140,6 @@ public class MainActivity extends FragmentActivity implements UserMainFragment.O
                 PostContent.getInstance().addPost(newPost);
             }
         });
-
-
     }
 
     private void dispatchCameraIntent() {

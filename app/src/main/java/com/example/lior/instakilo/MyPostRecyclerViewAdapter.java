@@ -45,6 +45,8 @@ public class MyPostRecyclerViewAdapter extends RecyclerView.Adapter<MyPostRecycl
             public void onLoadedPost(List<Post> items) {
                 mValues = items;
                 notifyDataSetChanged();
+
+                MainActivity.mainProgressBar.setVisibility(View.GONE);
             }
 
             @Override

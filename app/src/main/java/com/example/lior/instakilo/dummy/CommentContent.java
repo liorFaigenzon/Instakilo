@@ -1,5 +1,8 @@
 package com.example.lior.instakilo.dummy;
 
+import android.view.View;
+
+import com.example.lior.instakilo.MainActivity;
 import com.example.lior.instakilo.models.Comment;
 import com.example.lior.instakilo.models.Model;
 import com.example.lior.instakilo.models.callbacks.OnItemsLoadedCallback;
@@ -41,6 +44,7 @@ public class CommentContent {
     public  static void getCommentByPostId(String postId)
     {
         ITEMS = new ArrayList<>();
+        MainActivity.mainProgressBar.setVisibility(View.VISIBLE);
         Model.getInstance().getCommentsByPostId(postId, new Model.GetManyListener() {
             @Override
             public void onResult(List<Object> objects) {
@@ -57,7 +61,6 @@ public class CommentContent {
 
             @Override
             public void onCancel() {
-
             }
         });
     }

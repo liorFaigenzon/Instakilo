@@ -78,6 +78,10 @@ public class DetailActivity extends AppCompatActivity implements PostDetailFragm
                 String content = dialog.getInputEditText().getText().toString().trim();
                 if (content != "") {
                     final Comment newComment = new Comment(FirebaseAuth.getInstance().getCurrentUser().getUid(), FirebaseAuth.getInstance().getCurrentUser().getDisplayName(), post.getId(), content);
+
+                    // Show progress bar before adding the comment
+                    MainActivity.mainProgressBar.setVisibility(View.VISIBLE);
+
                     Model.getInstance().add(newComment, new Model.AddListener() {
                         @Override
                         public void onComplete(DatabaseError databaseError, DatabaseReference databaseReference, String key) {
