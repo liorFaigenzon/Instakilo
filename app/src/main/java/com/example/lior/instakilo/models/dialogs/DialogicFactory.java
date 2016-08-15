@@ -26,4 +26,12 @@ public class DialogicFactory {
                 .positiveText(R.string.dialog_confirm_button)
                 .build();
     }
+
+    public static MaterialDialog getAcceptDialog(Context context) {
+        return new MaterialDialog.Builder(context)
+                .title("Are you sure?")
+                .negativeText(R.string.dialog_cancel_button)
+                .positiveText(R.string.dialog_confirm_button)
+                .build();
+    }
 }

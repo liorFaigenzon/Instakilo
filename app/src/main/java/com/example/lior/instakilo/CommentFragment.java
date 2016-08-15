@@ -103,5 +103,7 @@ public class CommentFragment extends Fragment {
     public interface OnListFragmentInteractionListener {
         // TODO: Update argument type and name
         void onListFragmentInteraction(Comment item);
+
+        void onLongListFragmentInteraction(Comment mItem);
     }
 }

@@ -126,5 +126,7 @@ public class PostListFragment extends Fragment {
     public interface OnListFragmentInteractionListener {
         // TODO: Update argument type and name
         void onListFragmentInteraction(Post post);
+
+        void onLongListFragmentInteraction(Post mItem);
     }
 }

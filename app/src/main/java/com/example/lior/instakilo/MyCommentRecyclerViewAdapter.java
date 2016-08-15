@@ -63,6 +63,19 @@ public class MyCommentRecyclerViewAdapter extends RecyclerView.Adapter<MyComment
                 }
             }
         });
+        holder.mView.setOnLongClickListener(new View.OnLongClickListener() {
+            @Override
+            public boolean onLongClick(View v) {
+
+                if (null != mListener) {
+                    // Notify the active callbacks interface (the activity, if the
+                    // fragment is attached to one) that an item has been selected.
+                    mListener.onLongListFragmentInteraction(holder.mItem);
+                }
+                return true;
+            }
+        });
+
     }
 
     @Override

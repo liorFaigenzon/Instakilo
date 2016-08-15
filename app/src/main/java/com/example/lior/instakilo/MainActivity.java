@@ -1,14 +1,15 @@
 package com.example.lior.instakilo;
 
 
-import android.*;
 import android.Manifest;
+import android.content.Context;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.graphics.Bitmap;
 import android.net.Uri;
 import android.os.Bundle;
 import android.provider.MediaStore;
+import android.support.annotation.NonNull;
 import android.support.design.widget.FloatingActionButton;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.app.FragmentActivity;
@@ -18,11 +19,15 @@ import android.support.v4.content.ContextCompat;
 import android.util.Log;
 import android.view.View;
 import android.widget.ProgressBar;
+import android.widget.Toast;
 
+import com.afollestad.materialdialogs.DialogAction;
+import com.afollestad.materialdialogs.MaterialDialog;
 import com.example.lior.instakilo.dummy.PostContent;
 import com.example.lior.instakilo.models.Model;
 import com.example.lior.instakilo.models.PicModeSelectDialogFragment;
 import com.example.lior.instakilo.models.Post;
+import com.example.lior.instakilo.models.dialogs.DialogicFactory;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
@@ -59,6 +64,37 @@ public class MainActivity extends FragmentActivity implements UserMainFragment.O
     @Override
     public void onFragmentInteraction(Uri uri) {
         Log.i("FragmentAlertDialog", "camera click!");
+    }
+
+    @Override
+    public void onLongListFragmentInteraction(Post post) {
+        final Post deletePost = post;
+        final Context context = getApplicationContext();
+        final int duration = Toast.LENGTH_SHORT;
+
+
+        if (FirebaseAuth.getInstance().getCurrentUser().getUid() == post.getAuthorId()) {
+            PostContent.getInstance().deletePost(post);
+            MaterialDialog materialDialog = DialogicFactory.getAcceptDialog(this);
+            materialDialog.getBuilder().onPositive(new MaterialDialog.SingleButtonCallback() {
+                @Override
+                public void onClick(@NonNull MaterialDialog dialog, @NonNull DialogAction which) {
+                    PostContent.getInstance().deletePost(deletePost);
+                    Toast.makeText(context,"Deleted photo",duration).show();
+
+                }
+            }).onNegative(new MaterialDialog.SingleButtonCallback() {
+                @Override
+                public void onClick(@NonNull MaterialDialog dialog, @NonNull DialogAction which) {
+
+                }
+            }).build();
+            materialDialog.show();
+        }
+        else
+        {
+            Toast.makeText(context,"Can't delete photo", duration).show();;
+        }
     }
 
     @Override

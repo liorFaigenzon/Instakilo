@@ -1,5 +1,6 @@
 package com.example.lior.instakilo;
 
+import android.content.Context;
 import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
@@ -9,8 +10,8 @@ import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentTransaction;
 import android.support.v7.app.AppCompatActivity;
 import android.view.View;
-import android.view.Window;
 import android.widget.ProgressBar;
+import android.widget.Toast;
 
 import com.afollestad.materialdialogs.DialogAction;
 import com.afollestad.materialdialogs.MaterialDialog;
@@ -100,7 +101,7 @@ public class DetailActivity extends AppCompatActivity implements PostDetailFragm
         }).onNegative(new MaterialDialog.SingleButtonCallback() {
             @Override
             public void onClick(@NonNull MaterialDialog dialog, @NonNull DialogAction which) {
-                //TODO: do what the fuck you want...
+
             }
         }).build();
         materialDialog.show();
@@ -109,6 +110,36 @@ public class DetailActivity extends AppCompatActivity implements PostDetailFragm
     @Override
     public void onListFragmentInteraction(Comment item) {
 
+    }
+
+    @Override
+    public void onLongListFragmentInteraction(Comment comment) {
+        final Comment deleteComment = comment;
+        final Context context = getApplicationContext();
+        final int duration = Toast.LENGTH_SHORT;
+
+        if (FirebaseAuth.getInstance().getCurrentUser().getUid() == comment.getAuthorId()) {
+
+            MaterialDialog materialDialog = DialogicFactory.getAcceptDialog(this);
+            materialDialog.getBuilder().onPositive(new MaterialDialog.SingleButtonCallback() {
+                @Override
+                public void onClick(@NonNull MaterialDialog dialog, @NonNull DialogAction which) {
+                    CommentContent.getInstance().deleteComment(deleteComment);
+                    Toast.makeText(context,"Deleted comment",duration).show();
+
+                }
+            }).onNegative(new MaterialDialog.SingleButtonCallback() {
+                @Override
+                public void onClick(@NonNull MaterialDialog dialog, @NonNull DialogAction which) {
+
+                }
+            }).build();
+            materialDialog.show();
+        }
+        else
+        {
+            Toast.makeText(context,"Can't delete comment", duration).show();;
+        }
     }
 
     @Override

@@ -1,11 +1,10 @@
 package com.example.lior.instakilo.dummy;
 
-import android.view.View;
-
-import com.example.lior.instakilo.MainActivity;
 import com.example.lior.instakilo.models.Comment;
 import com.example.lior.instakilo.models.Model;
 import com.example.lior.instakilo.models.callbacks.OnItemsLoadedCallback;
+import com.google.firebase.database.DatabaseError;
+import com.google.firebase.database.DatabaseReference;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -34,6 +33,19 @@ public class CommentContent {
 
     public static void setCallback(OnItemsLoadedCallback callback) {
         mCallback = callback;
+    }
+
+    public static void deleteComment(Comment comment) {
+        final Comment deletComment = comment;
+        Model.getInstance().delete(deletComment, new Model.DeleteListener() {
+            @Override
+            public void onComplete(DatabaseError databaseError, DatabaseReference databaseReference, String key) {
+                ITEMS.remove(deletComment);
+                mCallback.onLoadedComment(ITEMS);
+            }
+        });
+
+
     }
 
     public static void addComment(Comment comment) {
