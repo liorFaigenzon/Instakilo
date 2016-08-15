@@ -141,7 +141,12 @@ public class MyPostRecyclerViewAdapter extends RecyclerView.Adapter<MyPostRecycl
                 if (viewDetailHolder.likePic != null) {
                     if(holder.mItem.isUserLiked(FirebaseAuth.getInstance().getCurrentUser().getUid()))
                     {
-                        viewDetailHolder.likePic.setPressed(true);
+                        viewDetailHolder.likePic.setImageResource(R.drawable.heart_full);
+
+                    }
+                    else {
+
+                        viewDetailHolder.likePic.setImageResource(R.drawable.heart_outline);
                     }
 
                     viewDetailHolder.likePic.setTag(position);
@@ -208,7 +213,7 @@ public class MyPostRecyclerViewAdapter extends RecyclerView.Adapter<MyPostRecycl
         @Override
         public void onClick(View v) {
             int position = (Integer) v.getTag();
-            mValues.get(position).toggleLikeCounter(FirebaseAuth.getInstance().getCurrentUser().getUid());
+            boolean isLike =  mValues.get(position).toggleLikeCounter(FirebaseAuth.getInstance().getCurrentUser().getUid());
             Model.getInstance().update(mValues.get(position), new Model.UpdateListener() {
                 @Override
                 public void onComplete(DatabaseError databaseError, DatabaseReference databaseReference, String key) {
@@ -218,17 +223,17 @@ public class MyPostRecyclerViewAdapter extends RecyclerView.Adapter<MyPostRecycl
             //Model.getInstance().update();
             // int position = (Integer) v.getTag();
 
-            //if(((ImageView)v).getDrawable().equals(R.drawable.heart_outline))
+            if(isLike)
             {
                 // Access the row position here to get the correct data item
                 //mValues.get(position).incLikeCounter(FirebaseAuth.getInstance().getCurrentUser().getUid());
-                //((ImageView) v).setImageResource(R.drawable.heart_full);
+                ((ImageView) v).setImageResource(R.drawable.heart_full);
             }
-            //else
+            else
             {
                 // Access the row position here to get the correct data item
                 //mItem.decLikeCounter();
-                //((ImageView) v).setImageResource(R.drawable.heart_outline);
+                ((ImageView) v).setImageResource(R.drawable.heart_outline);
             }
 
             notifyDataSetChanged();

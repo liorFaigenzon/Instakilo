@@ -104,11 +104,15 @@ public class PostDetailFragment extends Fragment {
 
         if (likePic != null) {
 
+            if (post.isUserLiked(FirebaseAuth.getInstance().getCurrentUser().getUid())) {
+                likePic.setImageResource(R.drawable.heart_full);
+
+            } else {
+
+                likePic.setImageResource(R.drawable.heart_outline);
+            }
             likePic.setOnClickListener(mOnLikeClickListener);
         }
-
-
-
         return mView;
     }
 
@@ -121,13 +125,26 @@ public class PostDetailFragment extends Fragment {
         @Override
         public void onClick(View v) {
             // int position = (Integer) v.getTag();
-            post.toggleLikeCounter(FirebaseAuth.getInstance().getCurrentUser().getUid());
+           boolean isLike=  post.toggleLikeCounter(FirebaseAuth.getInstance().getCurrentUser().getUid());
             Model.getInstance().update(post, new Model.UpdateListener() {
                 @Override
                 public void onComplete(DatabaseError databaseError, DatabaseReference databaseReference, String key) {
                     Log.d("Alon", "Post liked:" + FirebaseAuth.getInstance().getCurrentUser().getUid());
                 }
             });
+
+            if(isLike)
+            {
+                // Access the row position here to get the correct data item
+                //mValues.get(position).incLikeCounter(FirebaseAuth.getInstance().getCurrentUser().getUid());
+                ((ImageView) v).setImageResource(R.drawable.heart_full);
+            }
+            else
+            {
+                // Access the row position here to get the correct data item
+                //mItem.decLikeCounter();
+                ((ImageView) v).setImageResource(R.drawable.heart_outline);
+            }
             //PostDetailFragment.newInstance().UpdateLike();
         }
     };

@@ -3,7 +3,8 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     tools:context=".PostDetailFragment"
-    android:orientation="vertical">
+    android:orientation="vertical"
+    android:theme="@android:style/Theme.NoTitleBar">
     <TextView
         android:id="@+id/authorName"
         android:gravity="top"
@@ -37,7 +38,6 @@
             android:id="@+id/likePic"
             android:layout_width="40dp"
             android:layout_height="40dp"
-            android:background="@drawable/like_selector"
             android:layout_marginStart="10dp"
             android:layout_marginLeft="10dp"
             android:layout_marginRight="10dp"
