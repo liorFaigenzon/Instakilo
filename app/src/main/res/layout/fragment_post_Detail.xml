@@ -38,7 +38,6 @@
             android:id="@+id/likePic"
             android:layout_width="40dp"
             android:layout_height="40dp"
-            android:background="@drawable/like_selector"
             android:layout_marginStart="10dp"
             android:layout_marginLeft="10dp"
             android:layout_marginRight="10dp"
