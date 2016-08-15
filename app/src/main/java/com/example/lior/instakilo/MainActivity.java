@@ -2,6 +2,7 @@ package com.example.lior.instakilo;
 
 
 import android.Manifest;
+import android.content.ContentResolver;
 import android.content.Context;
 import android.content.Intent;
 import android.content.pm.PackageManager;
@@ -14,6 +15,7 @@ import android.support.design.widget.FloatingActionButton;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.app.FragmentActivity;
 import android.support.v4.content.ContextCompat;
+import android.support.v4.content.FileProvider;
 import android.util.Log;
 import android.view.View;
 import android.widget.ProgressBar;
@@ -30,7 +32,9 @@ import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 
+import java.io.File;
 import java.io.IOException;
+import android.net.Uri;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 
@@ -148,8 +152,19 @@ public class MainActivity extends FragmentActivity implements UserMainFragment.O
     }
 
     private void onCapturePhotoResult(Intent data) {
+
+        Uri imageUri = data.getData();
+
+        this.getContentResolver().notifyChange(imageUri, null);
+        ContentResolver cr = this.getContentResolver();
+
         // Get thumbnail photo
-        final Bitmap thumbnail = (Bitmap) data.getExtras().get("data");
+        Bitmap thumbnail = null;
+        try {
+            thumbnail = MediaStore.Images.Media.getBitmap(cr, imageUri);
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
         addPost(thumbnail);
     }
 
@@ -209,9 +224,26 @@ public class MainActivity extends FragmentActivity implements UserMainFragment.O
 
         // Check that there is an activity that can handle such request
         if (cameraIntent.resolveActivity(getPackageManager()) != null) {
+            final String timeStamp = new SimpleDateFormat("yyyyMMdd_HHmmss").format(new Date());
+            final String photoId = FirebaseAuth.getInstance().getCurrentUser().getUid() + timeStamp + ".jpg";
 
-            // Start camera intent
-            startActivityForResult(cameraIntent, REQUEST_IMAGE_CAPTURE);
+            File photoFile = null;
+            try {
+                photoFile = Model.getInstance().createTempImageFile(photoId);
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+
+            // Continue only if the File was successfully created
+            if (photoFile != null) {
+                Uri photoURI = FileProvider.getUriForFile(this,
+                        "com.example.lior.instakilo",
+                        photoFile);
+                cameraIntent.putExtra(MediaStore.EXTRA_OUTPUT, photoURI);
+
+                // Start camera intent
+                startActivityForResult(cameraIntent, REQUEST_IMAGE_CAPTURE);
+            }
         }
     }
 

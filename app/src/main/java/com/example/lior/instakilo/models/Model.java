@@ -299,6 +299,19 @@ public class Model {
         }
     }
 
+    public File createTempImageFile(String imageFileName) throws IOException {
+
+        // Create an image file name
+        File storageDir = Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_PICTURES);
+        File image = File.createTempFile(
+                imageFileName,  /* prefix */
+                ".jpg",         /* suffix */
+                storageDir      /* directory */
+        );
+
+        return image;
+    }
+
     private Bitmap loadImageFromFile(String imageFileName){
         String str = null;
         Bitmap bitmap = null;
