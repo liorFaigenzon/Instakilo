@@ -36,7 +36,7 @@ public class PostListFragment extends Fragment {
     public PostListFragment() {
     }
 
-    // TODO: Customize parameter initialization
+
     @SuppressWarnings("unused")
     public static PostListFragment newInstance(int columnCount) {
         PostListFragment fragment = new PostListFragment();
@@ -124,7 +124,7 @@ public class PostListFragment extends Fragment {
      * >Communicating with Other Fragments</a> for more information.
      */
     public interface OnListFragmentInteractionListener {
-        // TODO: Update argument type and name
+
         void onListFragmentInteraction(Post post);
 
         void onLongListFragmentInteraction(Post mItem);

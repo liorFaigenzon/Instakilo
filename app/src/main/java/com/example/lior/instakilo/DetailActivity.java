@@ -53,17 +53,10 @@ public class DetailActivity extends AppCompatActivity implements PostDetailFragm
         FragmentManager fm = getSupportFragmentManager();
         FragmentTransaction ft = fm.beginTransaction();
         postDetailFragment =new PostDetailFragment();
-        //UserMainFragment fragment = new UserMainFragment();
         Bundle bundle = new Bundle();
-        //ViewGroup.LayoutParams params = findViewById(android.R.id.content).getLayoutParams();
-        // params.height = ViewGroup.LayoutParams.MATCH_PARENT;
-        //params.width = ViewGroup.LayoutParams.MATCH_PARENT;
-        //fragment.getView().setLayoutParams(params);
         bundle.putParcelable("com.example.instakilo.Post", post);
         postDetailFragment.setArguments(bundle);
         ft.replace(R.id.mainFragment,postDetailFragment);
-        //ft.replace(R.id.main_frag_container,fragmentInstance);
-        // ft.addToBackStack(null);
         ft.commit();
     }
 
@@ -118,7 +111,7 @@ public class DetailActivity extends AppCompatActivity implements PostDetailFragm
         final Context context = getApplicationContext();
         final int duration = Toast.LENGTH_SHORT;
 
-        if (FirebaseAuth.getInstance().getCurrentUser().getUid() == comment.getAuthorId()) {
+        if (FirebaseAuth.getInstance().getCurrentUser().getUid().equals(comment.getAuthorId())) {
 
             MaterialDialog materialDialog = DialogicFactory.getAcceptDialog(this);
             materialDialog.getBuilder().onPositive(new MaterialDialog.SingleButtonCallback() {

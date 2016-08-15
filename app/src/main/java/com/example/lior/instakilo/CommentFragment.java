@@ -21,9 +21,7 @@ import com.example.lior.instakilo.models.Comment;
  */
 public class CommentFragment extends Fragment {
 
-    // TODO: Customize parameter argument names
     private static final String ARG_COLUMN_COUNT = "column-count";
-    // TODO: Customize parameters
     private int mColumnCount = 1;
     private OnListFragmentInteractionListener mListener;
 
@@ -34,7 +32,7 @@ public class CommentFragment extends Fragment {
     public CommentFragment() {
     }
 
-    // TODO: Customize parameter initialization
+
     @SuppressWarnings("unused")
     public static CommentFragment newInstance(int columnCount) {
         CommentFragment fragment = new CommentFragment();
@@ -101,7 +99,7 @@ public class CommentFragment extends Fragment {
      * >Communicating with Other Fragments</a> for more information.
      */
     public interface OnListFragmentInteractionListener {
-        // TODO: Update argument type and name
+
         void onListFragmentInteraction(Comment item);
 
         void onLongListFragmentInteraction(Comment mItem);

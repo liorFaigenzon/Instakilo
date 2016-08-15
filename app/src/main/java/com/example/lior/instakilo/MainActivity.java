@@ -13,8 +13,6 @@ import android.support.annotation.NonNull;
 import android.support.design.widget.FloatingActionButton;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.app.FragmentActivity;
-import android.support.v4.app.FragmentManager;
-import android.support.v4.app.FragmentTransaction;
 import android.support.v4.content.ContextCompat;
 import android.util.Log;
 import android.view.View;
@@ -73,8 +71,7 @@ public class MainActivity extends FragmentActivity implements UserMainFragment.O
         final int duration = Toast.LENGTH_SHORT;
 
 
-        if (FirebaseAuth.getInstance().getCurrentUser().getUid() == post.getAuthorId()) {
-            PostContent.getInstance().deletePost(post);
+        if (FirebaseAuth.getInstance().getCurrentUser().getUid().equals(deletePost.getAuthorId())) {
             MaterialDialog materialDialog = DialogicFactory.getAcceptDialog(this);
             materialDialog.getBuilder().onPositive(new MaterialDialog.SingleButtonCallback() {
                 @Override
@@ -102,30 +99,12 @@ public class MainActivity extends FragmentActivity implements UserMainFragment.O
         Intent intent = new Intent(this, DetailActivity.class);
         intent.putExtra("com.example.instakilo.Post", post);
         startActivity(intent);
-        FragmentManager fm = getSupportFragmentManager();
-        FragmentTransaction ft = fm.beginTransaction();
-        PostDetailFragment fragment =new PostDetailFragment();
-        //UserMainFragment fragment = new UserMainFragment();
-        Bundle bundle = new Bundle();
-        //ViewGroup.LayoutParams params = findViewById(android.R.id.content).getLayoutParams();
-       // params.height = ViewGroup.LayoutParams.MATCH_PARENT;
-        //params.width = ViewGroup.LayoutParams.MATCH_PARENT;
-        //fragment.getView().setLayoutParams(params);
-        bundle.putParcelable("com.example.instakilo.Post", post);
-        //bundle.putParcelable("setLayoutParams.Post", params);
-        fragment.setArguments(bundle);
-       // ft.replace(R.id.main_frag_container2,fragment);
-        //ft.addToBackStack(null);
-        //ft.commit();
-
     }
 
     private void setup() {
         mAddNewRecordFab = (FloatingActionButton) findViewById(R.id.activity_Post_AddNewRecord_FloatingActionButton);
         mAddNewRecordFab.setOnClickListener(new DialogPicActivity(this));
     }
-
-
 
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
@@ -169,7 +148,6 @@ public class MainActivity extends FragmentActivity implements UserMainFragment.O
     }
 
     private void onCapturePhotoResult(Intent data) {
-
         // Get thumbnail photo
         final Bitmap thumbnail = (Bitmap) data.getExtras().get("data");
         addPost(thumbnail);
