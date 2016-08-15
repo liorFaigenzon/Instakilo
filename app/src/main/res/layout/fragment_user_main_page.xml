@@ -18,14 +18,24 @@
 
         <TextView
             android:id="@+id/authorName"
-            android:layout_width="fill_parent"
-            android:layout_height="60dp"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
             android:layout_toRightOf="@id/userImg"
             android:text="user info."
             android:textAppearance="?android:attr/textAppearanceLarge"
-            android:gravity="top"/>
+            android:layout_above="@+id/rel"/>
+
+        <Button
+            android:id="@+id/button_logout"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Logout"
+            android:background="@color/buttonColor"
+            android:textColor="@color/buttonTextColor"
+            android:layout_alignParentRight="true"/>
 
         <RelativeLayout
+            android:id="@+id/rel"
             android:layout_below="@id/userImg"
             android:layout_width="match_parent"
             android:layout_height="wrap_content">
