@@ -3,7 +3,8 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     tools:context=".PostDetailFragment"
-    android:orientation="vertical">
+    android:orientation="vertical"
+    android:theme="@android:style/Theme.NoTitleBar">
     <TextView
         android:id="@+id/authorName"
         android:gravity="top"
