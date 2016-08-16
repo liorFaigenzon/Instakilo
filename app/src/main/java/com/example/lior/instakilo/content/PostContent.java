@@ -1,5 +1,6 @@
 package com.example.lior.instakilo.content;
 
+import com.example.lior.instakilo.MainActivity;
 import com.example.lior.instakilo.models.Model;
 import com.example.lior.instakilo.models.Post;
 import com.example.lior.instakilo.models.callbacks.OnItemsLoadedCallback;
@@ -55,6 +56,7 @@ public class PostContent {
     }
 
     static {
+        MainActivity.isDataLoading = true;
         Model.getInstance().getAll(Model.ModelClass.POST, new Model.GetManyListener() {
             @Override
             public void onResult(List<Object> objects) {
@@ -66,6 +68,8 @@ public class PostContent {
                 if(mCallback !=null) {
                     mCallback.onLoadedPost(ITEMS);
                 }
+
+                MainActivity.isDataLoading = false;
             }
 
             @Override

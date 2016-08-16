@@ -282,7 +282,7 @@ public class Model {
             imageFile.createNewFile();
 
             out = new FileOutputStream(imageFile);
-            imageBitmap.compress(Bitmap.CompressFormat.JPEG, 100, out);
+            imageBitmap.compress(Bitmap.CompressFormat.JPEG, 50, out);
             out.close();
 
             //add the picture to the gallery so we dont need to manage the cache size
@@ -327,7 +327,7 @@ public class Model {
              * It is needed because large files will throw OutOfMemoryException error on calling this code
              */
             BitmapFactory.Options sizeOptions = new BitmapFactory.Options();
-            sizeOptions.inSampleSize = 8;
+            sizeOptions.inSampleSize = 1;
 
             bitmap = BitmapFactory.decodeStream(inputStream, null, sizeOptions);
             Log.d("tag","got image from cache: " + imageFileName);

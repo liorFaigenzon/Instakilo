@@ -73,6 +73,22 @@ public class PostDetailFragment extends Fragment {
         mlikesTxt = (TextView)  mView.findViewById(R.id.likesTxt);
         final ImageView topImg = (ImageView)  mView.findViewById(R.id.topImg);
         ImageView likePic = (ImageView)  mView.findViewById(R.id.likePic);
+
+        if (likePic != null) {
+            if(post.isUserLiked(FirebaseAuth.getInstance().getCurrentUser().getUid()))
+            {
+                likePic.setImageResource(R.drawable.heart_full);
+
+            }
+            else {
+
+                likePic.setImageResource(R.drawable.heart_outline);
+            }
+
+            //likePic.setTag(position);
+            likePic.setOnClickListener(mOnLikeClickListener);
+        }
+
         if (post.isUserLiked(FirebaseAuth.getInstance().getCurrentUser().getUid())) {
             likePic.setPressed(true);
             //likePic.setImageResource(R.drawable.heart_full);

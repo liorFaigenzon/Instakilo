@@ -23,7 +23,7 @@ import android.widget.Toast;
 
 import com.afollestad.materialdialogs.DialogAction;
 import com.afollestad.materialdialogs.MaterialDialog;
-import com.example.lior.instakilo.dummy.PostContent;
+import com.example.lior.instakilo.content.PostContent;
 import com.example.lior.instakilo.models.Model;
 import com.example.lior.instakilo.models.PicModeSelectDialogFragment;
 import com.example.lior.instakilo.models.Post;
@@ -34,7 +34,6 @@ import com.google.firebase.database.DatabaseReference;
 
 import java.io.File;
 import java.io.IOException;
-import android.net.Uri;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 
@@ -47,6 +46,7 @@ public class MainActivity extends FragmentActivity implements UserMainFragment.O
     static final int REQUEST_PERMISSIONS_CAMERA = 300;
     static final int REQUEST_PERMISSIONS_STORAGE = 400;
     private FloatingActionButton mAddNewRecordFab;
+    public static boolean isDataLoading = false;
     public static ProgressBar mainProgressBar = null;
     private Bitmap thumbnail;
 
@@ -56,7 +56,10 @@ public class MainActivity extends FragmentActivity implements UserMainFragment.O
         setContentView(R.layout.activity_main);
 
         mainProgressBar = (ProgressBar)findViewById(R.id.mainProgressBar);
-        MainActivity.mainProgressBar.setVisibility(View.VISIBLE);
+        if (isDataLoading)
+            MainActivity.mainProgressBar.setVisibility(View.VISIBLE);
+        else
+            MainActivity.mainProgressBar.setVisibility(View.GONE);
 
         Model.getInstance().attachCacheListener(Model.ModelClass.POST);
         Model.getInstance().attachCacheListener(Model.ModelClass.COMMENT);

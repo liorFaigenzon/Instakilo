@@ -15,7 +15,7 @@ import android.widget.Toast;
 
 import com.afollestad.materialdialogs.DialogAction;
 import com.afollestad.materialdialogs.MaterialDialog;
-import com.example.lior.instakilo.dummy.CommentContent;
+import com.example.lior.instakilo.content.CommentContent;
 import com.example.lior.instakilo.models.Comment;
 import com.example.lior.instakilo.models.Model;
 import com.example.lior.instakilo.models.Post;

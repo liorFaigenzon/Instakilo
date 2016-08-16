@@ -10,7 +10,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
-import com.example.lior.instakilo.dummy.PostContent;
+import com.example.lior.instakilo.content.PostContent;
 import com.example.lior.instakilo.models.Post;
 
 /**

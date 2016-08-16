@@ -11,7 +11,7 @@ import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.example.lior.instakilo.PostListFragment.OnListFragmentInteractionListener;
-import com.example.lior.instakilo.dummy.PostContent;
+import com.example.lior.instakilo.content.PostContent;
 import com.example.lior.instakilo.models.Comment;
 import com.example.lior.instakilo.models.Model;
 import com.example.lior.instakilo.models.Post;

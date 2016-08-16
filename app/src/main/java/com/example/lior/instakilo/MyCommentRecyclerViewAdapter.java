@@ -7,7 +7,7 @@ import android.view.ViewGroup;
 import android.widget.TextView;
 
 import com.example.lior.instakilo.CommentFragment.OnListFragmentInteractionListener;
-import com.example.lior.instakilo.dummy.CommentContent;
+import com.example.lior.instakilo.content.CommentContent;
 import com.example.lior.instakilo.models.Comment;
 import com.example.lior.instakilo.models.Post;
 import com.example.lior.instakilo.models.callbacks.OnItemsLoadedCallback;
