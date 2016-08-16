@@ -1,7 +1,7 @@
-package com.example.lior.instakilo.dummy;
+package com.example.lior.instakilo.content;
 
+import com.example.lior.instakilo.models.Comment;
 import com.example.lior.instakilo.models.Model;
-import com.example.lior.instakilo.models.Post;
 import com.example.lior.instakilo.models.callbacks.OnItemsLoadedCallback;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
@@ -15,19 +15,18 @@ import java.util.List;
  * <p/>
  * TODO: Replace all uses of this class before publishing your app.
  */
-public class PostContent {
-    /**
-     * An array of sample (dummy) items.
-     */
-    public static final List<Post> ITEMS = new ArrayList<Post>();
+public class CommentContent {
 
-    private static PostContent INSTANCE;
+
+    public static List<Comment> ITEMS = new ArrayList<Comment>();
+
+    private static CommentContent INSTANCE;
 
     private static OnItemsLoadedCallback mCallback;
 
-    public static PostContent getInstance() {
+    public static CommentContent getInstance() {
         if(INSTANCE == null) {
-            INSTANCE = new PostContent();
+            INSTANCE = new CommentContent();
         }
         return INSTANCE;
     }
@@ -36,35 +35,38 @@ public class PostContent {
         mCallback = callback;
     }
 
-    public static void deletePost(Post post) {
-        final Post deletPost = post;
-        Model.getInstance().delete(deletPost, new Model.DeleteListener() {
+    public static void deleteComment(Comment comment) {
+        final Comment deletComment = comment;
+        Model.getInstance().delete(deletComment, new Model.DeleteListener() {
             @Override
             public void onComplete(DatabaseError databaseError, DatabaseReference databaseReference, String key) {
-                ITEMS.remove(deletPost);
-                mCallback.onLoadedPost(ITEMS);
+                ITEMS.remove(deletComment);
+                mCallback.onLoadedComment(ITEMS);
             }
         });
 
 
     }
 
-    public static void addPost(Post post) {
-        ITEMS.add(post);
-        mCallback.onLoadedPost(ITEMS);
+    public static void addComment(Comment comment) {
+        ITEMS.add(comment);
+        mCallback.onLoadedComment(ITEMS);
     }
 
-    static {
-        Model.getInstance().getAll(Model.ModelClass.POST, new Model.GetManyListener() {
+    public  static void getCommentByPostId(String postId)
+    {
+        ITEMS = new ArrayList<>();
+        Model.getInstance().getCommentsByPostId(postId, new Model.GetManyListener() {
             @Override
             public void onResult(List<Object> objects) {
 
                 // Add some sample items.
-                for (Object post:  objects) {
-                    ITEMS.add((Post)post);
+                for (Object comment:  objects) {
+                    ITEMS.add((Comment) comment);
                 }
+
                 if(mCallback !=null) {
-                    mCallback.onLoadedPost(ITEMS);
+                    mCallback.onLoadedComment(ITEMS);
                 }
             }
 
@@ -72,6 +74,6 @@ public class PostContent {
             public void onCancel() {
             }
         });
-
     }
+
 }
